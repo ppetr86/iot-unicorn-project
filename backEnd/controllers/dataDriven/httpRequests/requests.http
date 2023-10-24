@@ -1,0 +1,43 @@
+### login user test0@ for ROLE_ADMIN, test1 to n@ for ROLE_USER
+POST localhost:3001/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "test1@test.com",
+  "password": "1234"
+}
+
+### get SELF user ROLE_ADMIN by id
+GET localhost:3001/api/v1/users/{{idAdmin}}
+Content-Type: application/json
+Authorization: Bearer: {{jwtAdmin}}
+
+### get OTHER user ROLE_ADMIN by id - should 200
+GET localhost:3001/api/v1/users/{{idUser1}}
+Content-Type: application/json
+Authorization: Bearer: {{jwtAdmin}}
+
+### get SELF user ROLE_USER by id - should 200
+GET localhost:3001/api/v1/users/{{idUser1}}
+Content-Type: application/json
+Authorization: Bearer: {{jwtUser1}}
+
+### get OTHER user ROLE_USER by id - should 401
+GET localhost:3001/api/v1/users/{{idUser2}}
+Content-Type: application/json
+Authorization: Bearer: {{jwtUser1}}
+
+### get animal kind - should work for all users
+GET localhost:3001/api/v1/animalKinds/65379d97ba30a98c1dcc8063
+Accept: application/json
+Authorization: Bearer: {{jwtUser1}}
+
+### get animal kind - should 404
+GET localhost:3001/api/v1/animalKinds/65379d97ba30a98c1dcc8069
+Accept: application/json
+Authorization: Bearer: {{jwtUser1}}
+
+### get all animal kinds - should 200
+GET localhost:3001/api/v1/animalKinds
+Accept: application/json
+Authorization: Bearer: {{jwtUser1}}
