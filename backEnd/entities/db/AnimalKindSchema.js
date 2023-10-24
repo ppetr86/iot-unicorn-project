@@ -6,7 +6,8 @@ const AnimalKindSchema = new Schema({
         type: String,
         required: true,
         nullable: false,
-        unique: true
+        unique: true,
+        index: true
     },
     description: {
         type: String,
