@@ -5,7 +5,7 @@ const {
     createSensorData,
 } = require('../../controllers/dataDriven/SensorDataController');
 
-router.route('/')
+router.route('/:sensorType')
     .post(createSensorData);
 
 module.exports = router;
