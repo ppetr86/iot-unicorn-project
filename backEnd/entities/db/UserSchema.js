@@ -7,102 +7,151 @@ const emailRegExp = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 const validateEmail = email => emailRegExp.test(email);
 
 const UserSchema = new Schema({
-    firstName: {
-        type: String,
-        trim: true,
-        maxlength: 100,
-        minLength: 2,
-        required: true
-    },
-    lastName: {
-        type: String,
-        trim: true,
-        maxlength: 100,
-        minLength: 2,
-        required: true
-    },
-    email: {
-        type: String,
-        trim: true,
-        lowercase: true,
-        unique: true,
-        validate: [validateEmail, 'Please fill a valid email address'],
-        index: true
-    },
-    roles: {
-        type: [{
-            type: String
-        }],
-        enum: ['ROLE_ADMIN', 'ROLE_USER'],
-        required: true
-    },
-    password: {
-        type: String,
-        required: true,
-        maxlength: 10,
-        minLength: 4,
-        select: false
-    },
-    passwordChangedAt: {
-        type: Date,
-        select: false
-    },
-    passwordResetToken: {
-        type: String,
-        select: false
-    },
-    passwordResetExpires: {
-        type: Date,
-        select: false,
-    },
-    isDeactivated: {
-        type: Boolean,
-        default: false
-    },
-    //define on every schema so that we could get e.g. last document
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
-    //user related info end
-    terrariums: [
-        {
-            id: {
-                type: String,
-                maxlength: 36,
-                minLength: 1,
-                unique: true
-            },
-            name: String,
-            animalType: String,
-            description: String,
-            sensors: [
-                {
-                    id: {
-                        type: String,
-                        maxlength: 36,
-                        minLength: 1,
-                        unique: true
-                    },
-                    name: String,
-                    targets: {
-                        temperature: Number,
-                        humidity: Number,
-                        lightIntensity: Number,
-                    },
-                    data: [
-                        {
-                            timestamp: Date,
-                            temperature: Number,
-                            humidity: Number,
-                            lightIntensity: Number,
-                        },
-                    ],
-                },
-            ],
+        firstName: {
+            type: String,
+            trim: true,
+            maxlength: 100,
+            minLength: 2,
+            required: true
         },
-    ],
-});
+        lastName: {
+            type: String,
+            trim: true,
+            maxlength: 100,
+            minLength: 2,
+            required: true
+        },
+        email: {
+            type: String,
+            trim: true,
+            lowercase: true,
+            unique: true,
+            validate: [validateEmail, 'Please fill a valid email address'],
+            index: true
+        },
+        roles: {
+            type: [{
+                type: String
+            }],
+            enum: ['ROLE_ADMIN', 'ROLE_USER'],
+            required: true
+        },
+        password: {
+            type: String,
+            required: true,
+            maxlength: 10,
+            minLength: 4,
+            select: false
+        },
+        passwordChangedAt: {
+            type: Date,
+            select: false
+        },
+        passwordResetToken: {
+            type: String,
+            select: false
+        },
+        passwordResetExpires: {
+            type: Date,
+            select: false,
+        },
+        isDeactivated: {
+            type: Boolean,
+            default: false
+        },
+        //define on every schema so that we could get e.g. last document
+        createdAt: {
+            type: Date,
+            default: Date.now,
+        },
+        //user related info end
+
+        //embedded objects in mongoose are assigned _id by default
+        //{ _id: false }); // Disable _id for embedded subdocuments
+        terrariums: [
+            {
+                name: {
+                    type: String,
+                    index: true
+                },
+                animalType: String,
+                description: String,
+                sensors: [
+                    {
+                        hardwarioCode: {
+                            type: String,
+                            maxlength: 36,
+                            minLength: 1,
+                            unique: true,
+                            index: true
+                        },
+                        name: {type: String, index: true},
+                        //optimalni hodnoty kterych chceme dosahovat pri chovu; referencujeme schema
+                        targets: {
+                            type: Object,
+                            required: true,
+                            nullable: false,
+                            humidity: {
+                                min: {
+                                    type: Number,
+                                    min: 0,
+                                    max: 100
+                                },
+                                max: {
+                                    type: Number,
+                                    min: 0,
+                                    max: 100
+                                }
+                            },
+                            temperature: {
+                                min: {
+                                    type: Number,
+                                    min: -100,
+                                    max: 100
+                                },
+                                max: {
+                                    type: Number,
+                                    min: -100,
+                                    max: 100
+                                }
+                            },
+                            lightIntensity: {
+                                min: {
+                                    type: Number,
+                                    min: 0,
+                                    max: 100
+                                },
+                                max: {
+                                    type: Number,
+                                    min: 0,
+                                    max: 100
+                                }
+                            }
+                        },
+                        data:
+                            [
+                                {
+                                    timestamp: Date,
+                                    temperature: Number,
+                                    humidity: Number,
+                                    lightIntensity: Number,
+                                },
+                            ],
+                    },
+                ],
+            },
+        ],
+    })
+;
+
+UserSchema.path('terrariums.sensors.targets').validate(validateMinMax, 'Target max must be greater or equal to Target min.');
+
+function validateMinMax(targets) {
+    return targets.humidity.min <= targets.humidity.max &&
+        targets.temperature.min <= targets.temperature.max &&
+        targets.lightIntensity.min <= targets.lightIntensity.max;
+
+}
 
 UserSchema.pre('save', async function (next) {
     if (!this.isModified('password'))

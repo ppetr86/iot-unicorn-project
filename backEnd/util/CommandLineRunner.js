@@ -2,6 +2,8 @@
 const {faker} = require('@faker-js/faker');
 const animalKindAbl = require("../abl/AnimalKindAbl");
 const userAbl = require("../abl/UserAbl");
+const {SensorData, SensorTarget, Sensor, Terrarium} = require('../entities/schemaToClass/MongooseSchemaToClass.js');
+const { v4: uuidV4 } = require('uuid');
 
 class CommandLineRunner {
     constructor() {
@@ -25,13 +27,16 @@ class CommandLineRunner {
 
         //createAnimals
         if (appConfig.applicationProfiles.indexOf("loadAnimalKinds") !== -1) {
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 3; i++) {
                 try {
                     this.writeData(animalKindAbl, this.createFakeAnimalKind());
+                    console.log("Writing animalKind");
                 } catch (e) {
-                    //not important, just for test
+                    console.error("Failed writing animalKind from commandLineRunner")
                 }
             }
+            console.log("loadAnimalKinds done")
+
         }
 
         //create user
@@ -41,18 +46,21 @@ class CommandLineRunner {
                 if (!(await this.isDataExisting(userAbl, {"email": email}))) {
                     //ROLE_ADMIN one time, rest ROLE_USER
                     const user = this.createFakeUser(i === 0 ? "ROLE_ADMIN" : "ROLE_USER", email);
-                    console.log("Writing user with email: " + email);
-                    this.writeData(userAbl, user);
+                    try {
+                        this.writeData(userAbl, user);
+                        console.log("Writing user with email: " + email);
+                    } catch (e) {
+                        console.error("Failed writing user from commandLineRunner")
+                    }
                 }
             }
+            console.log("createUsers done");
         }
     }
-
 
     async isDataExisting(abl, queryObject) {
         return await abl.isExisting(queryObject);
     }
-
 
     writeData(abl, data) {
         return abl.create(data);
@@ -80,32 +88,43 @@ class CommandLineRunner {
         user.email = email;
         user.roles = [role];
         user.password = 1234;
-        user.terrariums = [];
+        user.terrariums = this.createFakeTerrariums();
         return user;
     }
 
+    createFakeTerrariums() {
+        const terrariumsArray = [];
+        for (let i = 0; i < 2; i++) {
+
+            const sensors = [];
+            for (let j = 0; j < 2; j++) {
+                const newSensorTarget = new SensorTarget(25, 30, 60, 70, 80, 90);
+                const data = [];
+                for (let k = 0; k < 2; k++) {
+                    data.push(new SensorData(25.5, 60, 80));
+                }
+                const newSensor = new Sensor(
+                    uuidV4(),
+                    "sensor name " + j,
+                    newSensorTarget,
+                    data);
+                sensors.push(newSensor);
+            }
+
+            terrariumsArray.push(new Terrarium(
+                "terrarium.name" + i,
+                "animalType" + i,
+                "description" + i,
+                sensors));
+        }
+        return terrariumsArray;
+    }
+
     createFakeAnimalKind() {
-        const minHumidity = faker.number.int({min: 0, max: 90});
-        const minTemp = faker.number.int({min: -100, max: 90});
-        const minLight = faker.number.int({min: 0, max: 90});
         return {
             animalType: "animalType" + faker.number.int({min: 0, max: 10000}),
             description: faker.lorem.sentences().substring(0, 254),
-            livingConditions:
-                {
-                    humidity: {
-                        min: minHumidity,
-                        max: minHumidity + 10,
-                    },
-                    temperature: {
-                        min: minTemp,
-                        max: minTemp + 10,
-                    },
-                    lightIntensity: {
-                        min: minLight,
-                        max: minLight + 10,
-                    },
-                }
+            livingConditions:  new SensorTarget(25, 30, 60, 70, 80, 90)
         }
     }
 

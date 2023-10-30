@@ -33,7 +33,7 @@ Accept: application/json
 Authorization: Bearer: {{jwtUser1}}
 
 ### get animal kind - should 404
-GET localhost:3001/api/v1/animalKinds/65379d97ba30a98c1dcc8069
+GET localhost:3001/api/v1/animalKinds/653f8e11496a4335957d81d0
 Accept: application/json
 Authorization: Bearer: {{jwtUser1}}
 

@@ -1,5 +1,5 @@
 {
-  "name": "tym",
+  "name": "iot-unicorn-project-backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -37,6 +37,7 @@
     "jsonwebtoken": "^9.0.2",
     "moment": "^2.29.4",
     "mongodb": "^6.2.0",
-    "mongoose": "^7.6.3"
+    "mongoose": "^7.6.3",
+    "uuid": "^9.0.1"
   }
 }

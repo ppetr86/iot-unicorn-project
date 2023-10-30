@@ -6,6 +6,7 @@ const express = require('express');
 const authRoute = require('./routes/dataDriven/authRoute');
 const usersRoute = require('./routes/dataDriven/userRoute');
 const animalKindRoute = require('./routes/dataDriven/animalKindRoute');
+const sensorDataRoute = require('./routes/dataDriven/SensorDataRoute');
 const cors = require('cors');
 
 const getConfiguration = require('./config');
@@ -50,6 +51,11 @@ app.use(express.static('./public'));
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/users", usersRoute);
 app.use("/api/v1/animalKinds", animalKindRoute);
+app.use("/api/v1/sensorData", sensorDataRoute);
+
+//TODO: routy k vytvoreni...
+//app.use("/api/v1/terrariums", terrariumsRoute);
+//app.use("/api/v1/sensors", sensorsRoute);
 
 //use case driven routes list below:
 //app.use("/fe/v1/users", usersUseCaseRoute);

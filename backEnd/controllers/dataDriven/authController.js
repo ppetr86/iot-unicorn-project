@@ -6,7 +6,8 @@ const User = require("../../entities/db/UserSchema");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const LoginDtoIn = require("../../entities/dtoIn/LoginDtoIn");
-const {UserDtoOut} = require("../../entities/dtoOut/UserDtoOut");
+const {UserDtoOut, UserDtoOutWithIdNameEmail} = require("../../entities/dtoOut/UserDtoOut");
+const UserAbl = require("../../abl/UserAbl");
 
 const loginUser = asyncWrapper(async (req, res, next) => {
     const {email, password} = req.body;
@@ -15,8 +16,10 @@ const loginUser = asyncWrapper(async (req, res, next) => {
     if (error)
         return next(new CustomApiError('Email or password in wrong format', StatusCodes.BAD_REQUEST));
 
-    //Model/Schema field that is default not selected must have the + sign
-    const dbDocument = await User.findOne({email}).select('+password');
+    //field that is default not selected must have the + sign
+    //projection, not fetching entire user...
+    const dbDocument = await User.findOne({email})
+        .select('firstName lastName email roles +password');
 
     if (!dbDocument || !(await dbDocument.isProvidedPasswordMatchingPersisted(password, dbDocument.password)))
         return next(new CustomApiError(`Email or password incorrect`, StatusCodes.UNAUTHORIZED));
@@ -27,7 +30,7 @@ const loginUser = asyncWrapper(async (req, res, next) => {
     res.status(StatusCodes.CREATED).json({
         status: "success",
         token,
-        data: new UserDtoOut(dbDocument)
+        data: new UserDtoOutWithIdNameEmail(dbDocument)
     });
 });
 

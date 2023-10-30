@@ -19,7 +19,9 @@ const protect = asyncWrapper(async (req, res, next) => {
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
     // 3) Check if user still exists
-    const currentUser = await User.findById(decoded.id);
+    const currentUser = await User.findById(decoded.id)
+        .select('firstName lastName email roles passwordChangedAt ');
+
     if (!currentUser)
         return next(new CustomApiError('The user belonging to this token does no longer exist.',
             StatusCodes.UNAUTHORIZED));
