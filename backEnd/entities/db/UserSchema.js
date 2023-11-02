@@ -86,7 +86,7 @@ const UserSchema = new Schema({
                             index: true
                         },
                         name: {type: String, index: true},
-                        //optimalni hodnoty kterych chceme dosahovat pri chovu; referencujeme schema
+                        //optimalni hodnoty kterych chceme dosahovat pri chovu
                         targets: {
                             type: Object,
                             required: true,

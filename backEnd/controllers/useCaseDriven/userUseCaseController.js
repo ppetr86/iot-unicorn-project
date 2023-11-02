@@ -1,7 +1,7 @@
 const asyncWrapper = require("../../middleware/Async");
 const {createCustomError} = require("../../errors/CustomApiError");
 const {StatusCodes} = require('http-status-codes');
-const StudyProgrammeAbl = require("../../abl/AnimalKindAbl");
+const StudyProgrammeAbl = require("../../dao/AnimalKindDao");
 const {ResponseObjDto} = require("../../entities/ResponseObjDto");
 
 /**

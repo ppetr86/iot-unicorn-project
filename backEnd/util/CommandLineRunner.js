@@ -1,7 +1,7 @@
 "use strict";
 const {faker} = require('@faker-js/faker');
-const animalKindAbl = require("../abl/AnimalKindAbl");
-const userAbl = require("../abl/UserAbl");
+const animalKindDao = require("../dao/AnimalKindDao");
+const userDao = require("../dao/UserDao");
 const {SensorData, SensorTarget, Sensor, Terrarium} = require('../entities/schemaToClass/MongooseSchemaToClass.js');
 const { v4: uuidV4 } = require('uuid');
 
@@ -13,23 +13,23 @@ class CommandLineRunner {
 
         //purge all data
         if (appConfig.applicationProfiles.indexOf("purgeAll") !== -1) {
-            await this.deleteAll(animalKindAbl);
-            await this.deleteAll(userAbl);
+            await this.deleteAll(animalKindDao);
+            await this.deleteAll(userDao);
         }
 
         if (appConfig.applicationProfiles.indexOf("purgeAnimalKinds") !== -1) {
-            await this.deleteAll(animalKindAbl);
+            await this.deleteAll(animalKindDao);
         }
 
         if (appConfig.applicationProfiles.indexOf("purgeUsers") !== -1) {
-            await this.deleteAll(userAbl);
+            await this.deleteAll(userDao);
         }
 
         //createAnimals
         if (appConfig.applicationProfiles.indexOf("loadAnimalKinds") !== -1) {
             for (let i = 0; i < 3; i++) {
                 try {
-                    this.writeData(animalKindAbl, this.createFakeAnimalKind());
+                    this.writeData(animalKindDao, this.createFakeAnimalKind());
                     console.log("Writing animalKind");
                 } catch (e) {
                     console.error("Failed writing animalKind from commandLineRunner")
@@ -43,11 +43,11 @@ class CommandLineRunner {
         if (appConfig.applicationProfiles.indexOf("createUsers") !== -1) {
             for (let i = 0; i < 3; i++) {
                 let email = "test" + i + "@test.com";
-                if (!(await this.isDataExisting(userAbl, {"email": email}))) {
+                if (!(await this.isDataExisting(userDao, {"email": email}))) {
                     //ROLE_ADMIN one time, rest ROLE_USER
                     const user = this.createFakeUser(i === 0 ? "ROLE_ADMIN" : "ROLE_USER", email);
                     try {
-                        this.writeData(userAbl, user);
+                        this.writeData(userDao, user);
                         console.log("Writing user with email: " + email);
                     } catch (e) {
                         console.error("Failed writing user from commandLineRunner")
@@ -58,25 +58,25 @@ class CommandLineRunner {
         }
     }
 
-    async isDataExisting(abl, queryObject) {
-        return await abl.isExisting(queryObject);
+    async isDataExisting(dao, queryObject) {
+        return await dao.isExisting(queryObject);
     }
 
-    writeData(abl, data) {
-        return abl.create(data);
+    writeData(dao, data) {
+        return dao.create(data);
     }
 
-    async deleteAll(abl) {
-        return abl.deleteAll();
+    async deleteAll(dao) {
+        return dao.deleteAll();
     }
 
-    async createUsers(abl) {
+    async createUsers(dao) {
         for (let i = 0; i < 5; i++) {
             let email = "test" + i + "@test.com";
-            if (!(await this.isDataExisting(abl, {"email": email}))) {
+            if (!(await this.isDataExisting(dao, {"email": email}))) {
                 const user = this.createFakeUser(i % 2 === 0 ? "ROLE_ADMIN" : "ROLE_TEACHER", email);
                 console.log("Writing user with email: " + email);
-                await this.writeData(abl, user);
+                await this.writeData(dao, user);
             }
         }
     }

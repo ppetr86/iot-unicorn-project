@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const LoginDtoIn = require("../../entities/dtoIn/LoginDtoIn");
 const {UserDtoOut, UserDtoOutWithIdNameEmail} = require("../../entities/dtoOut/UserDtoOut");
-const UserAbl = require("../../abl/UserAbl");
+const UserDao = require("../../dao/UserDao");
 
 const loginUser = asyncWrapper(async (req, res, next) => {
     const {email, password} = req.body;

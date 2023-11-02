@@ -1,13 +1,13 @@
 const asyncWrapper = require("../../middleware/Async");
 const {CustomApiError} = require("../../errors/CustomApiError");
 const {StatusCodes} = require('http-status-codes');
-const AnimalKindAbl = require("../../abl/AnimalKindAbl");
+const AnimalKindDao = require("../../dao/AnimalKindDao");
 const {ResponseObjDto} = require("../../entities/ResponseObjDto");
 const {AnimalKindDtoIn} = require("../../entities/dtoIn/AnimalKindDtoIn");
 const {AnimalKindDtoOut} = require("../../entities/dtoOut/AnimalKindDtoOut");
 
 const getAllAnimalKinds = asyncWrapper(async (req, res, next) => {
-    const dbDocuments = await AnimalKindAbl.getAll(req.query);
+    const dbDocuments = await AnimalKindDao.getAll(req.query);
     if (!dbDocuments)
         return next(new CustomApiError(`Request failed`, StatusCodes.INTERNAL_SERVER_ERROR));
 
@@ -18,7 +18,7 @@ const getAllAnimalKinds = asyncWrapper(async (req, res, next) => {
 });
 
 const deleteAnimalKind = asyncWrapper(async (req, res, next) => {
-    const dbDocument = await AnimalKindAbl.delete(req.params.id);
+    const dbDocument = await AnimalKindDao.delete(req.params.id);
 
     if (!dbDocument)
         return next(new CustomApiError(`No resource with id: ${req.params.id}`, StatusCodes.NOT_FOUND));
@@ -33,7 +33,7 @@ const putAnimalKind = asyncWrapper(async (req, res, next) => {
     if (error)
         return next(new CustomApiError(error, StatusCodes.BAD_REQUEST));
 
-    const dbDocument = await AnimalKindAbl.put(req.params.id, req.body);
+    const dbDocument = await AnimalKindDao.put(req.params.id, req.body);
 
     if (!dbDocument)
         return next(new CustomApiError(`No resource with id: ${req.params.id}`, StatusCodes.NOT_FOUND));
@@ -45,7 +45,7 @@ const putAnimalKind = asyncWrapper(async (req, res, next) => {
 
 const getAnimalKind = asyncWrapper(async (req, res, next) => {
 
-    const dbDocument = await AnimalKindAbl.get(req.params.id, req.query);
+    const dbDocument = await AnimalKindDao.get(req.params.id, req.query);
 
     if (!dbDocument)
         return next(new CustomApiError(`Error getting AnimalKind id: ${req.params.id}.`, StatusCodes.NOT_FOUND));
@@ -60,7 +60,7 @@ const createAnimalKind = asyncWrapper(async (req, res, next) => {
     if (error)
         return next(new CustomApiError(error, StatusCodes.BAD_REQUEST));
 
-    const dbDocument = await AnimalKindAbl.create(req.body);
+    const dbDocument = await AnimalKindDao.create(req.body);
 
     if (!dbDocument)
         return next(new CustomApiError(`AnimalKind was not created`, StatusCodes.INTERNAL_SERVER_ERROR));
@@ -77,7 +77,7 @@ const patchAnimalKind = asyncWrapper(async (req, res, next) => {
     if (!isValidOperation)
         return next(new CustomApiError(`Request Parameters do not match contract`, StatusCodes.BAD_REQUEST));
 
-    const dbDocument = await AnimalKindAbl.put(req.params.id, req.query);
+    const dbDocument = await AnimalKindDao.put(req.params.id, req.query);
 
     if (!dbDocument)
         return next(new CustomApiError(`Error putting AnimalKind id: ${req.params.id}.`, StatusCodes.NOT_FOUND));

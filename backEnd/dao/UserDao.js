@@ -1,11 +1,11 @@
 "use strict";
 const User = require("../entities/db/UserSchema");
-const BaseAbl = require("./BaseAbl");
+const BaseDao = require("./BaseDao");
 
-class UserAbl extends BaseAbl {
+class UserDao extends BaseDao {
     constructor() {
         super(User);
     }
 }
 
-module.exports = new UserAbl();
+module.exports = new UserDao();

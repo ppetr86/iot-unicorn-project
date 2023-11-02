@@ -38,7 +38,7 @@ function populateSpecificationNestedObject(path) {
     }
 }
 
-class BaseAbl {
+class BaseDao {
     constructor(schema) {
         this.schema = schema;
         this.className = this.constructor.name;
@@ -174,4 +174,4 @@ class BaseAbl {
     }
 }
 
-module.exports = BaseAbl;
+module.exports = BaseDao;

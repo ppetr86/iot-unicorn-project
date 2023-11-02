@@ -5,11 +5,11 @@ const {StatusCodes} = require('http-status-codes');
 const {UserDtoOut} = require("../../entities/dtoOut/UserDtoOut");
 const UserPutDtoIn = require("../../entities/dtoIn/UserPutDtoIn");
 const UserCreateDtoIn = require("../../entities/dtoIn/UserCreateDtoIn");
-const UserAbl = require("../../abl/UserAbl");
+const UserDao = require("../../dao/UserDao");
 
 const getAllUsers = asyncWrapper(async (req, res, next) => {
 
-    const dbDocuments = await UserAbl.getAll(req.query);
+    const dbDocuments = await UserDao.getAll(req.query);
 
     if (!dbDocuments)
         return next(new CustomApiError(`Request failed`, StatusCodes.NOT_FOUND));
@@ -62,7 +62,7 @@ const putUser = asyncWrapper(async (req, res, next) => {
 
 const getUser = asyncWrapper(async (req, res, next) => {
 
-    let dbDocument = await UserAbl.get(req.params.id, req.query);
+    let dbDocument = await UserDao.get(req.params.id, req.query);
 
     if (!dbDocument)
         return next(new CustomApiError(`No resource with id: ${req.params.id}`, StatusCodes.NOT_FOUND));

@@ -1,11 +1,11 @@
 "use strict";
 const AnimalKind = require('../entities/db/AnimalKindSchema');
-const BaseAbl = require("./BaseAbl");
+const BaseDao = require("./BaseDao");
 
-class AnimalKindAbl extends BaseAbl {
+class AnimalKindDao extends BaseDao {
     constructor() {
         super(AnimalKind);
     }
 }
 
-module.exports = new AnimalKindAbl();
+module.exports = new AnimalKindDao();
