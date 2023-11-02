@@ -98,7 +98,6 @@ class CommandLineRunner {
 
             const sensors = [];
             for (let j = 0; j < 2; j++) {
-                const newSensorTarget = new SensorTarget(25, 30, 60, 70, 80, 90);
                 const data = [];
                 for (let k = 0; k < 2; k++) {
                     data.push(new SensorData(25.5, 60, 80));
@@ -106,13 +105,13 @@ class CommandLineRunner {
                 const newSensor = new Sensor(
                     uuidV4(),
                     "sensor name " + j,
-                    newSensorTarget,
                     data);
                 sensors.push(newSensor);
             }
 
             terrariumsArray.push(new Terrarium(
-                "terrarium.name" + i,
+            new SensorTarget(25, 30, 60, 70, 80, 90),
+            "terrarium.name" + i,
                 "animalType" + i,
                 "description" + i,
                 sensors));

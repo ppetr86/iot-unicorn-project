@@ -25,16 +25,16 @@ class SensorTarget {
 }
 
 class Sensor {
-    constructor(hardwarioCode, name, targets, data) {
+    constructor(hardwarioCode, name, data) {
         this.hardwarioCode = hardwarioCode;
         this.name = name;
-        this.targets = targets;
         this.data = data;
     }
 }
 
 class Terrarium {
-    constructor(name, animalType, description, sensors) {
+    constructor(targets, name, animalType, description, sensors) {
+        this.targets = targets;
         this.name = name;
         this.animalType = animalType;
         this.description = description;

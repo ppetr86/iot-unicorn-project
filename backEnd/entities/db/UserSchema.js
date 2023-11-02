@@ -76,6 +76,48 @@ const UserSchema = new Schema({
                 },
                 animalType: String,
                 description: String,
+                //optimalni hodnoty kterych chceme dosahovat pri chovu
+                targets: {
+                    type: Object,
+                    required: true,
+                    nullable: false,
+                    humidity: {
+                        min: {
+                            type: Number,
+                            min: 0,
+                            max: 100
+                        },
+                        max: {
+                            type: Number,
+                            min: 0,
+                            max: 100
+                        }
+                    },
+                    temperature: {
+                        min: {
+                            type: Number,
+                            min: -100,
+                            max: 100
+                        },
+                        max: {
+                            type: Number,
+                            min: -100,
+                            max: 100
+                        }
+                    },
+                    lightIntensity: {
+                        min: {
+                            type: Number,
+                            min: 0,
+                            max: 100
+                        },
+                        max: {
+                            type: Number,
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                },
                 sensors: [
                     {
                         hardwarioCode: {
@@ -86,57 +128,14 @@ const UserSchema = new Schema({
                             index: true
                         },
                         name: {type: String, index: true},
-                        //optimalni hodnoty kterych chceme dosahovat pri chovu
-                        targets: {
-                            type: Object,
-                            required: true,
-                            nullable: false,
-                            humidity: {
-                                min: {
-                                    type: Number,
-                                    min: 0,
-                                    max: 100
-                                },
-                                max: {
-                                    type: Number,
-                                    min: 0,
-                                    max: 100
-                                }
+                        data: [
+                            {
+                                timestamp: Date,
+                                temperature: Number,
+                                humidity: Number,
+                                lightIntensity: Number,
                             },
-                            temperature: {
-                                min: {
-                                    type: Number,
-                                    min: -100,
-                                    max: 100
-                                },
-                                max: {
-                                    type: Number,
-                                    min: -100,
-                                    max: 100
-                                }
-                            },
-                            lightIntensity: {
-                                min: {
-                                    type: Number,
-                                    min: 0,
-                                    max: 100
-                                },
-                                max: {
-                                    type: Number,
-                                    min: 0,
-                                    max: 100
-                                }
-                            }
-                        },
-                        data:
-                            [
-                                {
-                                    timestamp: Date,
-                                    temperature: Number,
-                                    humidity: Number,
-                                    lightIntensity: Number,
-                                },
-                            ],
+                        ],
                     },
                 ],
             },
@@ -144,7 +143,7 @@ const UserSchema = new Schema({
     })
 ;
 
-UserSchema.path('terrariums.sensors.targets').validate(validateMinMax, 'Target max must be greater or equal to Target min.');
+UserSchema.path('terrariums.targets').validate(validateMinMax, 'Target max must be greater or equal to Target min.');
 
 function validateMinMax(targets) {
     return targets.humidity.min <= targets.humidity.max &&
