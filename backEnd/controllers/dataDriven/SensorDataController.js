@@ -21,6 +21,8 @@ const createSensorData = asyncWrapper(async (req, res, next) => {
             break;
     }
 
+    if (req.headers.authorization)
+        console.log(req.headers.authorization)
     console.log("received message: " + JSON.stringify(req.body))
     console.log("----------")
 
@@ -33,3 +35,4 @@ const createSensorData = asyncWrapper(async (req, res, next) => {
 module.exports = {
     createSensorData: createSensorData,
 };
+
