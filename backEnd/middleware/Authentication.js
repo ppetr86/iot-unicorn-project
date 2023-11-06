@@ -4,7 +4,8 @@ const {CustomApiError} = require("../errors/CustomApiError");
 const {StatusCodes} = require("http-status-codes");
 const {promisify} = require("util");
 const User = require("../entities/db/UserSchema");
-const UserDao = require("../dao/UserDao")
+const UserDao = require("../dao/UserDao");
+const mongoose = require('mongoose');
 
 const protectWithAuthenticationToken = asyncWrapper(async (req, res, next) => {
     // 1) Getting token and check if it's there
@@ -56,15 +57,20 @@ const protectWithIoTToken = asyncWrapper(async (req, res, next) => {
         req.user = { id: userId };
         next();
     } else {
-        // 3) Verification token
+        // 3) IoT token
         try {
             const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+            //if we get some invalid format dont bother checking if it is in db..
+            if (!mongoose.Types.ObjectId.isValid(decoded)) {
+                return next(new CustomApiError("Invalid token", StatusCodes.UNAUTHORIZED));
+            }
 
             // 4) Check if user still exists
             const isUserExisting = await UserDao.isExisting({ _id: decoded.id });
 
             if (!isUserExisting) {
-                return next(new CustomApiError("Provided key can not be associated with an existing user"));
+                return next(new CustomApiError("Provided key can not be associated with an existing user"), StatusCodes.UNAUTHORIZED);
             }
 
             // Cache the token for future use
