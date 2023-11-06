@@ -57,9 +57,6 @@ app.use("/api/v1/sensorData", sensorDataRoute);
 //app.use("/api/v1/terrariums", terrariumsRoute);
 //app.use("/api/v1/sensors", sensorsRoute);
 
-//use case driven routes list below:
-//app.use("/fe/v1/users", usersUseCaseRoute);
-
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 

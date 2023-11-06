@@ -52,6 +52,6 @@ Accept: application/json
 Authorization: Bearer: {{jwtUser1}}
 
 ### send data to iot endpoint
-GET localhost:3001/api/v1/sensorData/thermometer
+POST localhost:3001/api/v1/sensorData/thermometer
 Content-Type: application/json
 Authorization: Bearer: {{iotSensorJwtAdmin}}
