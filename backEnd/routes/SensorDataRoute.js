@@ -3,8 +3,8 @@ const router = express.Router();
 
 const {
     createSensorData,
-} = require('../../controllers/dataDriven/SensorDataController');
-const {protectWithIoTToken} = require("../../middleware/Authentication");
+} = require('../controllers/SensorDataController');
+const {protectWithIoTToken} = require("../middleware/Authentication");
 
 router.route('/:sensorType')
     .post(protectWithIoTToken, createSensorData);

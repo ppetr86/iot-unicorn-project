@@ -1,10 +1,10 @@
-const asyncWrapper = require("../../middleware/Async");
-const {CustomApiError} = require("../../errors/CustomApiError");
+const asyncWrapper = require("../middleware/Async");
+const {CustomApiError} = require("../errors/CustomApiError");
 const {StatusCodes} = require('http-status-codes');
-const AnimalKindDao = require("../../dao/AnimalKindDao");
-const {ResponseObjDto} = require("../../entities/ResponseObjDto");
-const {AnimalKindDtoIn} = require("../../entities/dtoIn/AnimalKindDtoIn");
-const {AnimalKindDtoOut} = require("../../entities/dtoOut/AnimalKindDtoOut");
+const AnimalKindDao = require("../dao/AnimalKindDao");
+const {ResponseObjDto} = require("../entities/ResponseObjDto");
+const {AnimalKindDtoIn} = require("../entities/dtoIn/AnimalKindDtoIn");
+const {AnimalKindDtoOut} = require("../entities/dtoOut/AnimalKindDtoOut");
 
 const getAllAnimalKinds = asyncWrapper(async (req, res, next) => {
     const dbDocuments = await AnimalKindDao.getAll(req.query);

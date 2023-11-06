@@ -68,9 +68,9 @@ Authentication: The process of verifying the identity of a user or system.
     
     Custom access control: consult relevant route settings e.g. Last parameter goes to controller, before are access controls
         router.route("/:id")
-                .get(protect, adminOrOwnerAccessOrThrow, getUser)
-                .delete(protect, adminAccessOrThrow, deleteUser)
-                .put(protect, adminOrOwnerAccessOrThrow, adminifyThrow, putUser);
+                .get(protectWithAuthenticationToken, adminOrOwnerAccessOrThrow, getUser)
+                .delete(protectWithAuthenticationToken, adminAccessOrThrow, deleteUser)
+                .put(protectWithAuthenticationToken, adminOrOwnerAccessOrThrow, adminifyThrow, putUser);
 
 The API has the following routes for frontend:
 

@@ -67,7 +67,6 @@ const UserSchema = new Schema({
         //user related info end
 
         //embedded objects in mongoose are assigned _id by default
-        //{ _id: false }); // Disable _id for embedded subdocuments
         terrariums: [
             {
                 name: {

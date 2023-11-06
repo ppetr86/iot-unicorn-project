@@ -1,11 +1,11 @@
-const User = require('../../entities/db/UserSchema');
-const asyncWrapper = require("../../middleware/Async");
-const {CustomApiError} = require("../../errors/CustomApiError");
+const User = require('../entities/db/UserSchema');
+const asyncWrapper = require("../middleware/Async");
+const {CustomApiError} = require("../errors/CustomApiError");
 const {StatusCodes} = require('http-status-codes');
-const {UserDtoOut} = require("../../entities/dtoOut/UserDtoOut");
-const UserPutDtoIn = require("../../entities/dtoIn/UserPutDtoIn");
-const UserCreateDtoIn = require("../../entities/dtoIn/UserCreateDtoIn");
-const UserDao = require("../../dao/UserDao");
+const {UserDtoOut} = require("../entities/dtoOut/UserDtoOut");
+const UserPutDtoIn = require("../entities/dtoIn/UserPutDtoIn");
+const UserCreateDtoIn = require("../entities/dtoIn/UserCreateDtoIn");
+const UserDao = require("../dao/UserDao");
 
 const getAllUsers = asyncWrapper(async (req, res, next) => {
 

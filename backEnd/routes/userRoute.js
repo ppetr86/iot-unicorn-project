@@ -7,7 +7,7 @@ const {
     getAllUsers,
     getUser,
     putUser,
-} = require('../../controllers/dataDriven/userController');
+} = require('../controllers/userController');
 
 
 const {
@@ -16,7 +16,7 @@ const {
     adminOrOwnerAccessOrThrow,
     adminAccessOrThrow,
     adminifyThrow
-} = require('../../middleware/Authentication');
+} = require('../middleware/Authentication');
 
 /*get by id, delete by id, put by id*/
 router.route("/:id")

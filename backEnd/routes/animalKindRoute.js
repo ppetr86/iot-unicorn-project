@@ -8,7 +8,7 @@ const {
     getAnimalKind,
     putAnimalKind,
     patchAnimalKind,
-} = require('../../controllers/dataDriven/animalKindController');
+} = require('../controllers/animalKindController');
 
 const {
     protectWithAuthenticationToken,
@@ -16,7 +16,7 @@ const {
     adminOrOwnerAccessOrThrow,
     adminAccessOrThrow,
     adminifyThrow
-} = require('../../middleware/Authentication');
+} = require('../middleware/Authentication');
 
 /*get by id, delete by id, put by id*/
 router.route("/:id")

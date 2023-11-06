@@ -1,6 +1,6 @@
-const asyncWrapper = require("../../middleware/Async");
+const asyncWrapper = require("../middleware/Async");
 const {StatusCodes} = require("http-status-codes");
-const UserDao = require("../../dao/UserDao");
+const UserDao = require("../dao/UserDao");
 
 const createSensorData = asyncWrapper(async (req, res, next) => {
     console.log(req.headers);

@@ -1,11 +1,11 @@
-const asyncWrapper = require("../../middleware/Async");
-const {CustomApiError} = require("../../errors/CustomApiError");
+const asyncWrapper = require("../middleware/Async");
+const {CustomApiError} = require("../errors/CustomApiError");
 const {StatusCodes} = require("http-status-codes");
-const User = require("../../entities/db/UserSchema");
+const User = require("../entities/db/UserSchema");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const LoginDtoIn = require("../../entities/dtoIn/LoginDtoIn");
-const {UserDtoOut, UserDtoOutWithIdNameEmail} = require("../../entities/dtoOut/UserDtoOut");
+const LoginDtoIn = require("../entities/dtoIn/LoginDtoIn");
+const {UserDtoOut, UserDtoOutWithIdNameEmail} = require("../entities/dtoOut/UserDtoOut");
 
 const loginUser = asyncWrapper(async (req, res, next) => {
     await authenticateAndRespond(req, res, next, true);

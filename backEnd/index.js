@@ -3,10 +3,10 @@ dotenv.config();
 
 const express = require('express');
 
-const authRoute = require('./routes/dataDriven/authRoute');
-const usersRoute = require('./routes/dataDriven/userRoute');
-const animalKindRoute = require('./routes/dataDriven/animalKindRoute');
-const sensorDataRoute = require('./routes/dataDriven/SensorDataRoute');
+const authRoute = require('./routes/authRoute');
+const usersRoute = require('./routes/userRoute');
+const animalKindRoute = require('./routes/animalKindRoute');
+const sensorDataRoute = require('./routes/SensorDataRoute');
 const cors = require('cors');
 
 const getConfiguration = require('./config');

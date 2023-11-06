@@ -7,25 +7,20 @@ const {
     forgotPassword,
     resetPassword,
     updatePassword
-} = require('../../controllers/dataDriven/authController');
+} = require('../controllers/authController');
 
 const {
     protectWithAuthenticationToken,
-} = require('../../middleware/Authentication');
+} = require('../middleware/Authentication');
 
-router.route('/login')
-    .post(loginUser)
+router.route('/login').post(loginUser)
 
-router.route('/login-iot')
-    .post(loginUserToIotSensors)
+router.route('/login-iot').post(loginUserToIotSensors)
 
-router.route('/forgotPassword')
-    .post(forgotPassword)
+router.route('/forgotPassword').post(forgotPassword)
 
-router.route('/resetPassword/:token')
-    .post(resetPassword);
+router.route('/resetPassword/:token').post(resetPassword);
 
-router.route('/updatePassword')
-    .patch(protectWithAuthenticationToken, updatePassword);
+router.route('/updatePassword').patch(protectWithAuthenticationToken, updatePassword);
 
 module.exports = router;
