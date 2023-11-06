@@ -51,7 +51,7 @@ GET localhost:3001/api/v1/animalKinds
 Accept: application/json
 Authorization: Bearer: {{jwtUser1}}
 
-### get SELF user ROLE_ADMIN by id
+### send data to iot endpoint
 GET localhost:3001/api/v1/sensorData/thermometer
 Content-Type: application/json
 Authorization: Bearer: {{iotSensorJwtAdmin}}
