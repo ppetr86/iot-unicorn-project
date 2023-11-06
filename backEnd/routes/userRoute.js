@@ -11,7 +11,7 @@ const {
 
 
 const {
-    protect,
+    protectWithAuthenticationToken,
     authorize,
     adminOrOwnerAccessOrThrow,
     adminAccessOrThrow,
@@ -20,13 +20,13 @@ const {
 
 /*get by id, delete by id, put by id*/
 router.route("/:id")
-    .get(protect, adminOrOwnerAccessOrThrow, getUser)
-    .delete(protect, adminAccessOrThrow, deleteUser)
-    .put(protect, adminOrOwnerAccessOrThrow, adminifyThrow, putUser);
+    .get(protectWithAuthenticationToken, adminOrOwnerAccessOrThrow, getUser)
+    .delete(protectWithAuthenticationToken, adminAccessOrThrow, deleteUser)
+    .put(protectWithAuthenticationToken, adminOrOwnerAccessOrThrow, adminifyThrow, putUser);
 
 /*get all, create one*/
 router.route('/')
-    .get(protect, adminAccessOrThrow, getAllUsers)
+    .get(protectWithAuthenticationToken, adminAccessOrThrow, getAllUsers)
     .post(createUser)
 
 module.exports = router;
