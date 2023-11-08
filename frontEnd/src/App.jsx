@@ -6,11 +6,14 @@ import {
 } from "react-router-dom";
 import NavBar from "./components/navBar/navBar";
 import MainPage from "./pages/mainPage";
+import LoginProvider from "./context/loginContext";
+import UserPage from "./pages/userPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<NavBar />}>
       <Route index element={<MainPage />} />
+      <Route path="/user" element={<UserPage />} />
     </Route>
   )
 );
@@ -18,7 +21,9 @@ const router = createBrowserRouter(
 let App = () => {
   return (
     <>
-      <RouterProvider router={router} />
+      <LoginProvider>
+        <RouterProvider router={router} />
+      </LoginProvider>
     </>
   );
 };

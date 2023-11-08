@@ -50,13 +50,14 @@ function MainPage() {
                 <form>
                   <div className="mb-3">
                     <label htmlFor="username" className="form-label">
-                      User Name
+                      Email
                     </label>
                     <input
                       type="text"
                       className="form-control"
                       id="username"
-                      placeholder="Enter your username"
+                      placeholder="Enter your email"
+                      required
                     />
                   </div>
                   <div className="mb-3">
@@ -66,8 +67,9 @@ function MainPage() {
                     <input
                       type="password"
                       className="form-control"
-                      id="password"
+                      id="logInPassword"
                       placeholder="Enter your password"
+                      required
                     />
                   </div>
                   <button type="submit" className="btn btn-primary">
@@ -86,25 +88,63 @@ function MainPage() {
               <div className="logInForm">
                 <form>
                   <div className="mb-3">
-                    <label htmlFor="new-username" className="form-label">
-                      New User Name
+                    <label htmlFor="first-name" className="form-label">
+                      First Name
                     </label>
                     <input
                       type="text"
                       className="form-control"
-                      id="new-username"
-                      placeholder="Enter your new username"
+                      id="first-name"
+                      placeholder="Enter your first name"
+                      required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="new-password" className="form-label">
-                      New Password
+                    <label htmlFor="last-name" className="form-label">
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="last-name"
+                      placeholder="Enter your last name"
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="email" className="form-label">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      id="email"
+                      placeholder="Enter your email"
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="password" className="form-label">
+                      Password
                     </label>
                     <input
                       type="password"
                       className="form-control"
-                      id="new-password"
-                      placeholder="Enter your new password"
+                      id="createPassword"
+                      placeholder="Enter your password"
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="repeat-password" className="form-label">
+                      Repeat Password
+                    </label>
+                    <input
+                      type="repeatPassword"
+                      className="form-control"
+                      id="repeat-password"
+                      placeholder="Repeat your password"
+                      required
                     />
                   </div>
                   <button type="submit" className="btn btn-primary">
