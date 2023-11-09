@@ -1,6 +1,64 @@
+import { useContext, useState } from "react";
+import { LoginContext } from "../context/loginContext";
+import { Link } from "react-router-dom";
+import { Button, Alert } from "react-bootstrap";
+
 function MainPage() {
+  const { isLoggedIn, login } = useContext(LoginContext);
+  const [state, setState] = useState({
+    loading: false,
+    createAccount: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    logIn: {
+      email: "",
+      password: "",
+    },
+    errorMessage: "",
+  });
+
+  const updateLogInInput = (event) => {
+    let { value, name } = event.target;
+    setState({
+      ...state,
+      logIn: {
+        ...state.logIn,
+        [name]: value,
+      },
+    });
+  };
+
+  const handleLogin = () => {
+    // Make a request to login
+    login(state.logIn.email, state.logIn.password)
+      .then(() => {
+        // Handle successful login
+        window.location.href = "/user";
+      })
+      .catch((error) => {
+        // Handle login error
+        console.error(error);
+        setState({
+          ...state,
+          errorMessage: `${error.message} - ${JSON.stringify(
+            error.response.data,
+            null,
+            2
+          )}`,
+        }); // Set error as a string message
+      });
+  };
+
   return (
     <>
+      {JSON.stringify(state.logIn)}
+      {state.errorMessage && (
+        <Alert variant="danger">{state.errorMessage}</Alert>
+      )}
       <section className="mainPageHeader">
         <div className="container">
           <h1>Welcome to smart terrarium web page</h1>
@@ -53,11 +111,14 @@ function MainPage() {
                       Email
                     </label>
                     <input
-                      type="text"
+                      type="email"
                       className="form-control"
-                      id="username"
+                      id="logInEmail"
                       placeholder="Enter your email"
                       required
+                      name="email"
+                      value={state.logIn.email}
+                      onChange={updateLogInInput}
                     />
                   </div>
                   <div className="mb-3">
@@ -70,11 +131,14 @@ function MainPage() {
                       id="logInPassword"
                       placeholder="Enter your password"
                       required
+                      name="password"
+                      value={state.logIn.password}
+                      onChange={updateLogInInput}
                     />
                   </div>
-                  <button type="submit" className="btn btn-primary">
+                  <Button variant="primary" onClick={handleLogin}>
                     LogIn
-                  </button>
+                  </Button>
                 </form>
               </div>
             </div>
@@ -147,9 +211,9 @@ function MainPage() {
                       required
                     />
                   </div>
-                  <button type="submit" className="btn btn-primary">
+                  <Button type="submit" className="btn btn-primary">
                     Create
-                  </button>
+                  </Button>
                 </form>
               </div>
             </div>
