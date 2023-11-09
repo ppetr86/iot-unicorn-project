@@ -26,6 +26,7 @@ const UserSchema = new Schema({
             trim: true,
             lowercase: true,
             unique: true,
+            required:true,
             validate: [validateEmail, 'Please fill a valid email address'],
             index: true
         },
@@ -79,7 +80,6 @@ const UserSchema = new Schema({
                 targets: {
                     type: Object,
                     required: true,
-                    nullable: false,
                     humidity: {
                         min: {
                             type: Number,
@@ -123,6 +123,7 @@ const UserSchema = new Schema({
                             type: String,
                             maxlength: 36,
                             minLength: 1,
+                            sparse: true,
                             unique: true,
                             index: true
                         },
@@ -130,9 +131,11 @@ const UserSchema = new Schema({
                         data: [
                             {
                                 timestamp: Date,
-                                temperature: Number,
-                                humidity: Number,
-                                lightIntensity: Number,
+                                value: Number,
+                                type: {
+                                    type: String,
+                                    enum: ['temperature', 'humidity', 'lightIntensity']
+                                }
                             },
                         ],
                     },

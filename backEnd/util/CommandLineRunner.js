@@ -100,7 +100,7 @@ class CommandLineRunner {
             for (let j = 0; j < 2; j++) {
                 const data = [];
                 for (let k = 0; k < 2; k++) {
-                    data.push(new SensorData(25.5, 60, 80));
+                    data.push(new SensorData(25.5, "temperature"));
                 }
                 const newSensor = new Sensor(
                     uuidV4(),
