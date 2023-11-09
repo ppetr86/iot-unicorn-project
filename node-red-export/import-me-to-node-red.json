@@ -1,266 +1,485 @@
 [
-  {
-    "id": "201ad2e0fbdc9e3d",
-    "type": "tab",
-    "label": "Flow 5",
-    "disabled": false,
-    "info": "",
-    "env": []
-  },
-  {
-    "id": "2546a5abbc42c850",
-    "type": "http request",
-    "z": "201ad2e0fbdc9e3d",
-    "name": "",
-    "method": "POST",
-    "ret": "txt",
-    "paytoqs": "query",
-    "url": "localhost:3001/api/v1/sensorData/thermometer",
-    "tls": "",
-    "persist": false,
-    "proxy": "",
-    "insecureHTTPParser": false,
-    "authType": "",
-    "senderr": false,
-    "headers": [
-      {
-        "keyType": "Content-Type",
-        "keyValue": "",
-        "valueType": "application/json",
-        "valueValue": ""
-      },
-      {
-        "keyType": "Authorization",
-        "keyValue": "",
-        "valueType": "other",
-        "valueValue": "Bearer nasrat"
-      }
-    ],
-    "x": 690,
-    "y": 160,
-    "wires": [
-      []
-    ]
-  },
-  {
-    "id": "46b6fba27bbb1dc7",
-    "type": "function",
-    "z": "201ad2e0fbdc9e3d",
-    "name": "function 3",
-    "func": "const contentArr = msg.payload.split(\" \");\nconst topicArr = msg.topic.split(\"/\");\nmsg.payload = {\n    'value': + contentArr[0],\n    'sensorId': contentArr[1],\n    'topic': topicArr[topicArr.length-1]\n}\nreturn msg;",
-    "outputs": 1,
-    "noerr": 0,
-    "initialize": "",
-    "finalize": "",
-    "libs": [],
-    "x": 500,
-    "y": 160,
-    "wires": [
-      [
-        "2546a5abbc42c850"
-      ]
-    ]
-  },
-  {
-    "id": "25939d5da6c5c734",
-    "type": "mqtt in",
-    "z": "201ad2e0fbdc9e3d",
-    "name": "",
-    "topic": "node/skeleton:0/temperature",
-    "qos": "2",
-    "datatype": "auto-detect",
-    "broker": "29fba84a.b2af58",
-    "nl": false,
-    "rap": true,
-    "rh": 0,
-    "inputs": 0,
-    "x": 140,
-    "y": 160,
-    "wires": [
-      [
-        "46b6fba27bbb1dc7"
-      ]
-    ]
-  },
-  {
-    "id": "489e71ad3d91b8c5",
-    "type": "mqtt in",
-    "z": "201ad2e0fbdc9e3d",
-    "name": "",
-    "topic": "node/skeleton:0/accelerometer",
-    "qos": "2",
-    "datatype": "auto-detect",
-    "broker": "29fba84a.b2af58",
-    "nl": false,
-    "rap": true,
-    "rh": 0,
-    "inputs": 0,
-    "x": 150,
-    "y": 240,
-    "wires": [
-      [
-        "f856c225ef6ea5d7"
-      ]
-    ]
-  },
-  {
-    "id": "229ca8d81db26f21",
-    "type": "mqtt in",
-    "z": "201ad2e0fbdc9e3d",
-    "name": "",
-    "topic": "node/skeleton:0/button",
-    "qos": "2",
-    "datatype": "auto-detect",
-    "broker": "29fba84a.b2af58",
-    "nl": false,
-    "rap": true,
-    "rh": 0,
-    "inputs": 0,
-    "x": 120,
-    "y": 320,
-    "wires": [
-      [
-        "56850c3ab11941bf"
-      ]
-    ]
-  },
-  {
-    "id": "6a68d6390767aea7",
-    "type": "http request",
-    "z": "201ad2e0fbdc9e3d",
-    "name": "",
-    "method": "POST",
-    "ret": "txt",
-    "paytoqs": "query",
-    "url": "localhost:3001/api/v1/sensorData/accelerometer",
-    "tls": "",
-    "persist": false,
-    "proxy": "",
-    "insecureHTTPParser": false,
-    "authType": "",
-    "senderr": false,
-    "headers": [
-      {
-        "keyType": "Content-Type",
-        "keyValue": "",
-        "valueType": "application/json",
-        "valueValue": ""
-      }
-    ],
-    "x": 690,
-    "y": 240,
-    "wires": [
-      []
-    ]
-  },
-  {
-    "id": "f856c225ef6ea5d7",
-    "type": "function",
-    "z": "201ad2e0fbdc9e3d",
-    "name": "function 4",
-    "func": "const contentArr = msg.payload.split(\" \");\nconst topicArr = msg.topic.split(\"/\");\nmsg.payload = {\n    'value': contentArr[0],\n    'sensorId': contentArr[1],\n    'topic': topicArr[topicArr.length - 1]\n}\nreturn msg;",
-    "outputs": 1,
-    "noerr": 0,
-    "initialize": "",
-    "finalize": "",
-    "libs": [],
-    "x": 500,
-    "y": 240,
-    "wires": [
-      [
-        "6a68d6390767aea7",
-        "10aee0ec0da69682"
-      ]
-    ]
-  },
-  {
-    "id": "91d1f7364a6e38bf",
-    "type": "http request",
-    "z": "201ad2e0fbdc9e3d",
-    "name": "",
-    "method": "POST",
-    "ret": "txt",
-    "paytoqs": "query",
-    "url": "localhost:3001/api/v1/sensorData/button",
-    "tls": "",
-    "persist": false,
-    "proxy": "",
-    "insecureHTTPParser": false,
-    "authType": "",
-    "senderr": false,
-    "headers": [
-      {
-        "keyType": "Content-Type",
-        "keyValue": "",
-        "valueType": "application/json",
-        "valueValue": ""
-      }
-    ],
-    "x": 690,
-    "y": 320,
-    "wires": [
-      []
-    ]
-  },
-  {
-    "id": "56850c3ab11941bf",
-    "type": "function",
-    "z": "201ad2e0fbdc9e3d",
-    "name": "function 5",
-    "func": "const contentArr = msg.payload.split(\" \");\nconst topicArr = msg.topic.split(\"/\");\nmsg.payload = {\n    'value': + contentArr[0],\n    'sensorId': contentArr[1],\n    'topic': topicArr[topicArr.length - 1]\n}\nreturn msg;",
-    "outputs": 1,
-    "noerr": 0,
-    "initialize": "",
-    "finalize": "",
-    "libs": [],
-    "x": 500,
-    "y": 320,
-    "wires": [
-      [
-        "91d1f7364a6e38bf"
-      ]
-    ]
-  },
-  {
-    "id": "10aee0ec0da69682",
-    "type": "debug",
-    "z": "201ad2e0fbdc9e3d",
-    "name": "debug 10",
-    "active": true,
-    "tosidebar": true,
-    "console": false,
-    "tostatus": false,
-    "complete": "payload",
-    "targetType": "msg",
-    "statusVal": "",
-    "statusType": "auto",
-    "x": 700,
-    "y": 80,
-    "wires": []
-  },
-  {
-    "id": "29fba84a.b2af58",
-    "type": "mqtt-broker",
-    "name": "",
-    "broker": "127.0.0.1",
-    "port": "1883",
-    "clientid": "",
-    "autoConnect": true,
-    "usetls": false,
-    "protocolVersion": "4",
-    "keepalive": "60",
-    "cleansession": true,
-    "birthTopic": "",
-    "birthQos": "0",
-    "birthPayload": "",
-    "birthMsg": {},
-    "closeTopic": "",
-    "closePayload": "",
-    "closeMsg": {},
-    "willTopic": "",
-    "willQos": "0",
-    "willPayload": "",
-    "willMsg": {},
-    "sessionExpiry": ""
-  }
+    {
+        "id": "5b91a02e803be8ff",
+        "type": "tab",
+        "label": "Flow 5",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "296626cb516aaea3",
+        "type": "mqtt in",
+        "z": "5b91a02e803be8ff",
+        "name": "",
+        "topic": "node/skeleton:0/temperature",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "29fba84a.b2af58",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 160,
+        "y": 300,
+        "wires": [
+            [
+                "6fd9eb89ba1222a6"
+            ]
+        ]
+    },
+    {
+        "id": "0b38a9fd0f852c1e",
+        "type": "mqtt in",
+        "z": "5b91a02e803be8ff",
+        "name": "",
+        "topic": "node/skeleton:0/accelerometer",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "29fba84a.b2af58",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 440,
+        "wires": [
+            [
+                "6fd9eb89ba1222a6"
+            ]
+        ]
+    },
+    {
+        "id": "178ae6144d604783",
+        "type": "mqtt in",
+        "z": "5b91a02e803be8ff",
+        "name": "",
+        "topic": "node/skeleton:0/button",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "29fba84a.b2af58",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 140,
+        "y": 580,
+        "wires": [
+            [
+                "6fd9eb89ba1222a6"
+            ]
+        ]
+    },
+    {
+        "id": "d816c04af76e41bb",
+        "type": "http request",
+        "z": "5b91a02e803be8ff",
+        "name": "",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "Content-Type",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            }
+        ],
+        "x": 1110,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8311b30f5b6aa8e3",
+        "type": "inject",
+        "z": "5b91a02e803be8ff",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "temperature",
+        "payload": "26.5 123id",
+        "payloadType": "str",
+        "x": 140,
+        "y": 260,
+        "wires": [
+            [
+                "6fd9eb89ba1222a6"
+            ]
+        ]
+    },
+    {
+        "id": "da8a1906da85581f",
+        "type": "comment",
+        "z": "5b91a02e803be8ff",
+        "name": "MQTT handlers",
+        "info": "",
+        "x": 100,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "cbe845260cf2c4ce",
+        "type": "function",
+        "z": "5b91a02e803be8ff",
+        "name": "Convert MQTT to HTTP",
+        "func": "const contentArr = msg.payload.split(\" \");\nconst topicArr = msg.topic.split(\"/\");\n\nconst stringValue = contentArr[0];\nconst numericValue = +stringValue;\nconst value = isNaN(numericValue) ? stringValue : numericValue;\n\nconst sensorId = contentArr[1];\nconst topic = topicArr[topicArr.length - 1];\n\nmsg.method = 'POST';\nmsg.url = `localhost:3001/api/v1/sensorData/${topic}`;\nmsg.headers = {\n    'Authorization': `Bearer ${msg.token}`\n};\nmsg.payload = {\n    value,\n    sensorId\n};\n\ndelete msg.token;\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 890,
+        "y": 460,
+        "wires": [
+            [
+                "d816c04af76e41bb"
+            ]
+        ]
+    },
+    {
+        "id": "82037a86349ce46f",
+        "type": "inject",
+        "z": "5b91a02e803be8ff",
+        "name": "On init",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 90,
+        "y": 80,
+        "wires": [
+            [
+                "4defd2110a545a98"
+            ]
+        ]
+    },
+    {
+        "id": "4defd2110a545a98",
+        "type": "file in",
+        "z": "5b91a02e803be8ff",
+        "name": "",
+        "filename": "C:\\Users\\vabal\\data\\local\\tmp\\config.json",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 360,
+        "y": 80,
+        "wires": [
+            [
+                "c225169053cb91e5"
+            ]
+        ]
+    },
+    {
+        "id": "c225169053cb91e5",
+        "type": "json",
+        "z": "5b91a02e803be8ff",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 590,
+        "y": 80,
+        "wires": [
+            [
+                "ddc8eefc226330dd"
+            ]
+        ]
+    },
+    {
+        "id": "d65ac984b77d310d",
+        "type": "change",
+        "z": "5b91a02e803be8ff",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "token",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 940,
+        "y": 80,
+        "wires": [
+            [
+                "57d4c3c0d3007776",
+                "157abca1f8d43cae"
+            ]
+        ]
+    },
+    {
+        "id": "57d4c3c0d3007776",
+        "type": "ui_text_input",
+        "z": "5b91a02e803be8ff",
+        "name": "",
+        "label": "Token",
+        "tooltip": "",
+        "group": "57ff470b.93fdf8",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": "0",
+        "topic": "topic",
+        "sendOnBlur": false,
+        "className": "",
+        "topicType": "msg",
+        "x": 1110,
+        "y": 80,
+        "wires": [
+            [
+                "d65ac984b77d310d"
+            ]
+        ]
+    },
+    {
+        "id": "780b91492b02be26",
+        "type": "comment",
+        "z": "5b91a02e803be8ff",
+        "name": "Configuration flow",
+        "info": "",
+        "x": 110,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "ddc8eefc226330dd",
+        "type": "change",
+        "z": "5b91a02e803be8ff",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.token",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 740,
+        "y": 80,
+        "wires": [
+            [
+                "d65ac984b77d310d"
+            ]
+        ]
+    },
+    {
+        "id": "157abca1f8d43cae",
+        "type": "function",
+        "z": "5b91a02e803be8ff",
+        "name": "Load config from flow",
+        "func": "return {\n    payload: {\n        token: flow.get(\"token\")\n    }\n};\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1160,
+        "y": 40,
+        "wires": [
+            [
+                "4280e89173f4de4e"
+            ]
+        ]
+    },
+    {
+        "id": "2e7e5d21d121c0c3",
+        "type": "file",
+        "z": "5b91a02e803be8ff",
+        "name": "",
+        "filename": "C:\\Users\\vabal\\data\\local\\tmp\\config.json",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 1560,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4280e89173f4de4e",
+        "type": "json",
+        "z": "5b91a02e803be8ff",
+        "name": "",
+        "property": "payload",
+        "action": "str",
+        "pretty": true,
+        "x": 1330,
+        "y": 40,
+        "wires": [
+            [
+                "2e7e5d21d121c0c3"
+            ]
+        ]
+    },
+    {
+        "id": "280ae53df0466a3f",
+        "type": "inject",
+        "z": "5b91a02e803be8ff",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "accelerometer",
+        "payload": "moved 123id",
+        "payloadType": "str",
+        "x": 160,
+        "y": 400,
+        "wires": [
+            [
+                "6fd9eb89ba1222a6"
+            ]
+        ]
+    },
+    {
+        "id": "74cfe226dbc6aee0",
+        "type": "inject",
+        "z": "5b91a02e803be8ff",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "button",
+        "payload": "42 123id",
+        "payloadType": "str",
+        "x": 120,
+        "y": 540,
+        "wires": [
+            [
+                "6fd9eb89ba1222a6"
+            ]
+        ]
+    },
+    {
+        "id": "6fd9eb89ba1222a6",
+        "type": "change",
+        "z": "5b91a02e803be8ff",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "token",
+                "pt": "msg",
+                "to": "token",
+                "tot": "flow"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 660,
+        "y": 460,
+        "wires": [
+            [
+                "cbe845260cf2c4ce"
+            ]
+        ]
+    },
+    {
+        "id": "29fba84a.b2af58",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "127.0.0.1",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "57ff470b.93fdf8",
+        "type": "ui_group",
+        "name": "Configuration",
+        "tab": "11207769.c31889",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": true,
+        "className": ""
+    },
+    {
+        "id": "11207769.c31889",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard"
+    }
 ]
