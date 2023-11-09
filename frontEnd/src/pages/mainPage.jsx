@@ -1,7 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { LoginContext } from "../context/loginContext";
-import { Link } from "react-router-dom";
-import { Button, Alert } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { Button, Alert, Form } from "react-bootstrap";
+import { ApiService } from "../services/apiService";
 
 function MainPage() {
   const { isLoggedIn, login } = useContext(LoginContext);
@@ -20,6 +21,27 @@ function MainPage() {
     },
     errorMessage: "",
   });
+  const [validationErrors, setValidationErrors] = useState({
+    logIn: {
+      email: "",
+      password: "",
+    },
+    createAccount: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+  const navigateTo = useNavigate();
+
+  useEffect(() => {
+    console.log(isLoggedIn);
+    if (isLoggedIn) {
+      navigateTo("/user");
+    }
+  }, [isLoggedIn, navigateTo]);
 
   const updateLogInInput = (event) => {
     let { value, name } = event.target;
@@ -31,14 +53,38 @@ function MainPage() {
       },
     });
   };
+  const updateCreateAccountInput = (event) => {
+    let { value, name } = event.target;
+    setState({
+      ...state,
+      createAccount: {
+        ...state.createAccount,
+        [name]: value,
+      },
+    });
+  };
 
   const handleLogin = () => {
+    // Clear validation errors
+    setValidationErrors({ ...validationErrors, logIn: {} });
+
+    if (!state.logIn.email || !state.logIn.password) {
+      setValidationErrors({
+        ...validationErrors,
+        logIn: {
+          email: !state.logIn.email,
+          password: !state.logIn.password,
+        },
+      });
+      return;
+    }
+
     // Make a request to login
     login(state.logIn.email, state.logIn.password)
-      .then(() => {
-        // Handle successful login
-        window.location.href = "/user";
-      })
+      // .then(() => {
+      //   // Handle successful login
+      //   window.location.href = "/user";
+      // })
       .catch((error) => {
         // Handle login error
         console.error(error);
@@ -53,9 +99,54 @@ function MainPage() {
       });
   };
 
+  const handleCreateAccount = async () => {
+    // Clear validation errors
+    setValidationErrors({ ...validationErrors, createAccount: {} });
+    if (
+      !state.createAccount.firstName ||
+      !state.createAccount.lastName ||
+      !state.createAccount.email ||
+      !state.createAccount.password ||
+      !state.createAccount.confirmPassword ||
+      state.createAccount.password !== state.createAccount.confirmPassword
+    ) {
+      setValidationErrors({
+        ...validationErrors,
+        createAccount: {
+          firstName: !state.createAccount.firstName,
+          lastName: !state.createAccount.lastName,
+          email: !state.createAccount.email,
+          password: !state.createAccount.password,
+          confirmPassword:
+            state.createAccount.password !==
+            state.createAccount.confirmPassword,
+        },
+      });
+      return;
+    }
+
+    try {
+      const response = await ApiService.createUser(
+        state.createAccount.email,
+        state.createAccount.password,
+        state.createAccount.firstName,
+        state.createAccount.lastName
+      );
+    } catch (error) {
+      console.error(error);
+      setState({
+        ...state,
+        errorMessage: `${error.message} - ${JSON.stringify(
+          error.response.data,
+          null,
+          2
+        )}`,
+      });
+    }
+  };
+
   return (
     <>
-      {JSON.stringify(state.logIn)}
       {state.errorMessage && (
         <Alert variant="danger">{state.errorMessage}</Alert>
       )}
@@ -105,41 +196,43 @@ function MainPage() {
             >
               {/* Obsah pro LogIn. */}
               <div className="logInForm">
-                <form>
-                  <div className="mb-3">
-                    <label htmlFor="username" className="form-label">
-                      Email
-                    </label>
-                    <input
+                <Form className="col-6">
+                  <Form.Group className="mb-3">
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
                       type="email"
-                      className="form-control"
                       id="logInEmail"
                       placeholder="Enter your email"
                       required
                       name="email"
                       value={state.logIn.email}
                       onChange={updateLogInInput}
+                      isInvalid={validationErrors.logIn.email}
                     />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="password" className="form-label">
-                      Password
-                    </label>
-                    <input
+                    <Form.Control.Feedback type="invalid">
+                      Please enter a valid email.
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
                       type="password"
-                      className="form-control"
                       id="logInPassword"
                       placeholder="Enter your password"
                       required
                       name="password"
                       value={state.logIn.password}
                       onChange={updateLogInInput}
+                      isInvalid={validationErrors.logIn.password}
                     />
-                  </div>
+                    <Form.Control.Feedback type="invalid">
+                      Please enter your password.
+                    </Form.Control.Feedback>
+                  </Form.Group>
                   <Button variant="primary" onClick={handleLogin}>
                     LogIn
                   </Button>
-                </form>
+                </Form>
               </div>
             </div>
             <div
@@ -150,71 +243,91 @@ function MainPage() {
             >
               {/* Obsah pro Create Account. */}
               <div className="logInForm">
-                <form>
-                  <div className="mb-3">
-                    <label htmlFor="first-name" className="form-label">
-                      First Name
-                    </label>
-                    <input
+                <Form className="col-6">
+                  <Form.Group className="mb-3">
+                    <Form.Label>First Name</Form.Label>
+                    <Form.Control
                       type="text"
-                      className="form-control"
                       id="first-name"
                       placeholder="Enter your first name"
                       required
+                      name="firstName"
+                      value={state.createAccount.firstName}
+                      onChange={updateCreateAccountInput}
+                      isInvalid={validationErrors.createAccount.firstName}
                     />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="last-name" className="form-label">
-                      Last Name
-                    </label>
-                    <input
+                    <Form.Control.Feedback type="invalid">
+                      Please enter your first name.
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Last Name</Form.Label>
+                    <Form.Control
                       type="text"
-                      className="form-control"
                       id="last-name"
                       placeholder="Enter your last name"
                       required
+                      name="lastName"
+                      value={state.createAccount.lastName}
+                      onChange={updateCreateAccountInput}
+                      isInvalid={validationErrors.createAccount.lastName}
                     />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="email" className="form-label">
-                      Email
-                    </label>
-                    <input
+                    <Form.Control.Feedback type="invalid">
+                      Please enter your last name.
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
                       type="email"
-                      className="form-control"
-                      id="email"
+                      id="createAccountEmail"
                       placeholder="Enter your email"
                       required
+                      name="email"
+                      value={state.createAccount.email}
+                      onChange={updateCreateAccountInput}
+                      isInvalid={validationErrors.createAccount.email}
                     />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="password" className="form-label">
-                      Password
-                    </label>
-                    <input
+                    <Form.Control.Feedback type="invalid">
+                      Please enter a valid email.
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
                       type="password"
-                      className="form-control"
                       id="createPassword"
                       placeholder="Enter your password"
                       required
+                      name="password"
+                      value={state.createAccount.password}
+                      onChange={updateCreateAccountInput}
+                      isInvalid={validationErrors.createAccount.password}
                     />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="repeat-password" className="form-label">
-                      Repeat Password
-                    </label>
-                    <input
-                      type="repeatPassword"
-                      className="form-control"
+                    <Form.Control.Feedback type="invalid">
+                      Please enter your password.
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Repeat Password</Form.Label>
+                    <Form.Control
+                      type="password"
                       id="repeat-password"
                       placeholder="Repeat your password"
                       required
+                      name="confirmPassword"
+                      value={state.createAccount.confirmPassword}
+                      onChange={updateCreateAccountInput}
+                      isInvalid={validationErrors.createAccount.confirmPassword}
                     />
-                  </div>
-                  <Button type="submit" className="btn btn-primary">
+                    <Form.Control.Feedback type="invalid">
+                      Passwords do not match.
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                  <Button variant="primary" onClick={handleCreateAccount}>
                     Create
                   </Button>
-                </form>
+                </Form>
               </div>
             </div>
           </div>

@@ -9,9 +9,9 @@ const LoginProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(
     localStorage.getItem("accessToken") || ""
   );
-  const [refreshToken] = useState(localStorage.getItem("refreshToken") || "");
   const [error, setError] = useState(null); // New error state
 
+  console.log(isLoggedIn);
   useEffect(() => {
     // Check localStorage for tokens on component mount (initial load)
     const storedAccessToken = localStorage.getItem("accessToken");
@@ -20,10 +20,10 @@ const LoginProvider = ({ children }) => {
       setIsLoggedIn(true);
     }
   }, []);
-
-  // useEffect(() => {
-  //   localStorage.setItem("accessToken", accessToken);
-  // }, [accessToken]);
+  console.log(isLoggedIn);
+  useEffect(() => {
+    localStorage.setItem("accessToken", accessToken);
+  }, [accessToken]);
 
   const getAccessTokenHeader = () => {
     return localStorage.getItem("accessToken");
@@ -43,18 +43,13 @@ const LoginProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
-    try {
-      setIsLoggedIn(false);
-      setAccessToken("");
-      localStorage.removeItem("accessToken");
-      await ApiService.logout(accessToken, refreshToken);
-      console.log("Logout successful");
-      setError(null); // Clear any previous error
-    } catch (error) {
-      console.error(error);
-      setError("Logout failed. Please try again.");
-    }
+  const logout = () => {
+    setIsLoggedIn(false);
+    setAccessToken("");
+    localStorage.removeItem("accessToken");
+    console.log("Logout successful");
+    setError(null); // Clear any previous error
+    window.location.href = "/";
   };
 
   return (
