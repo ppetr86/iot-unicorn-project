@@ -14,6 +14,7 @@ const router = createBrowserRouter(
     <Route path="/" element={<NavBar />}>
       <Route index element={<MainPage />} />
       <Route path="/user" element={<UserPage />} />
+      <Route path="*" element={<h2>There is nothing here: 404!</h2>} />
     </Route>
   )
 );
