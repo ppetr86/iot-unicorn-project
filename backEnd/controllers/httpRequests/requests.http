@@ -55,3 +55,9 @@ Authorization: Bearer: {{jwtUser1}}
 POST localhost:3001/api/v1/sensorData/thermometer
 Content-Type: application/json
 Authorization: Bearer: {{iotSensorJwtAdmin}}
+
+{
+  "value": 20.5,
+  "sensorId": "12aef2bd83b3",
+  "topic": "node/skeleton:0/temperature"
+}

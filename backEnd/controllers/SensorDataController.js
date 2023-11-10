@@ -1,43 +1,44 @@
 const asyncWrapper = require("../middleware/Async");
 const {StatusCodes} = require("http-status-codes");
 const UserDao = require("../dao/UserDao");
+const UserSchema = require("../entities/db/UserSchema");
+const {SensorData} = require("../entities/schemaToClass/MongooseSchemaToClass");
 
 const createSensorData = asyncWrapper(async (req, res, next) => {
-    console.log(req.headers);
+
     const hardwarioCode = getHardwarioCode(req.body);
-    // TODO: const userId = getUserId(req);
+    const userId = req.user.id;
 
-    switch (req.params?.sensorType) {
-        case 'accelerometer':
-            console.log("accelerometer")
-            //TODO:implement me
-            break;
-        case 'thermometer':
-            console.log("thermometer")
-            // TODO: add mongoose query for inserting received thermometer data into user collection by hardwario code
-            break;
-        case 'button':
-            console.log("button")
-            //TODO:implement me
-            break;
-        case 'test':
-            console.log("test")
-            break;
-    }
-
-    if (req.headers.authorization)
-        console.log(req.headers.authorization)
+    const receivedData = req.body.value;
 
     console.log("received message: " + JSON.stringify(req.body))
     console.log("----------")
 
-    res.status(StatusCodes.CREATED).json({
-        status: "success",
-        data: "payload processed"
-    });
+    const test = await UserSchema.findOneAndUpdate(
+        {
+            _id: userId,
+            'terrariums.sensors.hardwarioCode': hardwarioCode,
+        },
+        {
+            $push: {'terrariums.$.sensors.$.data': {timestamp: new Date(), value: receivedData, type: "temperature"}}
+        },
+        {new: true})
+        .then(() => {
+            console.log('Data pushed successfully');
+        })
+        .catch((error) => {
+            console.error(error);
+
+        });
+
+    res.status(StatusCodes.ACCEPTED);
 });
 
-const getHardwarioCode = (reqPayload) => `${reqPayload.sensorId}-${reqPayload.topic}`;
+const getHardwarioCode = (reqPayload) => {
+
+    const array = reqPayload.topic.split("/");
+    return `${reqPayload.sensorId}-${array[array.length - 1]}`;
+}
 
 module.exports = {
     createSensorData: createSensorData,

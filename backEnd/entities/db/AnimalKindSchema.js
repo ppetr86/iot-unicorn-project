@@ -6,7 +6,6 @@ const AnimalKindSchema = new Schema({
     animalType: {
         type: String,
         required: true,
-        nullable: false,
         unique: true,
         index: true
     },
@@ -19,8 +18,7 @@ const AnimalKindSchema = new Schema({
     //optimalni hodnoty kterych chceme dosahovat pri chovu
     livingConditions: {
         type: Object,
-        required: true,
-        nullable: false,
+        required:true,
         humidity: {
             min: {
                 type: Number,
