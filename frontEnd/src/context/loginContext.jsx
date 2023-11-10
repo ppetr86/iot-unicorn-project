@@ -48,7 +48,6 @@ const LoginProvider = ({ children }) => {
     localStorage.removeItem("accessToken");
     console.log("Logout successful");
     setError(null); // Clear any previous error
-    window.location.href = "/";
   };
 
   return (
