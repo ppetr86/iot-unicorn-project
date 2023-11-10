@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { LoginContext } from "../context/loginContext";
 import { useNavigate } from "react-router-dom";
-import { Button, Alert, Form } from "react-bootstrap";
+import { Button, Alert, Form, Spinner } from "react-bootstrap";
 import { ApiService } from "../services/apiService";
 
 function MainPage() {
   const { isLoggedIn, login } = useContext(LoginContext);
+  const [newAccountSuccess, setNewAccountSuccess] = useState(false);
   const [state, setState] = useState({
     loading: false,
     createAccount: {
@@ -37,7 +38,6 @@ function MainPage() {
   const navigateTo = useNavigate();
 
   useEffect(() => {
-    console.log(isLoggedIn);
     if (isLoggedIn) {
       navigateTo("/user");
     }
@@ -45,23 +45,23 @@ function MainPage() {
 
   const updateLogInInput = (event) => {
     let { value, name } = event.target;
-    setState({
-      ...state,
+    setState((prevState) => ({
+      ...prevState,
       logIn: {
-        ...state.logIn,
+        ...prevState.logIn,
         [name]: value,
       },
-    });
+    }));
   };
   const updateCreateAccountInput = (event) => {
     let { value, name } = event.target;
-    setState({
-      ...state,
+    setState((prevState) => ({
+      ...prevState,
       createAccount: {
-        ...state.createAccount,
+        ...prevState.createAccount,
         [name]: value,
       },
-    });
+    }));
   };
 
   const handleLogin = () => {
@@ -79,23 +79,24 @@ function MainPage() {
       return;
     }
 
+    setState((prevState) => ({ ...prevState, loading: true }));
     // Make a request to login
     login(state.logIn.email, state.logIn.password)
-      // .then(() => {
-      //   // Handle successful login
-      //   window.location.href = "/user";
-      // })
+      .then(() => {
+        setState((prevState) => ({ ...prevState, loading: false }));
+      })
       .catch((error) => {
         // Handle login error
         console.error(error);
-        setState({
-          ...state,
+        setState((prevState) => ({
+          ...prevState,
+          loading: false,
           errorMessage: `${error.message} - ${JSON.stringify(
             error.response.data,
             null,
             2
           )}`,
-        }); // Set error as a string message
+        })); // Set error as a string message
       });
   };
 
@@ -126,22 +127,27 @@ function MainPage() {
     }
 
     try {
+      setState((prevState) => ({ ...prevState, loading: true }));
       const response = await ApiService.createUser(
         state.createAccount.email,
         state.createAccount.password,
         state.createAccount.firstName,
         state.createAccount.lastName
       );
+      setState((prevState) => ({ ...prevState, loading: false }));
+      if (response.status === 201) {
+        setNewAccountSuccess(true);
+      }
     } catch (error) {
       console.error(error);
-      setState({
-        ...state,
+      setState((prevState) => ({
+        ...prevState,
         errorMessage: `${error.message} - ${JSON.stringify(
           error.response.data,
           null,
           2
         )}`,
-      });
+      }));
     }
   };
 
@@ -229,9 +235,22 @@ function MainPage() {
                       Please enter your password.
                     </Form.Control.Feedback>
                   </Form.Group>
-                  <Button variant="primary" onClick={handleLogin}>
-                    LogIn
-                  </Button>
+                  {state.loading ? (
+                    <Button variant="primary" type="button" disabled>
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                      />
+                      Loading...
+                    </Button>
+                  ) : (
+                    <Button variant="primary" onClick={handleLogin}>
+                      LogIn
+                    </Button>
+                  )}
                 </Form>
               </div>
             </div>
@@ -243,91 +262,112 @@ function MainPage() {
             >
               {/* Obsah pro Create Account. */}
               <div className="logInForm">
-                <Form className="col-6">
-                  <Form.Group className="mb-3">
-                    <Form.Label>First Name</Form.Label>
-                    <Form.Control
-                      type="text"
-                      id="first-name"
-                      placeholder="Enter your first name"
-                      required
-                      name="firstName"
-                      value={state.createAccount.firstName}
-                      onChange={updateCreateAccountInput}
-                      isInvalid={validationErrors.createAccount.firstName}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      Please enter your first name.
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Last Name</Form.Label>
-                    <Form.Control
-                      type="text"
-                      id="last-name"
-                      placeholder="Enter your last name"
-                      required
-                      name="lastName"
-                      value={state.createAccount.lastName}
-                      onChange={updateCreateAccountInput}
-                      isInvalid={validationErrors.createAccount.lastName}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      Please enter your last name.
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control
-                      type="email"
-                      id="createAccountEmail"
-                      placeholder="Enter your email"
-                      required
-                      name="email"
-                      value={state.createAccount.email}
-                      onChange={updateCreateAccountInput}
-                      isInvalid={validationErrors.createAccount.email}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      Please enter a valid email.
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                      type="password"
-                      id="createPassword"
-                      placeholder="Enter your password"
-                      required
-                      name="password"
-                      value={state.createAccount.password}
-                      onChange={updateCreateAccountInput}
-                      isInvalid={validationErrors.createAccount.password}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      Please enter your password.
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Repeat Password</Form.Label>
-                    <Form.Control
-                      type="password"
-                      id="repeat-password"
-                      placeholder="Repeat your password"
-                      required
-                      name="confirmPassword"
-                      value={state.createAccount.confirmPassword}
-                      onChange={updateCreateAccountInput}
-                      isInvalid={validationErrors.createAccount.confirmPassword}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      Passwords do not match.
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                  <Button variant="primary" onClick={handleCreateAccount}>
-                    Create
-                  </Button>
-                </Form>
+                {newAccountSuccess ? (
+                  <div className="alert alert-success" role="alert">
+                    {`🚀 Welcome on board, ${state.createAccount.firstName}! Your account ${state.createAccount.email} has been ✅ successfully created! You can now log in 🔑.`}
+                  </div>
+                ) : (
+                  <Form className="col-6">
+                    <Form.Group className="mb-3">
+                      <Form.Label>First Name</Form.Label>
+                      <Form.Control
+                        type="text"
+                        id="first-name"
+                        placeholder="Enter your first name"
+                        required
+                        name="firstName"
+                        value={state.createAccount.firstName}
+                        onChange={updateCreateAccountInput}
+                        isInvalid={validationErrors.createAccount.firstName}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        Please enter your first name.
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Last Name</Form.Label>
+                      <Form.Control
+                        type="text"
+                        id="last-name"
+                        placeholder="Enter your last name"
+                        required
+                        name="lastName"
+                        value={state.createAccount.lastName}
+                        onChange={updateCreateAccountInput}
+                        isInvalid={validationErrors.createAccount.lastName}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        Please enter your last name.
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Email</Form.Label>
+                      <Form.Control
+                        type="email"
+                        id="createAccountEmail"
+                        placeholder="Enter your email"
+                        required
+                        name="email"
+                        value={state.createAccount.email}
+                        onChange={updateCreateAccountInput}
+                        isInvalid={validationErrors.createAccount.email}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        Please enter a valid email.
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Password</Form.Label>
+                      <Form.Control
+                        type="password"
+                        id="createPassword"
+                        placeholder="Enter your password"
+                        required
+                        name="password"
+                        value={state.createAccount.password}
+                        onChange={updateCreateAccountInput}
+                        isInvalid={validationErrors.createAccount.password}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        Please enter your password.
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Repeat Password</Form.Label>
+                      <Form.Control
+                        type="password"
+                        id="repeat-password"
+                        placeholder="Repeat your password"
+                        required
+                        name="confirmPassword"
+                        value={state.createAccount.confirmPassword}
+                        onChange={updateCreateAccountInput}
+                        isInvalid={
+                          validationErrors.createAccount.confirmPassword
+                        }
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        Passwords do not match.
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                    {state.loading ? (
+                      <Button variant="primary" type="button" disabled>
+                        <Spinner
+                          as="span"
+                          animation="border"
+                          size="sm"
+                          role="status"
+                          aria-hidden="true"
+                        />
+                        Loading...
+                      </Button>
+                    ) : (
+                      <Button variant="primary" onClick={handleCreateAccount}>
+                        Create
+                      </Button>
+                    )}
+                  </Form>
+                )}
               </div>
             </div>
           </div>

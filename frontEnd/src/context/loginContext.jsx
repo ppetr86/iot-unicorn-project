@@ -11,7 +11,6 @@ const LoginProvider = ({ children }) => {
   );
   const [error, setError] = useState(null); // New error state
 
-  console.log(isLoggedIn);
   useEffect(() => {
     // Check localStorage for tokens on component mount (initial load)
     const storedAccessToken = localStorage.getItem("accessToken");
@@ -20,7 +19,7 @@ const LoginProvider = ({ children }) => {
       setIsLoggedIn(true);
     }
   }, []);
-  console.log(isLoggedIn);
+
   useEffect(() => {
     localStorage.setItem("accessToken", accessToken);
   }, [accessToken]);
