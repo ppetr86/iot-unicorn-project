@@ -26,7 +26,9 @@ const NavBar = () => {
           ) : null}
         </Navbar>
       </div>
-      <Outlet />
+      <div id="detail">
+        <Outlet />
+      </div>
     </>
   );
 };
