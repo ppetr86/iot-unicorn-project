@@ -1,6 +1,6 @@
 import { Navbar, Nav, Button } from "react-bootstrap";
 import { Outlet } from "react-router-dom";
-import { House } from "react-bootstrap-icons";
+
 import { LoginContext } from "../../context/loginContext";
 import { useContext } from "react";
 
@@ -15,7 +15,7 @@ const NavBar = () => {
       <div className="navbar-container sticky-top">
         <Navbar bg="dark" data-bs-theme="dark">
           <Nav className="mr-auto">
-            <House color="gold" size={65} />
+            <h1>🌡️🦎📡</h1>
           </Nav>
           {isLoggedIn ? ( // Check if user is logged in
             <Nav>
