@@ -117,29 +117,24 @@ const UserSchema = new Schema({
                         }
                     }
                 },
-                sensors: [
+                hardwarioCode: {
+                    type: String,
+                    maxlength: 36,
+                    minLength: 1,
+                    sparse: true,
+                    unique: true,
+                    index: true
+                },
+                data: [
                     {
-                        hardwarioCode: {
+                        timestamp: Date,
+                        value: Number,
+                        type: {
                             type: String,
-                            maxlength: 36,
-                            minLength: 1,
-                            sparse: true,
-                            unique: true,
-                            index: true
+                            enum: ['temperature', 'humidity', 'lightIntensity']
                         },
-                        name: {type: String, index: true},
-                        data: [
-                            {
-                                timestamp: Date,
-                                value: Number,
-                                type: {
-                                    type: String,
-                                    enum: ['temperature', 'humidity', 'lightIntensity']
-                                }
-                            },
-                        ],
                     },
-                ],
+                ]
             },
         ],
     })

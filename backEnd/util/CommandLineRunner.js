@@ -2,8 +2,8 @@
 const {faker} = require('@faker-js/faker');
 const animalKindDao = require("../dao/AnimalKindDao");
 const userDao = require("../dao/UserDao");
-const {SensorData, SensorTarget, Sensor, Terrarium} = require('../entities/schemaToClass/MongooseSchemaToClass.js');
-const { v4: uuidV4 } = require('uuid');
+const {TerrariumData, TerrariumTarget, Sensor, Terrarium} = require('../entities/schemaToClass/MongooseSchemaToClass.js');
+const {v4: uuidV4} = require('uuid');
 
 class CommandLineRunner {
     constructor() {
@@ -71,7 +71,7 @@ class CommandLineRunner {
     }
 
     async createUsers(dao) {
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 1; i++) {
             let email = "test" + i + "@test.com";
             if (!(await this.isDataExisting(dao, {"email": email}))) {
                 const user = this.createFakeUser(i % 2 === 0 ? "ROLE_ADMIN" : "ROLE_TEACHER", email);
@@ -94,27 +94,19 @@ class CommandLineRunner {
 
     createFakeTerrariums() {
         const terrariumsArray = [];
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 1; i++) {
 
-            const sensors = [];
-            for (let j = 0; j < 2; j++) {
-                const data = [];
-                for (let k = 0; k < 2; k++) {
-                    data.push(new SensorData(25.5, "temperature"));
-                }
-                const newSensor = new Sensor(
-                    uuidV4(),
-                    "sensor name " + j,
-                    data);
-                sensors.push(newSensor);
+            const data = [];
+            for (let k = 0; k < 2; k++) {
+                data.push(new TerrariumData(25.5, "temperature"));
             }
-
             terrariumsArray.push(new Terrarium(
-            new SensorTarget(25, 30, 60, 70, 80, 90),
-            "terrarium.name" + i,
+                new TerrariumTarget(25, 30, 60, 70, 80, 90),
+                "terrarium.name" + i,
                 "animalType" + i,
                 "description" + i,
-                sensors));
+                "12aef2bd83b3",
+                data));
         }
         return terrariumsArray;
     }
@@ -123,7 +115,7 @@ class CommandLineRunner {
         return {
             animalType: "animalType" + faker.number.int({min: 0, max: 10000}),
             description: faker.lorem.sentences().substring(0, 254),
-            livingConditions:  new SensorTarget(25, 30, 60, 70, 80, 90)
+            livingConditions: new TerrariumTarget(25, 30, 60, 70, 80, 90)
         }
     }
 

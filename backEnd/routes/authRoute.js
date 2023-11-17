@@ -11,7 +11,7 @@ const {
 
 const {
     protectWithAuthenticationToken,
-} = require('../middleware/Authentication');
+} = require('../middleware/AuthenticationMiddleware');
 
 router.route('/login').post(loginUser)
 

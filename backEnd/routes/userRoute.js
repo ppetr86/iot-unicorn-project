@@ -16,7 +16,7 @@ const {
     adminOrOwnerAccessOrThrow,
     adminAccessOrThrow,
     adminifyThrow
-} = require('../middleware/Authentication');
+} = require('../middleware/AuthenticationMiddleware');
 
 /*get by id, delete by id, put by id*/
 router.route("/:id")

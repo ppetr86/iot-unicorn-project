@@ -1,4 +1,4 @@
-class SensorData {
+class TerrariumData {
     constructor(value, type) {
         this.timestamp = new Date();
         this.value = value;
@@ -6,7 +6,7 @@ class SensorData {
     }
 }
 
-class SensorTarget {
+class TerrariumTarget {
     constructor(temperatureMin,temperatureMax , humidityMin, humidityMax, lightIntensityMin, lightIntensityMax) {
 
         this.temperature = {};
@@ -23,22 +23,15 @@ class SensorTarget {
     }
 }
 
-class Sensor {
-    constructor(hardwarioCode, name, data) {
-        this.hardwarioCode = hardwarioCode;
-        this.name = name;
-        this.data = data;
-    }
-}
-
 class Terrarium {
-    constructor(targets, name, animalType, description, sensors) {
+    constructor(targets, name, animalType, description, hardwarioCode,data) {
         this.targets = targets;
         this.name = name;
         this.animalType = animalType;
         this.description = description;
-        this.sensors = sensors;
+        this.hardwarioCode = hardwarioCode;
+        this.data=data;
     }
 }
 
-module.exports = {SensorData, SensorTarget, Sensor, Terrarium};
+module.exports = {TerrariumData, TerrariumTarget, Terrarium};

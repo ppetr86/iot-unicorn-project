@@ -6,12 +6,12 @@ const express = require('express');
 const authRoute = require('./routes/authRoute');
 const usersRoute = require('./routes/userRoute');
 const animalKindRoute = require('./routes/animalKindRoute');
-const sensorDataRoute = require('./routes/SensorDataRoute');
+const terrariumDataRoute = require('./routes/TerrariumDataRoute');
 const cors = require('cors');
 
 const getConfiguration = require('./config');
 const connectDB = require('./db/connect');
-const errorHandlerMiddleware = require('./middleware/ErrorHandler');
+const errorHandlerMiddleware = require('./middleware/ErrorHandlerMiddleware');
 const notFoundMiddleware = require("./middleware/Not-found");
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -51,7 +51,7 @@ app.use(express.static('./public'));
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/users", usersRoute);
 app.use("/api/v1/animalKinds", animalKindRoute);
-app.use("/api/v1/sensorData", sensorDataRoute);
+app.use("/api/v1/terrariumData", terrariumDataRoute);
 
 //TODO: routy k vytvoreni...
 //app.use("/api/v1/terrariums", terrariumsRoute);

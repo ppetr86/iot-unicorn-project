@@ -1,6 +1,6 @@
 [
     {
-        "id": "5b91a02e803be8ff",
+        "id": "de5da0716b4173a5",
         "type": "tab",
         "label": "Flow 5",
         "disabled": false,
@@ -8,9 +8,9 @@
         "env": []
     },
     {
-        "id": "296626cb516aaea3",
+        "id": "7f535294f33ff69f",
         "type": "mqtt in",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "",
         "topic": "node/skeleton:0/temperature",
         "qos": "2",
@@ -24,14 +24,14 @@
         "y": 300,
         "wires": [
             [
-                "6fd9eb89ba1222a6"
+                "8ab57879c29681ce"
             ]
         ]
     },
     {
-        "id": "0b38a9fd0f852c1e",
+        "id": "3ae3b3a6ea0f03d5",
         "type": "mqtt in",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "",
         "topic": "node/skeleton:0/accelerometer",
         "qos": "2",
@@ -45,14 +45,14 @@
         "y": 440,
         "wires": [
             [
-                "6fd9eb89ba1222a6"
+                "8ab57879c29681ce"
             ]
         ]
     },
     {
-        "id": "178ae6144d604783",
+        "id": "f8e015274f582787",
         "type": "mqtt in",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "",
         "topic": "node/skeleton:0/button",
         "qos": "2",
@@ -66,19 +66,19 @@
         "y": 580,
         "wires": [
             [
-                "6fd9eb89ba1222a6"
+                "8ab57879c29681ce"
             ]
         ]
     },
     {
-        "id": "d816c04af76e41bb",
+        "id": "2c059cde3e76bc3b",
         "type": "http request",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "",
-        "method": "use",
+        "method": "POST",
         "ret": "txt",
         "paytoqs": "query",
-        "url": "",
+        "url": "localhost:3001/api/v1/sensorData",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -100,9 +100,9 @@
         ]
     },
     {
-        "id": "8311b30f5b6aa8e3",
+        "id": "a41328d41d725914",
         "type": "inject",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "",
         "props": [
             {
@@ -124,14 +124,14 @@
         "y": 260,
         "wires": [
             [
-                "6fd9eb89ba1222a6"
+                "8ab57879c29681ce"
             ]
         ]
     },
     {
-        "id": "da8a1906da85581f",
+        "id": "0910890fa764a106",
         "type": "comment",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "MQTT handlers",
         "info": "",
         "x": 100,
@@ -139,11 +139,11 @@
         "wires": []
     },
     {
-        "id": "cbe845260cf2c4ce",
+        "id": "9c43ca6ccf1bc5e3",
         "type": "function",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "Convert MQTT to HTTP",
-        "func": "const contentArr = msg.payload.split(\" \");\nconst topicArr = msg.topic.split(\"/\");\n\nconst stringValue = contentArr[0];\nconst numericValue = +stringValue;\nconst value = isNaN(numericValue) ? stringValue : numericValue;\n\nconst sensorId = contentArr[1];\nconst topic = topicArr[topicArr.length - 1];\n\nmsg.method = 'POST';\nmsg.url = `localhost:3001/api/v1/sensorData/${topic}`;\nmsg.headers = {\n    'Authorization': `Bearer ${msg.token}`\n};\nmsg.payload = {\n    value,\n    sensorId\n};\n\ndelete msg.token;\n\nreturn msg;\n",
+        "func": "const contentArr = msg.payload.split(\" \");\nconst topicArr = msg.topic.split(\"/\");\n\nconst stringValue = contentArr[0];\nconst numericValue = +stringValue;\nconst value = isNaN(numericValue) ? stringValue : numericValue;\n\nconst sensorId = contentArr[1];\nconst topic = topicArr[topicArr.length - 1];\n\n//msg.method = 'POST';\n//msg.url = `localhost:3001/api/v1/sensorData/${topic}`;\nmsg.headers = {\n    'Authorization': `Bearer ${msg.token}`\n};\nmsg.payload = {\n    value,\n    sensorId,\n    topic\n};\n\ndelete msg.token;\n\nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -153,14 +153,14 @@
         "y": 460,
         "wires": [
             [
-                "d816c04af76e41bb"
+                "2c059cde3e76bc3b"
             ]
         ]
     },
     {
-        "id": "82037a86349ce46f",
+        "id": "471d0d32107be26e",
         "type": "inject",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "On init",
         "props": [],
         "repeat": "",
@@ -172,34 +172,34 @@
         "y": 80,
         "wires": [
             [
-                "4defd2110a545a98"
+                "cf784492aac08d90"
             ]
         ]
     },
     {
-        "id": "4defd2110a545a98",
+        "id": "cf784492aac08d90",
         "type": "file in",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "",
-        "filename": "C:\\Users\\vabal\\data\\local\\tmp\\config.json",
+        "filename": "C:\\Users\\ppetr\\Documents\\unicorn\\IoT\\iotkey.json",
         "filenameType": "str",
         "format": "utf8",
         "chunk": false,
         "sendError": false,
         "encoding": "none",
         "allProps": false,
-        "x": 360,
+        "x": 390,
         "y": 80,
         "wires": [
             [
-                "c225169053cb91e5"
+                "d16c6fe557a9582f"
             ]
         ]
     },
     {
-        "id": "c225169053cb91e5",
+        "id": "d16c6fe557a9582f",
         "type": "json",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "",
         "property": "payload",
         "action": "obj",
@@ -208,14 +208,14 @@
         "y": 80,
         "wires": [
             [
-                "ddc8eefc226330dd"
+                "0226b2a85ef38827"
             ]
         ]
     },
     {
-        "id": "d65ac984b77d310d",
+        "id": "2698e90b0dea7589",
         "type": "change",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "",
         "rules": [
             {
@@ -235,15 +235,15 @@
         "y": 80,
         "wires": [
             [
-                "57d4c3c0d3007776",
-                "157abca1f8d43cae"
+                "c4c30a190fd564b8",
+                "26167c97b87e51eb"
             ]
         ]
     },
     {
-        "id": "57d4c3c0d3007776",
+        "id": "c4c30a190fd564b8",
         "type": "ui_text_input",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "",
         "label": "Token",
         "tooltip": "",
@@ -262,14 +262,14 @@
         "y": 80,
         "wires": [
             [
-                "d65ac984b77d310d"
+                "2698e90b0dea7589"
             ]
         ]
     },
     {
-        "id": "780b91492b02be26",
+        "id": "3790a55a1d55295d",
         "type": "comment",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "Configuration flow",
         "info": "",
         "x": 110,
@@ -277,9 +277,9 @@
         "wires": []
     },
     {
-        "id": "ddc8eefc226330dd",
+        "id": "0226b2a85ef38827",
         "type": "change",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "",
         "rules": [
             {
@@ -299,14 +299,14 @@
         "y": 80,
         "wires": [
             [
-                "d65ac984b77d310d"
+                "2698e90b0dea7589"
             ]
         ]
     },
     {
-        "id": "157abca1f8d43cae",
+        "id": "26167c97b87e51eb",
         "type": "function",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "Load config from flow",
         "func": "return {\n    payload: {\n        token: flow.get(\"token\")\n    }\n};\n",
         "outputs": 1,
@@ -318,31 +318,31 @@
         "y": 40,
         "wires": [
             [
-                "4280e89173f4de4e"
+                "7b7f1cb0e947f139"
             ]
         ]
     },
     {
-        "id": "2e7e5d21d121c0c3",
+        "id": "e78458246ae48d4f",
         "type": "file",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "",
-        "filename": "C:\\Users\\vabal\\data\\local\\tmp\\config.json",
+        "filename": "C:\\Users\\ppetr\\Documents\\unicorn\\IoT\\iotkey.json",
         "filenameType": "str",
         "appendNewline": true,
         "createDir": false,
         "overwriteFile": "true",
         "encoding": "none",
-        "x": 1560,
+        "x": 1590,
         "y": 40,
         "wires": [
             []
         ]
     },
     {
-        "id": "4280e89173f4de4e",
+        "id": "7b7f1cb0e947f139",
         "type": "json",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "",
         "property": "payload",
         "action": "str",
@@ -351,14 +351,14 @@
         "y": 40,
         "wires": [
             [
-                "2e7e5d21d121c0c3"
+                "e78458246ae48d4f"
             ]
         ]
     },
     {
-        "id": "280ae53df0466a3f",
+        "id": "be4662253ed04d96",
         "type": "inject",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "",
         "props": [
             {
@@ -380,14 +380,14 @@
         "y": 400,
         "wires": [
             [
-                "6fd9eb89ba1222a6"
+                "8ab57879c29681ce"
             ]
         ]
     },
     {
-        "id": "74cfe226dbc6aee0",
+        "id": "7dcf1b9afacb03f9",
         "type": "inject",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "",
         "props": [
             {
@@ -409,14 +409,14 @@
         "y": 540,
         "wires": [
             [
-                "6fd9eb89ba1222a6"
+                "8ab57879c29681ce"
             ]
         ]
     },
     {
-        "id": "6fd9eb89ba1222a6",
+        "id": "8ab57879c29681ce",
         "type": "change",
-        "z": "5b91a02e803be8ff",
+        "z": "de5da0716b4173a5",
         "name": "",
         "rules": [
             {
@@ -436,7 +436,7 @@
         "y": 460,
         "wires": [
             [
-                "cbe845260cf2c4ce"
+                "9c43ca6ccf1bc5e3"
             ]
         ]
     },
@@ -468,13 +468,12 @@
     {
         "id": "57ff470b.93fdf8",
         "type": "ui_group",
-        "name": "Configuration",
+        "name": "Default",
         "tab": "11207769.c31889",
         "order": 1,
         "disp": true,
         "width": "6",
-        "collapse": true,
-        "className": ""
+        "collapse": false
     },
     {
         "id": "11207769.c31889",

@@ -52,12 +52,12 @@ Accept: application/json
 Authorization: Bearer: {{jwtUser1}}
 
 ### send data to iot endpoint
-POST localhost:3001/api/v1/sensorData/thermometer
+POST localhost:3001/api/v1/terrariumData
 Content-Type: application/json
 Authorization: Bearer: {{iotSensorJwtAdmin}}
 
 {
-  "value": 20.5,
+  "value": 29.5,
   "sensorId": "12aef2bd83b3",
-  "topic": "node/skeleton:0/temperature"
+  "topic": "temperature"
 }
