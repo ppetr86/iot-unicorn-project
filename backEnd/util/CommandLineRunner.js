@@ -4,6 +4,7 @@ const animalKindDao = require("../dao/AnimalKindDao");
 const userDao = require("../dao/UserDao");
 const {TerrariumData, TerrariumTarget, Sensor, Terrarium} = require('../entities/schemaToClass/MongooseSchemaToClass.js');
 const {v4: uuidV4} = require('uuid');
+const {UUID} = require("mongodb");
 
 class CommandLineRunner {
     constructor() {
@@ -56,6 +57,24 @@ class CommandLineRunner {
             }
             console.log("createUsers done");
         }
+
+        if (appConfig.applicationProfiles.indexOf("createUsersRoleUser") !== -1) {
+            for (let i = 0; i < 3; i++) {
+                let email = "test" + i + "@test.com";
+                if (!(await this.isDataExisting(userDao, {"email": email}))) {
+                    //ROLE_ADMIN one time, rest ROLE_USER
+                    const user = this.createFakeUser("ROLE_USER", email);
+                    try {
+                        this.writeData(userDao, user);
+                        console.log("Writing user with email: " + email);
+                    } catch (e) {
+                        console.error("Failed writing user from commandLineRunner")
+                    }
+                }
+            }
+            console.log("createUsers done");
+        }
+
     }
 
     async isDataExisting(dao, queryObject) {
@@ -105,7 +124,7 @@ class CommandLineRunner {
                 "terrarium.name" + i,
                 "animalType" + i,
                 "description" + i,
-                "12aef2bd83b3",
+                "12aef2bd83b3" + UUID.generate(),
                 data));
         }
         return terrariumsArray;

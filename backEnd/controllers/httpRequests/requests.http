@@ -61,3 +61,33 @@ Authorization: Bearer: {{iotSensorJwtAdmin}}
   "sensorId": "12aef2bd83b3",
   "topic": "temperature"
 }
+
+### get ALL USERS by user ROLE_ADMIN
+GET localhost:3001/api/v1/users/
+Content-Type: application/json
+Authorization: Bearer: {{jwtAdmin}}
+
+### get ALL USERS by user ROLE_ADMIN
+GET localhost:3001/fe/v1/users?fields=terrariums
+Content-Type: application/json
+Authorization: Bearer: {{jwtAdmin}}
+
+### get ALL TERRARIUMS of a userId
+GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums
+Content-Type: application/json
+Authorization: Bearer: {{jwtAdmin}}
+
+### get DATA by hardwarioCode and userId
+GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariumsHc/12aef2bd83b3
+Content-Type: application/json
+Authorization: Bearer: {{jwtAdmin}}
+
+### get TERRARIUM by id and userId
+GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariumsId/6553ed4aeb48fff32c22ea9a
+Content-Type: application/json
+Authorization: Bearer: {{jwtAdmin}}
+
+### get DATA of a terrariumId and userId
+GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariumsId/6553ed4aeb48fff32c22ea9a/data
+Content-Type: application/json
+Authorization: Bearer: {{jwtAdmin}}

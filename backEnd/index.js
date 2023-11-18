@@ -7,8 +7,9 @@ const authRoute = require('./routes/authRoute');
 const usersRoute = require('./routes/userRoute');
 const animalKindRoute = require('./routes/animalKindRoute');
 const terrariumDataRoute = require('./routes/TerrariumDataRoute');
-const cors = require('cors');
+const frontEndRoute = require('./routes/FrontEndRoute');
 
+const cors = require('cors');
 const getConfiguration = require('./config');
 const connectDB = require('./db/connect');
 const errorHandlerMiddleware = require('./middleware/ErrorHandlerMiddleware');
@@ -52,6 +53,7 @@ app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/users", usersRoute);
 app.use("/api/v1/animalKinds", animalKindRoute);
 app.use("/api/v1/terrariumData", terrariumDataRoute);
+app.use("/fe/v1/users", frontEndRoute);
 
 //TODO: routy k vytvoreni...
 //app.use("/api/v1/terrariums", terrariumsRoute);

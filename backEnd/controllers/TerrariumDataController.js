@@ -7,15 +7,13 @@ const createTerrariumData = asyncWrapper(async (req, res, next) => {
     const hardwarioCode = req.body.sensorId;
     const userId = req.user.id;
     const type = req.body.topic.toLowerCase().trim();
-    if ('temperature' === type || 'humidity' === type || 'lightIntensity' === type) {
+    if (('temperature' === type || 'humidity' === type || 'lightIntensity' === type)
+        && isNaN(req.body.value)) {
         const receivedData = {
             timestamp: new Date(),
             value: req.body.value,
             type: type
         };
-
-        console.log("received message: " + JSON.stringify(req.body))
-        console.log("----------")
 
         UserSchema.findOneAndUpdate(
             {
