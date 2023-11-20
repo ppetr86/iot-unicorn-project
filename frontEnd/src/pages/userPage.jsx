@@ -1,9 +1,29 @@
+import { LoginContext } from "../context/loginContext";
+import { useContext } from "react";
+
 function UserPage() {
-    return (
-        <div>
-            <h1>Hola</h1>
-        </div>
-    )
+  const { userData } = useContext(LoginContext);
+  return (
+    <div>
+      <h1>User</h1>
+      <table className="table">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{userData.firstName}</td>
+            <td>{userData.lastName}</td>
+            <td>{userData.email}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
-export default UserPage
+export default UserPage;

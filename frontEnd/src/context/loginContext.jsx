@@ -1,28 +1,18 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState } from "react";
 import { ApiService } from "../services/apiService";
 import PropTypes from "prop-types";
 
 export const LoginContext = createContext();
 
 const LoginProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [accessToken, setAccessToken] = useState(
     localStorage.getItem("accessToken") || ""
   );
+  const [isLoggedIn, setIsLoggedIn] = useState(accessToken ? true : false);
+  const [userData, setuserData] = useState(
+    localStorage.getItem("userData") || ""
+  );
   const [error, setError] = useState(null); // New error state
-
-  useEffect(() => {
-    // Check localStorage for tokens on component mount (initial load)
-    const storedAccessToken = localStorage.getItem("accessToken");
-    if (storedAccessToken) {
-      setAccessToken(storedAccessToken);
-      setIsLoggedIn(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("accessToken", accessToken);
-  }, [accessToken]);
 
   const getAccessTokenHeader = () => {
     return localStorage.getItem("accessToken");
@@ -31,9 +21,13 @@ const LoginProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await ApiService.login(email, password);
-      const { accessToken } = response.data;
+      const accessToken = response.data.token;
+      const userData = response.data.data;
+      console.log(userData);
       setIsLoggedIn(true);
+      setuserData(userData);
       setAccessToken(accessToken);
+      localStorage.setItem("accessToken", accessToken);
       setError(null); // Clear any previous error
     } catch (error) {
       console.error(error);
@@ -53,6 +47,7 @@ const LoginProvider = ({ children }) => {
   return (
     <LoginContext.Provider
       value={{
+        userData,
         isLoggedIn,
         login,
         logout,
