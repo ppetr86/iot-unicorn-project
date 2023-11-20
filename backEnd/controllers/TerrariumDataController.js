@@ -2,12 +2,13 @@ const asyncWrapper = require("../middleware/Async");
 const {StatusCodes} = require("http-status-codes");
 const UserSchema = require("../entities/db/UserSchema");
 
+
 const createTerrariumData = asyncWrapper(async (req, res, next) => {
 
     const hardwarioCode = req.body.sensorId;
     const userId = req.user.id;
     const type = req.body.topic.toLowerCase().trim();
-    if (('temperature' === type || 'humidity' === type || 'lightIntensity' === type) && !isNaN(req.body.value)) {
+    if (('temperature' === type || 'danger' === type || 'drinking' === type || 'feeding' === type) && !isNaN(req.body.value)) {
         const receivedData = {
             timestamp: new Date(),
             value: req.body.value,
