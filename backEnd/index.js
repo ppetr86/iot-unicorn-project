@@ -21,7 +21,8 @@ const appConfig = getConfiguration();
 
 const app = express();
 const commandLineRunner = require("./util/CommandLineRunner.js");
-
+const oldDataEraser = require("./util/OldDataEraser.js");
+const cron = require('node-cron');
 
 // enable CORS for any resource
 app.use(cors({
@@ -55,13 +56,13 @@ app.use("/api/v1/animalKinds", animalKindRoute);
 app.use("/api/v1/terrariumData", terrariumDataRoute);
 app.use("/fe/v1/users", frontEndRoute);
 
-//TODO: routy k vytvoreni...
-//app.use("/api/v1/terrariums", terrariumsRoute);
-//app.use("/api/v1/sensors", sensorsRoute);
-
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
+cron.schedule('* * * * *', () => {
+    //TODO: cron job runs every minute just for testing purpose...
+    oldDataEraser.eraseOldMeasuredDataFromDatabase(7);
+});
 const start = async () => {
     try {
         await connectDB(appConfig.dbConnectionString);
