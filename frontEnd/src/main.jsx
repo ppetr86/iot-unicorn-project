@@ -22,6 +22,9 @@ import MainPage from "./pages/mainPage";
 import UserPage from "./pages/userPage";
 import ErrorPage from "./pages/errorPage";
 import { ProtectedRoute } from "./components/protectedRoute/protectedRoute";
+import Dashboard from "./pages/dashboard";
+import Terrarium from "./pages/terrarium";
+import CreateTerrarium from "./pages/createTerrarium";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,7 +32,10 @@ const router = createBrowserRouter(
       <Route errorElement={<ErrorPage />}>
         <Route index element={<MainPage />} />
         <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/createTerrarium" element={<CreateTerrarium />} />
           <Route path="/user" element={<UserPage />} />
+          <Route path="/terrarium/:id" element={<Terrarium />} />
         </Route>
       </Route>
     </Route>
