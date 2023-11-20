@@ -39,7 +39,7 @@ function MainPage() {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigateTo("/user");
+      navigateTo("/dashboard");
     }
   }, [isLoggedIn, navigateTo]);
 
