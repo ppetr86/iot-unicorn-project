@@ -10,13 +10,10 @@ const LoginProvider = ({ children }) => {
   );
   const [isLoggedIn, setIsLoggedIn] = useState(accessToken ? true : false);
   const [userData, setuserData] = useState(
-    localStorage.getItem("userData") || ""
+    JSON.parse(localStorage.getItem("userData")) || ""
   );
-  const [error, setError] = useState(null); // New error state
 
-  const getAccessTokenHeader = () => {
-    return localStorage.getItem("accessToken");
-  };
+  const [error, setError] = useState(null); // New error state
 
   const login = async (email, password) => {
     try {
@@ -28,6 +25,7 @@ const LoginProvider = ({ children }) => {
       setuserData(userData);
       setAccessToken(accessToken);
       localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("userData", JSON.stringify(userData));
       setError(null); // Clear any previous error
     } catch (error) {
       console.error(error);
@@ -51,7 +49,7 @@ const LoginProvider = ({ children }) => {
         isLoggedIn,
         login,
         logout,
-        getAccessTokenHeader,
+        accessToken,
         error, // Pass error state to your components
       }}
     >

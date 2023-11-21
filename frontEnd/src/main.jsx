@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 import LoginProvider from "./context/loginContext";
 import "./index.css";
@@ -42,10 +43,14 @@ const router = createBrowserRouter(
   )
 );
 
+const queryClient = new QueryClient();
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <LoginProvider>
-      <RouterProvider router={router} />
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
     </LoginProvider>
   </React.StrictMode>
 );

@@ -4,7 +4,7 @@ export class ApiService {
   static axiosInstance = axiosHandler;
 
   //------------------------------------------------------------------------
-  // ----------------- User requests --------------------------------------
+  // ----------------- User requests ---------------------------------------
   //------------------------------------------------------------------------
   static login(email, password) {
     let dataURL = "/api/v1/auth/login";
@@ -19,5 +19,25 @@ export class ApiService {
       firstName,
       lastName,
     });
+  }
+
+  //------------------------------------------------------------------------
+  // ----------------- Terrarium requests ----------------------------------
+  //------------------------------------------------------------------------
+  static getAllTerrariums(userId, accessToken) {
+    let dataURL = `api/v1/users/${userId}/terrariums`;
+    return this.axiosInstance.get(dataURL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  }
+
+  //-------------------------------------------------------------------------
+  // ----------------- Animal Kind requests ---------------------------------
+  //-------------------------------------------------------------------------
+  static getAllAnimalKinds() {
+    let dataURL = "api/v1/animalKinds";
+    return this.axiosInstance.get(dataURL);
   }
 }

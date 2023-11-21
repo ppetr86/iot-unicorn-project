@@ -13,6 +13,11 @@ axiosHandler.interceptors.request.use(
   async (config) => {
     const token = localStorage.getItem("accessToken");
 
+    // Check if the request not contains the Authorization header
+    if (!config.headers["Authorization"]) {
+      return config; // Skip token validation, if the header is not present
+    }
+
     // Check if the token exists and is not expired
     if (token) {
       const decodedToken = jwtDecode(token);
@@ -20,9 +25,6 @@ axiosHandler.interceptors.request.use(
 
       if (isTokenExpired) {
         window.location.href = "/";
-      } else {
-        // Token is valid, use it for the request
-        config.headers["Authorization"] = `Bearer ${token}`;
       }
     }
 
