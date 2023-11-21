@@ -131,10 +131,10 @@ const UserSchema = new Schema({
                         value: Number,
                         type: {
                             type: String,
-                            enum: ['temperature', 'humidity', 'lightIntensity']
+                            enum: ['temperature', 'danger', 'feeding', 'drinking']
                         },
                     },
-                ]
+                ],
             },
         ],
     })
