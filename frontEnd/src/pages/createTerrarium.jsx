@@ -1,10 +1,72 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import { ApiService } from "../services/apiService";
 import { Button, Alert, Form, Spinner, Col, Row } from "react-bootstrap";
 
+const fakeData = {
+  data: [
+    {
+      _id: "17865464",
+      animalType: "Snake",
+      description: "Cobra",
+      livingConditions: {
+        humidity: {
+          min: "",
+          max: "",
+        },
+        temperature: {
+          min: 15,
+          max: 35,
+        },
+        lightIntensity: {
+          min: "",
+          max: "",
+        },
+      },
+    },
+    {
+      _id: "254646444",
+      animalType: "Mouse",
+      description: "Mickey",
+      livingConditions: {
+        humidity: {
+          min: "",
+          max: "",
+        },
+        temperature: {
+          min: 5,
+          max: 30,
+        },
+        lightIntensity: {
+          min: "",
+          max: "",
+        },
+      },
+    },
+    {
+      _id: "3445565",
+      animalType: "Snake",
+      description: "Anaconda",
+      livingConditions: {
+        humidity: {
+          min: "",
+          max: "",
+        },
+        temperature: {
+          min: 10,
+          max: 39,
+        },
+        lightIntensity: {
+          min: "",
+          max: "",
+        },
+      },
+    },
+  ],
+};
+
 function CreateTerrarium() {
-  const [searchQuery, setSearchQuery] = useState();
+  const [searchQuery, setSearchQuery] = useState("");
   const [state, setState] = useState({
     loading: false,
     newTerrarium: {
@@ -27,6 +89,8 @@ function CreateTerrarium() {
       },
       hardwarioCode: "",
     },
+    allAnimalTypes: [],
+    searchResultAnimalTypes: [],
   });
   const [validationErrors, setValidationErrors] = useState({
     animalType: "",
@@ -36,12 +100,73 @@ function CreateTerrarium() {
     temperatureMax: "",
     hardwarioCode: "",
   });
-  const { data, isLoading, isError } = useQuery("animalData", async () => {
-    const response = await ApiService.getAllAnimalKinds();
-    return response.data;
-  });
 
-  const handleNewTerrarium = () => {};
+  // Delete when using API
+  const isError = false;
+  let [isLoading, setIsLoading] = useState(false);
+
+  //------ Prepared DATA FETCHING ---------
+  //   const { data, isLoading, isError } = useQuery("animalData", async () => {
+  //     const response = await ApiService.getAllAnimalKinds();
+
+  //     console.log(response);
+  //     return response.data;
+  //   });
+
+  let data = fakeData;
+
+  useEffect(() => {
+    if (data) {
+      // Delete when using API - Keep just setState
+      setIsLoading(true);
+      setTimeout(() => {
+        setState((prevState) => ({
+          ...prevState,
+          allAnimalTypes: data.data,
+          searchResultAnimalTypes: data.data,
+        }));
+        setIsLoading(false);
+      }, 3000);
+    }
+  }, [data]);
+
+  const handleNewTerrarium = () => {
+    setValidationErrors({});
+    const { newTerrarium } = state;
+
+    // Validation
+    if (
+      !newTerrarium.name ||
+      !newTerrarium.animalType ||
+      !newTerrarium.description ||
+      !newTerrarium.livingConditions ||
+      !newTerrarium.livingConditions.temperature ||
+      !newTerrarium.livingConditions.temperature.min ||
+      !newTerrarium.livingConditions.temperature.max ||
+      !newTerrarium.hardwarioCode ||
+      newTerrarium.livingConditions.temperature.min < -100 ||
+      newTerrarium.livingConditions.temperature.min > 100 ||
+      newTerrarium.livingConditions.temperature.max < -100 ||
+      newTerrarium.livingConditions.temperature.max > 100
+    ) {
+      setValidationErrors({
+        name: !newTerrarium.name,
+        animalType: !newTerrarium.animalType,
+        description: !newTerrarium.description,
+        livingConditions: !newTerrarium.livingConditions,
+        temperatureMin:
+          !newTerrarium.livingConditions?.temperature?.min ||
+          newTerrarium.livingConditions.temperature.min < -100 ||
+          newTerrarium.livingConditions.temperature.min > 100,
+        temperatureMax:
+          !newTerrarium.livingConditions?.temperature?.max ||
+          newTerrarium.livingConditions.temperature.max < -100 ||
+          newTerrarium.livingConditions.temperature.max > 100,
+        hardwarioCode: !newTerrarium.hardwarioCode,
+      });
+      return;
+    }
+  };
   const updateInput = (event) => {
     let { value, name } = event.target;
     const field = event.target.dataset.field;
@@ -71,13 +196,72 @@ function CreateTerrarium() {
       }));
     }
   };
-  const handleSearch = () => {};
+  const handleAnimalTypeSelect = (e) => {
+    let result = state.searchResultAnimalTypes.find(
+      (element) => element._id === e.target.value
+    );
+    if (result) {
+      setState((prevState) => ({
+        ...prevState,
+        newTerrarium: {
+          ...prevState.newTerrarium,
+          // Copy values from 'result' that exist in 'newTerrarium' structure
+          ...Object.keys(prevState.newTerrarium).reduce((acc, key) => {
+            if (Object.prototype.hasOwnProperty.call(result, key)) {
+              acc[key] = result[key];
+            } else {
+              acc[key] = prevState.newTerrarium[key];
+            }
+            return acc;
+          }, {}),
+        },
+      }));
+    } else {
+      setState((prevState) => ({
+        ...prevState,
+        newTerrarium: {
+          ...prevState.newTerrarium,
+          animalType: "",
+          description: "",
+          livingConditions: {
+            humidity: {
+              min: "",
+              max: "",
+            },
+            temperature: {
+              min: "",
+              max: "",
+            },
+            lightIntensity: {
+              min: "",
+              max: "",
+            },
+          },
+        },
+      }));
+    }
+  };
+  const handleSearch = () => {
+    if (!searchQuery) {
+      setState((prevState) => ({
+        ...prevState,
+        searchResultAnimalTypes: state.allAnimalTypes,
+      }));
+    } else {
+      const result = state.allAnimalTypes.filter((animal) =>
+        animal.animalType.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setState((prevState) => ({
+        ...prevState,
+        searchResultAnimalTypes: result,
+      }));
+    }
+  };
 
   return (
     <>
       {isError && <Alert variant="danger">Error fetching data</Alert>}
-      {/* <div>Animal kind data: {JSON.stringify(data)}</div> */}
-      {JSON.stringify(state)}
+
       <div className="container">
         <section className="searchAnimalType">
           <Row>
@@ -94,6 +278,7 @@ function CreateTerrarium() {
                   variant="primary"
                   onClick={handleSearch}
                   className="ms-2"
+                  disabled={isLoading}
                 >
                   Search
                 </Button>
@@ -108,21 +293,17 @@ function CreateTerrarium() {
                 id={"listOfAnimalTypes"}
                 className="form-select"
                 aria-label="Select animal type"
-                // onChange={(e) =>
-                //   setState((prevState) => ({
-                //     ...prevState,
-                //     animalId: e.target.value,
-                //   }))
-                // }
+                onChange={handleAnimalTypeSelect}
                 size="5"
-                //   value={newTerrarium.animalId || ""}
               >
-                <option value="">Select animal type</option>
-                {/* {animalTypes.map((animalType) => (
+                <option value="">
+                  {isLoading ? "Loading..." : "Select animal type"}
+                </option>
+                {state.searchResultAnimalTypes.map((animalType) => (
                   <option key={animalType._id} value={animalType._id}>
-                    {animalType.name}
+                    {`${animalType.animalType} - ${animalType.description}`}
                   </option>
-                ))} */}
+                ))}
               </select>
             </div>
           </Row>
@@ -212,6 +393,8 @@ function CreateTerrarium() {
                   value={state.newTerrarium.livingConditions.temperature.min}
                   onChange={updateInput}
                   isInvalid={validationErrors.temperatureMin}
+                  min={-100}
+                  max={100}
                 />
 
                 <Form.Control.Feedback type="invalid">
@@ -231,6 +414,8 @@ function CreateTerrarium() {
                   value={state.newTerrarium.livingConditions.temperature.max}
                   onChange={updateInput}
                   isInvalid={validationErrors.temperatureMax}
+                  min={-100}
+                  max={100}
                 />
 
                 <Form.Control.Feedback type="invalid">
