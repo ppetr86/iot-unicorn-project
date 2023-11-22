@@ -4,8 +4,8 @@ import { useContext } from "react";
 function UserPage() {
   const { userData } = useContext(LoginContext);
   return (
-    <div>
-      <h1>User</h1>
+    <div className="container">
+      <h1>Logged user</h1>
       <table className="table">
         <thead>
           <tr>

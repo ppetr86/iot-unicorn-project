@@ -16,8 +16,10 @@ const NavBar = () => {
     <>
       <div className="navbar-container sticky-top">
         <Navbar bg="dark" variant="dark" expand="md">
-          <Navbar.Brand href="/">
-            <h1>🌡️🦎📡</h1>
+          <Navbar.Brand>
+            <Nav.Link as={NavLink} to="/">
+              <h1>🌡️🦎📡</h1>
+            </Nav.Link>
           </Navbar.Brand>
           <Navbar.Toggle
             aria-controls="basic-navbar-nav"

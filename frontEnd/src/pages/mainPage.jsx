@@ -202,8 +202,8 @@ function MainPage() {
             >
               {/* Obsah pro LogIn. */}
               <div className="logInForm">
-                <Form className="col-6">
-                  <Form.Group className="mb-3">
+                <Form>
+                  <Form.Group className="col-md-6 mb-3">
                     <Form.Label>Email</Form.Label>
                     <Form.Control
                       type="email"
@@ -219,7 +219,7 @@ function MainPage() {
                       Please enter a valid email.
                     </Form.Control.Feedback>
                   </Form.Group>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="col-md-6 mb-3">
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                       type="password"
@@ -267,8 +267,8 @@ function MainPage() {
                     {`🚀 Welcome on board, ${state.createAccount.firstName}! Your account ${state.createAccount.email} has been ✅ successfully created! You can now log in 🔑.`}
                   </div>
                 ) : (
-                  <Form className="col-6">
-                    <Form.Group className="mb-3">
+                  <Form>
+                    <Form.Group className="col-md-6 mb-3">
                       <Form.Label>First Name</Form.Label>
                       <Form.Control
                         type="text"
@@ -284,7 +284,7 @@ function MainPage() {
                         Please enter your first name.
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group className="mb-3">
+                    <Form.Group className="col-md-6 mb-3">
                       <Form.Label>Last Name</Form.Label>
                       <Form.Control
                         type="text"
@@ -300,7 +300,7 @@ function MainPage() {
                         Please enter your last name.
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group className="mb-3">
+                    <Form.Group className="col-md-6 mb-3">
                       <Form.Label>Email</Form.Label>
                       <Form.Control
                         type="email"
@@ -316,7 +316,7 @@ function MainPage() {
                         Please enter a valid email.
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group className="mb-3">
+                    <Form.Group className="col-md-6 mb-3">
                       <Form.Label>Password</Form.Label>
                       <Form.Control
                         type="password"
@@ -332,7 +332,7 @@ function MainPage() {
                         Please enter your password.
                       </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group className="mb-3">
+                    <Form.Group className="col-md-6 mb-3">
                       <Form.Label>Repeat Password</Form.Label>
                       <Form.Control
                         type="password"
