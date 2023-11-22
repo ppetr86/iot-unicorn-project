@@ -166,6 +166,11 @@ function CreateTerrarium() {
       });
       return;
     }
+
+    //Delete when using API
+    const jsonState = JSON.stringify(state.newTerrarium, null, 2);
+    const newWindow = window.open("", "_blank");
+    newWindow.document.write("<pre>" + jsonState + "</pre>");
   };
   const updateInput = (event) => {
     let { value, name } = event.target;
