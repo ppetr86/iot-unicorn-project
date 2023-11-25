@@ -3,8 +3,10 @@ import { Navbar, Nav, Button } from "react-bootstrap";
 import { Outlet, NavLink } from "react-router-dom";
 import { LoginContext } from "../../context/loginContext";
 import { useContext } from "react";
+import GlobalDataFetch from "../../services/globalDataFetch";
 
 const NavBar = () => {
+  const { data, isLoading, isError } = GlobalDataFetch;
   const { isLoggedIn, logout } = useContext(LoginContext);
   const [expanded, setExpanded] = useState(false);
 

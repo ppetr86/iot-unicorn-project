@@ -21,11 +21,20 @@ export class ApiService {
     });
   }
 
+  static getSelfUser(userId, accessToken) {
+    let dataURL = `/api/v1/users/${userId}`;
+    return this.axiosInstance.get(dataURL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  }
+
   //------------------------------------------------------------------------
   // ----------------- Terrarium requests ----------------------------------
   //------------------------------------------------------------------------
   static getAllTerrariums(userId, accessToken) {
-    let dataURL = `api/v1/users/${userId}/terrariums`;
+    let dataURL = `/api/v1/users/${userId}/terrariums`;
     return this.axiosInstance.get(dataURL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,

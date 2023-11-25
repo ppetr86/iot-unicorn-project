@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { ApiService } from "../services/apiService";
 import { Button, Alert, Form, Spinner, Col, Row } from "react-bootstrap";
 
@@ -111,7 +111,10 @@ function CreateTerrarium() {
 
   //     console.log(response);
   //     return response.data;
-  //   });
+  //   },
+  // {staleTime: Infinity,
+  //   cacheTime: Infinity}
+  //   );
 
   let data = fakeData;
 
@@ -265,7 +268,9 @@ function CreateTerrarium() {
 
   return (
     <>
-      {isError && <Alert variant="danger">Error fetching data</Alert>}
+      {isError && (
+        <Alert variant="danger">{`Error fetching data: ${isError.message}`}</Alert>
+      )}
 
       <div className="container">
         <section className="searchAnimalType">
