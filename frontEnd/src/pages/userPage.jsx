@@ -1,14 +1,14 @@
 import GlobalDataFetch from "../services/globalDataFetch";
 
 function UserPage() {
-  const { data, isLoading, isError } = GlobalDataFetch();
+  const { data, isLoading, isError, error } = GlobalDataFetch();
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   if (isError) {
-    return <div>Error occurred</div>;
+    return <div>Error occurred {`${error}`}</div>;
   }
 
   if (data) {

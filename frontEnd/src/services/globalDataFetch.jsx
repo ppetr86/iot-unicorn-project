@@ -12,7 +12,7 @@ function GlobalDataFetch() {
     return response.data;
   };
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["getAllUserData"],
     queryFn: fetchFunction,
     config: {
@@ -20,7 +20,7 @@ function GlobalDataFetch() {
     },
   });
 
-  return { data, isLoading, isError };
+  return { data, isLoading, isError, error };
 }
 
 export default GlobalDataFetch;

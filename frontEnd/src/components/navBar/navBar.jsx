@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navbar, Nav, Button } from "react-bootstrap";
+import { Navbar, Nav, Button, NavDropdown } from "react-bootstrap";
 import { Outlet, NavLink } from "react-router-dom";
 import { LoginContext } from "../../context/loginContext";
 import { useContext } from "react";
@@ -43,9 +43,24 @@ const NavBar = () => {
                   <Nav.Link as={NavLink} to="/dashboard">
                     Dashboard
                   </Nav.Link>
-                  {/* <Nav.Link as={NavLink} to="/terrarium">
-                    Terrarium
-                  </Nav.Link> */}
+                  <NavDropdown title="Terrariums" id="basic-nav-dropdown">
+                    {data && data.data && data.data.terrariums ? (
+                      data.data.terrariums.map((terrarium) => (
+                        <NavDropdown.Item
+                          as={NavLink}
+                          to={`/terrarium/${terrarium._id}`}
+                          key={terrarium._id}
+                        >
+                          {terrarium.name}
+                        </NavDropdown.Item>
+                      ))
+                    ) : (
+                      <NavDropdown.Item disabled>
+                        No terrariums available
+                      </NavDropdown.Item>
+                    )}
+                  </NavDropdown>
+
                   <Button variant="danger" onClick={handleLogout}>
                     Logout
                   </Button>

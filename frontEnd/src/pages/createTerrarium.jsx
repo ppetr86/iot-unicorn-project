@@ -3,68 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { ApiService } from "../services/apiService";
 import { Button, Alert, Form, Spinner, Col, Row } from "react-bootstrap";
 
-const fakeData = {
-  data: [
-    {
-      _id: "17865464",
-      animalType: "Snake",
-      description: "Cobra",
-      livingConditions: {
-        humidity: {
-          min: "",
-          max: "",
-        },
-        temperature: {
-          min: 15,
-          max: 35,
-        },
-        lightIntensity: {
-          min: "",
-          max: "",
-        },
-      },
-    },
-    {
-      _id: "254646444",
-      animalType: "Mouse",
-      description: "Mickey",
-      livingConditions: {
-        humidity: {
-          min: "",
-          max: "",
-        },
-        temperature: {
-          min: 5,
-          max: 30,
-        },
-        lightIntensity: {
-          min: "",
-          max: "",
-        },
-      },
-    },
-    {
-      _id: "3445565",
-      animalType: "Snake",
-      description: "Anaconda",
-      livingConditions: {
-        humidity: {
-          min: "",
-          max: "",
-        },
-        temperature: {
-          min: 10,
-          max: 39,
-        },
-        lightIntensity: {
-          min: "",
-          max: "",
-        },
-      },
-    },
-  ],
-};
-
 function CreateTerrarium() {
   const [searchQuery, setSearchQuery] = useState("");
   const [state, setState] = useState({
@@ -101,35 +39,25 @@ function CreateTerrarium() {
     hardwarioCode: "",
   });
 
-  // Delete when using API
-  const isError = false;
-  let [isLoading, setIsLoading] = useState(false);
+  // ------ Prepared DATA FETCHING ---------
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["animalData"],
+    queryFn: async () => {
+      const response = await ApiService.getAllAnimalKinds();
 
-  //------ Prepared DATA FETCHING ---------
-  //   const { data, isLoading, isError } = useQuery("animalData", async () => {
-  //     const response = await ApiService.getAllAnimalKinds();
+      return response.data;
+    },
 
-  //     console.log(response);
-  //     return response.data;
-  //   },
-  // {staleTime: Infinity,
-  //   cacheTime: Infinity}
-  //   );
-
-  let data = fakeData;
+    config: { staleTime: Infinity, cacheTime: Infinity },
+  });
 
   useEffect(() => {
     if (data) {
-      // Delete when using API - Keep just setState
-      setIsLoading(true);
-      setTimeout(() => {
-        setState((prevState) => ({
-          ...prevState,
-          allAnimalTypes: data.data,
-          searchResultAnimalTypes: data.data,
-        }));
-        setIsLoading(false);
-      }, 3000);
+      setState((prevState) => ({
+        ...prevState,
+        allAnimalTypes: data.data,
+        searchResultAnimalTypes: data.data,
+      }));
     }
   }, [data]);
 
@@ -269,7 +197,7 @@ function CreateTerrarium() {
   return (
     <>
       {isError && (
-        <Alert variant="danger">{`Error fetching data: ${isError.message}`}</Alert>
+        <Alert variant="danger">{`Error fetching data: ${error}`}</Alert>
       )}
 
       <div className="container">
