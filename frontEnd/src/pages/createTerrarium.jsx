@@ -47,8 +47,8 @@ function CreateTerrarium() {
 
       return response.data;
     },
-
-    config: { staleTime: Infinity, cacheTime: Infinity },
+    staleTime: Infinity,
+    cacheTime: Infinity,
   });
 
   useEffect(() => {

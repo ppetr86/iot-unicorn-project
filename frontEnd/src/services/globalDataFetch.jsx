@@ -15,9 +15,8 @@ function GlobalDataFetch() {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["getAllUserData"],
     queryFn: fetchFunction,
-    config: {
-      refetchInterval: 50 * 1000,
-    },
+    refetchInterval: 50 * 1000,
+    staleTime: Infinity,
   });
 
   return { data, isLoading, isError, error };
