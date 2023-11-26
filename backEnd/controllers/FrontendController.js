@@ -74,7 +74,7 @@ const createTerrarium = async (req, res, next) => {
 const deleteTerrarium = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const terrariumId = req.params.tid;
+        const terrariumId = req.params.terrariumId;
         const result = await UserSchema.findOneAndUpdate(
             {_id: userId},
             {$pull: {terrariums: {_id: terrariumId}}},
@@ -89,7 +89,7 @@ const deleteTerrarium = async (req, res, next) => {
 
         res.status(StatusCodes.OK).json(new ResponseObjDto(null, "success, terrarium deleted"));
     } catch (error) {
-        const message = `Error deleting terrarium id: ${tid}. Message: ${error.message}`;
+        const message = `Error deleting terrarium id: ${terrariumId}. Message: ${error.message}`;
         console.error(message);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(new ResponseObjDto(message, "fail"));
     }
@@ -121,7 +121,7 @@ const createUserTerrarium = asyncWrapper(async (req, res, next) => {
 
 const deleteUserTerrarium = asyncWrapper(async (req, res, next) => {
     const userId = req.params.id;
-    const terrariumId = req.params.tid;
+    const terrariumId = req.params.terrariumId;
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
         return next(new CustomApiError("Invalid userId", StatusCodes.BAD_REQUEST));

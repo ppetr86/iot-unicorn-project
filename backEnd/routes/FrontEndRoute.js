@@ -19,13 +19,14 @@ router.route("/:id/terrariums")
     .get(protectWithAuthenticationToken, getAllUserTerrariums)
     .post(protectWithAuthenticationToken, requestingUserIsTheSameAsPathUserOrThrow, createUserTerrarium);
 
-router.route("/:id/terrariums/:tid")
-    .delete(protectWithAuthenticationToken, requestingUserIsTheSameAsPathUserOrThrow, deleteUserTerrarium);
+router.route("/:id/terrariums/:terrariumId")
+    .delete(protectWithAuthenticationToken, requestingUserIsTheSameAsPathUserOrThrow, deleteUserTerrarium)
+    .get(protectWithAuthenticationToken, getTerrariumByTerrariumId);
 
 router.route("/:id/terrariumsHc/:hardwarioCode")
     .get(protectWithAuthenticationToken, getTerrariumByHardwarioCode);
 
-router.route("/:id/terrariumsId/:terrariumId").get(protectWithAuthenticationToken, getTerrariumByTerrariumId)
+
 router.route("/:id/terrariumsId/:terrariumId/data").get(protectWithAuthenticationToken, getTerrariumDataByTerrariumId)
 
 module.exports = router;
