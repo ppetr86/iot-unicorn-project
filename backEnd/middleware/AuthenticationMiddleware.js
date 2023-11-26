@@ -65,10 +65,18 @@ const adminifyThrow = asyncWrapper(async (req, res, next) => {
     next();
 });
 
+
+const requestingUserIsTheSameAsPathUserOrThrow = asyncWrapper(async (req, res, next) => {
+    if (req.params.id !== req.user._id.toString())
+        return next(new CustomApiError('You can not manipulate a terrarium for other user.', StatusCodes.UNAUTHORIZED));
+    next();
+});
+
 module.exports = {
     protectWithAuthenticationToken,
     authorize,
     adminOrOwnerAccessOrThrow,
     adminAccessOrThrow,
-    adminifyThrow
+    adminifyThrow,
+    requestingUserIsTheSameAsPathUserOrThrow,
 }

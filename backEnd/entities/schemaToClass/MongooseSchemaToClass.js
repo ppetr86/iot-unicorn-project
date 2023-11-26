@@ -24,8 +24,8 @@ class TerrariumTarget {
 }
 
 class Terrarium {
-    constructor(targets, name, animalType, description, hardwarioCode,data) {
-        this.targets = targets;
+    constructor(targetLivingConditions, name, animalType, description, hardwarioCode,data) {
+        this.targetLivingConditions = targetLivingConditions;
         this.name = name;
         this.animalType = animalType;
         this.description = description;

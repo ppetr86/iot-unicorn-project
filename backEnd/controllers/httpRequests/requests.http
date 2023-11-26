@@ -91,3 +91,35 @@ Authorization: Bearer: {{jwtAdmin}}
 GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariumsId/6553ed4aeb48fff32c22ea9a/data
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
+
+### get DATA of a terrariumId and userId
+POST localhost:3001/fe/v1/users/{{idAdmin}}/terrariums
+Content-Type: application/json
+Authorization: Bearer: {{jwtAdmin}}
+
+{
+  "name": "test1",
+  "animalType": "type1",
+  "description": "description",
+  "targetLivingConditions": {
+    "humidity": {
+      "min": 1,
+      "max": 1
+    },
+    "temperature": {
+      "min": 1,
+      "max": 1
+    },
+    "lightIntensity": {
+      "min": 1,
+      "max": 1
+    }
+  },
+  "hardwarioCode": "hardwarioCode1",
+  "data": []
+}
+
+### delete terrarium of a user
+DELETE localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/656243a88bb6c9d9a6dcb82a
+Content-Type: application/json
+Authorization: Bearer: {{jwtAdmin}}

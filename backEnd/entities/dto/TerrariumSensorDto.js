@@ -1,9 +1,9 @@
 class TerrariumDto {
-    constructor(name, animalType, description, targets, hardwarioCode, data) {
+    constructor(name, animalType, description, targetLivingConditions, hardwarioCode, data) {
         this.name = name;
         this.animalType = animalType;
         this.description = description;
-        this.targets = targets;
+        this.targetLivingConditions = targetLivingConditions;
         this.hardwarioCode = hardwarioCode;
         this.data = data;
     }

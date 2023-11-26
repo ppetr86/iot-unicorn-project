@@ -77,7 +77,7 @@ const UserSchema = new Schema({
                 animalType: String,
                 description: String,
                 //optimalni hodnoty kterych chceme dosahovat pri chovu
-                targets: {
+                targetLivingConditions: {
                     type: Object,
                     required: true,
                     humidity: {
@@ -140,12 +140,12 @@ const UserSchema = new Schema({
     })
 ;
 
-UserSchema.path('terrariums.targets').validate(validateMinMax, 'Target max must be greater or equal to Target min.');
+UserSchema.path('terrariums.targetLivingConditions').validate(validateMinMax, 'Target max must be greater or equal to Target min.');
 
-function validateMinMax(targets) {
-    return targets.humidity.min <= targets.humidity.max &&
-        targets.temperature.min <= targets.temperature.max &&
-        targets.lightIntensity.min <= targets.lightIntensity.max;
+function validateMinMax(targetLivingConditions) {
+    return targetLivingConditions.humidity.min <= targetLivingConditions.humidity.max &&
+        targetLivingConditions.temperature.min <= targetLivingConditions.temperature.max &&
+        targetLivingConditions.lightIntensity.min <= targetLivingConditions.lightIntensity.max;
 
 }
 
