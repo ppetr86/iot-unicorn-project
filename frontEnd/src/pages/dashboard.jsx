@@ -18,7 +18,6 @@ function Dashboard() {
     );
   }
   const terrariums = data.data.terrariums;
-  console.log(terrariums);
 
   if (!terrariums || terrariums.length === 0) {
     return (

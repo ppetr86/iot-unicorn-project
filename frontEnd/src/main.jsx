@@ -37,7 +37,7 @@ const router = createBrowserRouter(
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/createTerrarium" element={<CreateTerrarium />} />
           <Route path="/user" element={<UserPage />} />
-          <Route path="/terrarium/:id" element={<Terrarium />} />
+          <Route path="/terrarium/:terrariumId" element={<Terrarium />} />
         </Route>
       </Route>
     </Route>

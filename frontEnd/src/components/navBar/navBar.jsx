@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Navbar, Nav, Button, NavDropdown } from "react-bootstrap";
+import { Navbar, Nav, Button, NavDropdown, Spinner } from "react-bootstrap";
 import { Outlet, NavLink } from "react-router-dom";
 import { LoginContext } from "../../context/loginContext";
 import { useContext } from "react";
 import GlobalDataFetch from "../../services/globalDataFetch";
 
 const NavBar = () => {
-  const { data, isLoading, isError } = GlobalDataFetch;
+  const { data, isLoading, isError } = GlobalDataFetch();
   const { isLoggedIn, logout } = useContext(LoginContext);
   const [expanded, setExpanded] = useState(false);
 
@@ -43,8 +43,29 @@ const NavBar = () => {
                   <Nav.Link as={NavLink} to="/dashboard">
                     Dashboard
                   </Nav.Link>
-                  <NavDropdown title="Terrariums" id="basic-nav-dropdown">
-                    {data && data.data && data.data.terrariums ? (
+                  <NavDropdown
+                    title={
+                      isLoading ? (
+                        <>
+                          {"Terrariums "}
+                          <Spinner
+                            as="span"
+                            animation="border"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                            text="light"
+                          />
+                        </>
+                      ) : (
+                        <>{"Terrariums"}</>
+                      )
+                    }
+                    id="basic-nav-dropdown"
+                  >
+                    {isLoading ? (
+                      <NavDropdown.Item disabled>Loading ...</NavDropdown.Item>
+                    ) : data && data.data && data.data.terrariums ? (
                       data.data.terrariums.map((terrarium) => (
                         <NavDropdown.Item
                           as={NavLink}
@@ -54,6 +75,10 @@ const NavBar = () => {
                           {terrarium.name}
                         </NavDropdown.Item>
                       ))
+                    ) : isError ? (
+                      <NavDropdown.Item disabled>
+                        Error fetching terrariums
+                      </NavDropdown.Item>
                     ) : (
                       <NavDropdown.Item disabled>
                         No terrariums available
