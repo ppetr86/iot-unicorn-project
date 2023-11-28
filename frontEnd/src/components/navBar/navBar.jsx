@@ -6,9 +6,10 @@ import { useContext } from "react";
 import GlobalDataFetch from "../../services/globalDataFetch";
 
 const NavBar = () => {
-  const { data, isLoading, isError } = GlobalDataFetch();
   const { isLoggedIn, logout } = useContext(LoginContext);
+
   const [expanded, setExpanded] = useState(false);
+  const { data, isLoading, isError } = GlobalDataFetch();
 
   const handleLogout = () => {
     logout(); // Call the logout function from LoginContext
@@ -19,7 +20,7 @@ const NavBar = () => {
       <div className="navbar-container sticky-top">
         <Navbar bg="dark" variant="dark" expand="md">
           <Navbar.Brand>
-            <Nav.Link as={NavLink} to="/">
+            <Nav.Link as={NavLink} to="/dashboard">
               <h1>🌡️🦎📡</h1>
             </Nav.Link>
           </Navbar.Brand>
@@ -65,7 +66,10 @@ const NavBar = () => {
                   >
                     {isLoading ? (
                       <NavDropdown.Item disabled>Loading ...</NavDropdown.Item>
-                    ) : data && data.data && data.data.terrariums ? (
+                    ) : data &&
+                      data.data &&
+                      data.data.terrariums &&
+                      data.data.terrariums.length > 0 ? (
                       data.data.terrariums.map((terrarium) => (
                         <NavDropdown.Item
                           as={NavLink}

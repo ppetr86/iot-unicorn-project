@@ -27,10 +27,11 @@ import { ProtectedRoute } from "./components/protectedRoute/protectedRoute";
 import Dashboard from "./pages/dashboard";
 import Terrarium from "./pages/terrarium";
 import CreateTerrarium from "./pages/createTerrarium";
+import NavBarSwitch from "./components/navBar/navBarSwitch";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<NavBar />} errorElement={<ErrorPage />}>
+    <Route path="/" element={<NavBarSwitch />} errorElement={<ErrorPage />}>
       <Route errorElement={<ErrorPage />}>
         <Route index element={<MainPage />} />
         <Route element={<ProtectedRoute />}>
