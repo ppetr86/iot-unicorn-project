@@ -18,7 +18,6 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
-import NavBar from "./components/navBar/navBar";
 import MainPage from "./pages/mainPage";
 
 import UserPage from "./pages/userPage";
@@ -28,6 +27,8 @@ import Dashboard from "./pages/dashboard";
 import Terrarium from "./pages/terrarium";
 import CreateTerrarium from "./pages/createTerrarium";
 import NavBarSwitch from "./components/navBar/navBarSwitch";
+import LogoutPage from "./pages/logOutPage";
+import { CreateAxiosInterceptor } from "./services/axiosHandler";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -39,6 +40,7 @@ const router = createBrowserRouter(
           <Route path="/createTerrarium" element={<CreateTerrarium />} />
           <Route path="/user" element={<UserPage />} />
           <Route path="/terrarium/:terrariumId" element={<Terrarium />} />
+          <Route path="/logout" element={<LogoutPage />} />
         </Route>
       </Route>
     </Route>
@@ -51,8 +53,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <LoginProvider>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        <ReactQueryDevtools initialIsOpen={false} />
+        <CreateAxiosInterceptor>
+          <RouterProvider router={router} />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </CreateAxiosInterceptor>
       </QueryClientProvider>
     </LoginProvider>
   </React.StrictMode>

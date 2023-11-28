@@ -1,5 +1,5 @@
 import { Navbar } from "react-bootstrap";
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 const NavBarLoggedOut = () => {
   return (

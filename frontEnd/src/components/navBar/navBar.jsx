@@ -4,15 +4,17 @@ import { Outlet, NavLink } from "react-router-dom";
 import { LoginContext } from "../../context/loginContext";
 import { useContext } from "react";
 import GlobalDataFetch from "../../services/globalDataFetch";
+import { useQueryClient } from "@tanstack/react-query";
 
 const NavBar = () => {
+  const queryClient = useQueryClient();
   const { isLoggedIn, logout } = useContext(LoginContext);
 
   const [expanded, setExpanded] = useState(false);
   const { data, isLoading, isError } = GlobalDataFetch();
 
   const handleLogout = () => {
-    logout(); // Call the logout function from LoginContext
+    logout(), queryClient.removeQueries();
   };
 
   return (
