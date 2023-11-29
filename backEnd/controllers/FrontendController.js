@@ -9,7 +9,7 @@ const TerrariumDtoIn = require("../entities/dtoIn/TerrariumDtoIn");
 const {signIotIdentificationToken} = require("./authController");
 
 //TODO: refactor to include it in some service class
-const getTerrariumData = async (req, res, next, filter, projection) => {
+const getTerrarium = async (req, res, next, filter, projection) => {
     try {
         const userId = req.params.id;
         const terrariumId = req.params.terrariumId;
@@ -28,7 +28,9 @@ const getTerrariumData = async (req, res, next, filter, projection) => {
             return res.status(StatusCodes.NOT_FOUND).json(new ResponseObjDto(message, "fail"));
         }
 
-        const data = user.terrariums.map((t) => new Terrarium(t.targetLivingConditions, t.name, t.animalType, t.description, t.hardwarioCode, t.data));
+        const data = user.terrariums
+            .map((t) =>
+                new Terrarium(t.targetLivingConditions, t.name, t.animalType, t.description, t.hardwarioCode, t.data));
 
         res.status(StatusCodes.OK).json(new ResponseObjDto(data, "success"));
     } catch (error) {
@@ -101,7 +103,7 @@ const getAllUserTerrariums = asyncWrapper(async (req, res, next) => {
         return next(new CustomApiError("Invalid userId", StatusCodes.BAD_REQUEST));
     }
 
-    await getTerrariumData(req, res, next, null, {terrariums: 1});
+    await getTerrarium(req, res, next, null, {terrariums: 1});
 });
 
 const createUserTerrarium = asyncWrapper(async (req, res, next) => {
@@ -136,16 +138,32 @@ const deleteUserTerrarium = asyncWrapper(async (req, res, next) => {
 
 const getTerrariumByHardwarioCode = asyncWrapper(async (req, res, next) => {
     const hardwarioCode = req.params.hardwarioCode;
-    await getTerrariumData(req, res, next, {'terrariums.hardwarioCode': hardwarioCode}, {'terrariums.$': 1});
+    await getTerrarium(req, res, next, {'terrariums.hardwarioCode': hardwarioCode}, {'terrariums.$': 1});
 });
 
 const getTerrariumByTerrariumId = asyncWrapper(async (req, res, next) => {
-    await getTerrariumData(req, res, next, {'terrariums._id': req.params.terrariumId}, {'terrariums.$': 1});
+    await getTerrarium(req, res, next, {'terrariums._id': req.params.terrariumId}, {'terrariums.$': 1});
 });
 
 const getTerrariumDataByTerrariumId = asyncWrapper(async (req, res, next) => {
     await getTerrariumData(req, res, next, {'terrariums._id': req.params.terrariumId}, {'terrariums.$': 1});
 });
+
+const getTerrariumData = async (req, res, next, filter, projection) => {
+    try {
+        // Use the existing getTerrarium method to get the terrarium data
+        await getTerrarium(req, res, next, filter, projection);
+
+        // Extract the data property from the response
+        const data = res.locals.response.data.map((terrarium) => terrarium.data);
+
+        // Send the extracted data in the response
+        res.status(StatusCodes.OK).json(new ResponseObjDto(data, "success"));
+    } catch (error) {
+        // already handled by the getTerrarium method
+    }
+};
+
 
 module.exports = {
     getAllUserTerrariums,
