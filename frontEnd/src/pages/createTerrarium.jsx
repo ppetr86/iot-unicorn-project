@@ -8,28 +8,29 @@ function CreateTerrarium() {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   let { userData, accessToken } = useContext(LoginContext);
+  const newTerrariumModel = {
+    name: "",
+    animalType: "",
+    description: "",
+    targetLivingConditions: {
+      humidity: {
+        min: 0,
+        max: 0,
+      },
+      temperature: {
+        min: "",
+        max: "",
+      },
+      lightIntensity: {
+        min: 0,
+        max: 0,
+      },
+    },
+    hardwarioCode: "",
+  };
   const [state, setState] = useState({
     loading: false,
-    newTerrarium: {
-      name: "",
-      animalType: "",
-      description: "",
-      targetLivingConditions: {
-        humidity: {
-          min: 0,
-          max: 0,
-        },
-        temperature: {
-          min: null,
-          max: null,
-        },
-        lightIntensity: {
-          min: 0,
-          max: 0,
-        },
-      },
-      hardwarioCode: "",
-    },
+    newTerrarium: newTerrariumModel,
     allAnimalTypes: [],
     searchResultAnimalTypes: [],
   });
@@ -66,6 +67,9 @@ function CreateTerrarium() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getAllUserData"] });
     },
+    onError: (error) => {
+      console.log(error.response.data);
+    },
   });
 
   useEffect(() => {
@@ -87,34 +91,40 @@ function CreateTerrarium() {
       !newTerrarium.name ||
       !newTerrarium.animalType ||
       !newTerrarium.description ||
-      !newTerrarium.targetLivingConditions ||
-      !newTerrarium.targetLivingConditions.temperature ||
-      !newTerrarium.targetLivingConditions.temperature.min ||
-      !newTerrarium.targetLivingConditions.temperature.max ||
+      isNaN(newTerrarium.targetLivingConditions.temperature.min) ||
+      isNaN(newTerrarium.targetLivingConditions.temperature.max) ||
+      newTerrarium.targetLivingConditions.temperature.min === "" ||
+      newTerrarium.targetLivingConditions.temperature.max === "" ||
       !newTerrarium.hardwarioCode ||
       newTerrarium.targetLivingConditions.temperature.min < -100 ||
       newTerrarium.targetLivingConditions.temperature.min > 100 ||
       newTerrarium.targetLivingConditions.temperature.max < -100 ||
-      newTerrarium.targetLivingConditions.temperature.max > 100
+      newTerrarium.targetLivingConditions.temperature.max > 100 ||
+      newTerrarium.targetLivingConditions.temperature.max <=
+        newTerrarium.targetLivingConditions.temperature.min
     ) {
       setValidationErrors({
         name: !newTerrarium.name,
         animalType: !newTerrarium.animalType,
         description: !newTerrarium.description,
-        temperatureMin: !newTerrarium.targetLivingConditions.temperature.min,
-        temperatureMax: !newTerrarium.targetLivingConditions.temperature.max,
         hardwarioCode: !newTerrarium.hardwarioCode,
       });
-      if (newTerrarium.targetLivingConditions.temperature.min === 0) {
+      if (
+        newTerrarium.targetLivingConditions.temperature.min === "" ||
+        isNaN(newTerrarium.targetLivingConditions.temperature.min)
+      ) {
         setValidationErrors((prevState) => ({
           ...prevState,
-          temperatureMin: false,
+          temperatureMin: true,
         }));
       }
-      if (newTerrarium.targetLivingConditions.temperature.max === 0) {
+      if (
+        newTerrarium.targetLivingConditions.temperature.max === "" ||
+        isNaN(newTerrarium.targetLivingConditions.temperature.max)
+      ) {
         setValidationErrors((prevState) => ({
           ...prevState,
-          temperatureMax: false,
+          temperatureMax: true,
         }));
       }
       if (
@@ -228,26 +238,7 @@ function CreateTerrarium() {
     mutation.reset();
     setState((prevState) => ({
       ...prevState,
-      newTerrarium: {
-        name: "",
-        animalType: "",
-        description: "",
-        targetLivingConditions: {
-          humidity: {
-            min: 0,
-            max: 0,
-          },
-          temperature: {
-            min: "",
-            max: "",
-          },
-          lightIntensity: {
-            min: 0,
-            max: 0,
-          },
-        },
-        hardwarioCode: "",
-      },
+      newTerrarium: newTerrariumModel,
     }));
     setValidationErrors({
       animalType: "",
@@ -384,7 +375,7 @@ function CreateTerrarium() {
               <Form.Group className="col-md-6 mb-1 mt-2">
                 <Form.Label>Hardwario code</Form.Label>
                 <Form.Control
-                  type="string"
+                  type="number"
                   id="hardwarioCode"
                   placeholder="Enter the code of your hardwario device"
                   required
@@ -471,7 +462,9 @@ function CreateTerrarium() {
                   <>
                     {mutation.isError && (
                       <Alert variant="danger">
-                        {`An error occurred: ${mutation.error.message}`}
+                        {`An error occurred: ${
+                          mutation.error.message
+                        }: ${JSON.stringify(mutation.error.response.data)}`}
                       </Alert>
                     )}
                     {mutation.isSuccess && (

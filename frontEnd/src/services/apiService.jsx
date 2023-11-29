@@ -51,6 +51,15 @@ export class ApiService {
     });
   }
 
+  static deleteTerrarium(userId, terrariumId, accessToken) {
+    let dataURL = `/fe/v1/users/${userId}/terrariums/${terrariumId}`;
+    return this.axiosInstance.delete(dataURL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  }
+
   //-------------------------------------------------------------------------
   // ----------------- Animal Kind requests ---------------------------------
   //-------------------------------------------------------------------------
