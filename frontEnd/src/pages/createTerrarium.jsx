@@ -1,32 +1,36 @@
-import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect, useContext } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiService } from "../services/apiService";
 import { Button, Alert, Form, Spinner, Col, Row } from "react-bootstrap";
+import { LoginContext } from "../context/loginContext";
 
 function CreateTerrarium() {
+  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
+  let { userData, accessToken } = useContext(LoginContext);
+  const newTerrariumModel = {
+    name: "",
+    animalType: "",
+    description: "",
+    targetLivingConditions: {
+      humidity: {
+        min: 0,
+        max: 0,
+      },
+      temperature: {
+        min: "",
+        max: "",
+      },
+      lightIntensity: {
+        min: 0,
+        max: 0,
+      },
+    },
+    hardwarioCode: "",
+  };
   const [state, setState] = useState({
     loading: false,
-    newTerrarium: {
-      name: "",
-      animalType: "",
-      description: "",
-      livingConditions: {
-        humidity: {
-          min: "",
-          max: "",
-        },
-        temperature: {
-          min: "",
-          max: "",
-        },
-        lightIntensity: {
-          min: "",
-          max: "",
-        },
-      },
-      hardwarioCode: "",
-    },
+    newTerrarium: newTerrariumModel,
     allAnimalTypes: [],
     searchResultAnimalTypes: [],
   });
@@ -51,6 +55,23 @@ function CreateTerrarium() {
     cacheTime: Infinity,
   });
 
+  const mutation = useMutation({
+    mutationFn: (newTerrarium) => {
+      return ApiService.createNewTerrarium(
+        state.newTerrarium,
+        userData.id,
+        accessToken,
+        newTerrarium
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["getAllUserData"] });
+    },
+    onError: (error) => {
+      console.log(error.response.data);
+    },
+  });
+
   useEffect(() => {
     if (data) {
       setState((prevState) => ({
@@ -61,7 +82,7 @@ function CreateTerrarium() {
     }
   }, [data]);
 
-  const handleNewTerrarium = () => {
+  const handleCreateNewTerrarium = () => {
     setValidationErrors({});
     const { newTerrarium } = state;
 
@@ -70,38 +91,74 @@ function CreateTerrarium() {
       !newTerrarium.name ||
       !newTerrarium.animalType ||
       !newTerrarium.description ||
-      !newTerrarium.livingConditions ||
-      !newTerrarium.livingConditions.temperature ||
-      !newTerrarium.livingConditions.temperature.min ||
-      !newTerrarium.livingConditions.temperature.max ||
+      isNaN(newTerrarium.targetLivingConditions.temperature.min) ||
+      isNaN(newTerrarium.targetLivingConditions.temperature.max) ||
+      newTerrarium.targetLivingConditions.temperature.min === "" ||
+      newTerrarium.targetLivingConditions.temperature.max === "" ||
       !newTerrarium.hardwarioCode ||
-      newTerrarium.livingConditions.temperature.min < -100 ||
-      newTerrarium.livingConditions.temperature.min > 100 ||
-      newTerrarium.livingConditions.temperature.max < -100 ||
-      newTerrarium.livingConditions.temperature.max > 100
+      newTerrarium.targetLivingConditions.temperature.min < -100 ||
+      newTerrarium.targetLivingConditions.temperature.min > 100 ||
+      newTerrarium.targetLivingConditions.temperature.max < -100 ||
+      newTerrarium.targetLivingConditions.temperature.max > 100 ||
+      newTerrarium.targetLivingConditions.temperature.max <=
+        newTerrarium.targetLivingConditions.temperature.min
     ) {
       setValidationErrors({
         name: !newTerrarium.name,
         animalType: !newTerrarium.animalType,
         description: !newTerrarium.description,
-        livingConditions: !newTerrarium.livingConditions,
-        temperatureMin:
-          !newTerrarium.livingConditions?.temperature?.min ||
-          newTerrarium.livingConditions.temperature.min < -100 ||
-          newTerrarium.livingConditions.temperature.min > 100,
-        temperatureMax:
-          !newTerrarium.livingConditions?.temperature?.max ||
-          newTerrarium.livingConditions.temperature.max < -100 ||
-          newTerrarium.livingConditions.temperature.max > 100,
         hardwarioCode: !newTerrarium.hardwarioCode,
       });
+      if (
+        newTerrarium.targetLivingConditions.temperature.min === "" ||
+        isNaN(newTerrarium.targetLivingConditions.temperature.min)
+      ) {
+        setValidationErrors((prevState) => ({
+          ...prevState,
+          temperatureMin: true,
+        }));
+      }
+      if (
+        newTerrarium.targetLivingConditions.temperature.max === "" ||
+        isNaN(newTerrarium.targetLivingConditions.temperature.max)
+      ) {
+        setValidationErrors((prevState) => ({
+          ...prevState,
+          temperatureMax: true,
+        }));
+      }
+      if (
+        newTerrarium.targetLivingConditions.temperature.min < -100 ||
+        newTerrarium.targetLivingConditions.temperature.min > 100
+      ) {
+        setValidationErrors((prevState) => ({
+          ...prevState,
+          temperatureMin: "Out of range (+-100°C)",
+        }));
+      }
+      if (
+        newTerrarium.targetLivingConditions.temperature.max < -100 ||
+        newTerrarium.targetLivingConditions.temperature.max > 100
+      ) {
+        setValidationErrors((prevState) => ({
+          ...prevState,
+          temperatureMax: "Out of range (+-100°C)",
+        }));
+      }
+      if (
+        newTerrarium.targetLivingConditions.temperature.max <=
+        newTerrarium.targetLivingConditions.temperature.min
+      ) {
+        setValidationErrors((prevState) => ({
+          ...prevState,
+          temperatureMax: "Max temperature should be higher than the min temp.",
+        }));
+      }
+
       return;
     }
 
-    //Delete when using API
-    const jsonState = JSON.stringify(state.newTerrarium, null, 2);
-    const newWindow = window.open("", "_blank");
-    newWindow.document.write("<pre>" + jsonState + "</pre>");
+    mutation.mutate({ title: "New terrarium" });
   };
   const updateInput = (event) => {
     let { value, name } = event.target;
@@ -116,8 +173,8 @@ function CreateTerrarium() {
           [field]: {
             ...prevState.newTerrarium[field],
             [subField]: {
-              ...prevState.newTerrarium.livingConditions[subField],
-              [name]: value,
+              ...prevState.newTerrarium.targetLivingConditions[subField],
+              [name]: parseFloat(value),
             },
           },
         },
@@ -159,7 +216,7 @@ function CreateTerrarium() {
           ...prevState.newTerrarium,
           animalType: "",
           description: "",
-          livingConditions: {
+          targetLivingConditions: {
             humidity: {
               min: "",
               max: "",
@@ -177,6 +234,22 @@ function CreateTerrarium() {
       }));
     }
   };
+  const resetForm = () => {
+    mutation.reset();
+    setState((prevState) => ({
+      ...prevState,
+      newTerrarium: newTerrariumModel,
+    }));
+    setValidationErrors({
+      animalType: "",
+      name: "",
+      description: "",
+      temperatureMin: "",
+      temperatureMax: "",
+      hardwarioCode: "",
+    });
+  };
+
   const handleSearch = () => {
     if (!searchQuery) {
       setState((prevState) => ({
@@ -302,7 +375,7 @@ function CreateTerrarium() {
               <Form.Group className="col-md-6 mb-1 mt-2">
                 <Form.Label>Hardwario code</Form.Label>
                 <Form.Control
-                  type="string"
+                  type="number"
                   id="hardwarioCode"
                   placeholder="Enter the code of your hardwario device"
                   required
@@ -325,10 +398,12 @@ function CreateTerrarium() {
                   id="tempMin"
                   placeholder="Enter min temperature (°C)"
                   required
-                  data-field="livingConditions"
+                  data-field="targetLivingConditions"
                   data-subfield="temperature"
                   name="min"
-                  value={state.newTerrarium.livingConditions.temperature.min}
+                  value={
+                    state.newTerrarium.targetLivingConditions.temperature.min
+                  }
                   onChange={updateInput}
                   isInvalid={validationErrors.temperatureMin}
                   min={-100}
@@ -336,7 +411,8 @@ function CreateTerrarium() {
                 />
 
                 <Form.Control.Feedback type="invalid">
-                  Please enter a valid min temperature value.
+                  Please enter a valid min temperature value.{" "}
+                  {validationErrors.temperatureMin}
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="col-md-6 mb-1 mt-2">
@@ -346,10 +422,12 @@ function CreateTerrarium() {
                   id="tempMax"
                   placeholder="Enter max temperature (°C)"
                   required
-                  data-field="livingConditions"
+                  data-field="targetLivingConditions"
                   data-subfield="temperature"
                   name="max"
-                  value={state.newTerrarium.livingConditions.temperature.max}
+                  value={
+                    state.newTerrarium.targetLivingConditions.temperature.max
+                  }
                   onChange={updateInput}
                   isInvalid={validationErrors.temperatureMax}
                   min={-100}
@@ -357,13 +435,14 @@ function CreateTerrarium() {
                 />
 
                 <Form.Control.Feedback type="invalid">
-                  Please enter a valid max temperature value.
+                  Please enter a valid max temperature value.{" "}
+                  {validationErrors.temperatureMax}
                 </Form.Control.Feedback>
               </Form.Group>
             </Row>
             <Row>
               <Col>
-                {state.loading ? (
+                {mutation.isPending ? (
                   <Button
                     className="mb-1 mt-2"
                     variant="primary"
@@ -377,16 +456,39 @@ function CreateTerrarium() {
                       role="status"
                       aria-hidden="true"
                     />
-                    Loading...
+                    Uploading...
                   </Button>
                 ) : (
-                  <Button
-                    className="mb-1 mt-2"
-                    variant="primary"
-                    onClick={handleNewTerrarium}
-                  >
-                    Create Terrarium
-                  </Button>
+                  <>
+                    {mutation.isError && (
+                      <Alert variant="danger">
+                        {`An error occurred: ${
+                          mutation.error.message
+                        }: ${JSON.stringify(mutation.error.response.data)}`}
+                      </Alert>
+                    )}
+                    {mutation.isSuccess && (
+                      <>
+                        <Alert variant="success">
+                          Terrarium has been successfully added!
+                        </Alert>
+                      </>
+                    )}
+                    <Button
+                      className="mb-1 mt-2"
+                      variant="primary"
+                      onClick={handleCreateNewTerrarium}
+                    >
+                      Create Terrarium
+                    </Button>{" "}
+                    <Button
+                      className="mb-1 mt-2"
+                      variant="warning"
+                      onClick={resetForm}
+                    >
+                      Clear Form
+                    </Button>
+                  </>
                 )}
               </Col>
             </Row>

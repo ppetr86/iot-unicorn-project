@@ -1,17 +1,20 @@
 import { useState } from "react";
-import { Navbar, Nav, Button, NavDropdown } from "react-bootstrap";
+import { Navbar, Nav, Button, NavDropdown, Spinner } from "react-bootstrap";
 import { Outlet, NavLink } from "react-router-dom";
 import { LoginContext } from "../../context/loginContext";
 import { useContext } from "react";
 import GlobalDataFetch from "../../services/globalDataFetch";
+import { useQueryClient } from "@tanstack/react-query";
 
 const NavBar = () => {
-  const { data, isLoading, isError } = GlobalDataFetch;
+  const queryClient = useQueryClient();
   const { isLoggedIn, logout } = useContext(LoginContext);
+
   const [expanded, setExpanded] = useState(false);
+  const { data, isLoading, isError } = GlobalDataFetch();
 
   const handleLogout = () => {
-    logout(); // Call the logout function from LoginContext
+    logout(), queryClient.removeQueries();
   };
 
   return (
@@ -19,7 +22,7 @@ const NavBar = () => {
       <div className="navbar-container sticky-top">
         <Navbar bg="dark" variant="dark" expand="md">
           <Navbar.Brand>
-            <Nav.Link as={NavLink} to="/">
+            <Nav.Link as={NavLink} to="/dashboard">
               <h1>🌡️🦎📡</h1>
             </Nav.Link>
           </Navbar.Brand>
@@ -43,8 +46,32 @@ const NavBar = () => {
                   <Nav.Link as={NavLink} to="/dashboard">
                     Dashboard
                   </Nav.Link>
-                  <NavDropdown title="Terrariums" id="basic-nav-dropdown">
-                    {data && data.data && data.data.terrariums ? (
+                  <NavDropdown
+                    title={
+                      isLoading ? (
+                        <>
+                          {"Terrariums "}
+                          <Spinner
+                            as="span"
+                            animation="border"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                            text="light"
+                          />
+                        </>
+                      ) : (
+                        <>{"Terrariums"}</>
+                      )
+                    }
+                    id="basic-nav-dropdown"
+                  >
+                    {isLoading ? (
+                      <NavDropdown.Item disabled>Loading ...</NavDropdown.Item>
+                    ) : data &&
+                      data.data &&
+                      data.data.terrariums &&
+                      data.data.terrariums.length > 0 ? (
                       data.data.terrariums.map((terrarium) => (
                         <NavDropdown.Item
                           as={NavLink}
@@ -54,6 +81,10 @@ const NavBar = () => {
                           {terrarium.name}
                         </NavDropdown.Item>
                       ))
+                    ) : isError ? (
+                      <NavDropdown.Item disabled>
+                        Error fetching terrariums
+                      </NavDropdown.Item>
                     ) : (
                       <NavDropdown.Item disabled>
                         No terrariums available

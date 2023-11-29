@@ -42,6 +42,24 @@ export class ApiService {
     });
   }
 
+  static createNewTerrarium(terrariumData, userId, accessToken) {
+    let dataURL = `/fe/v1/users/${userId}/terrariums`;
+    return this.axiosInstance.post(dataURL, terrariumData, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  }
+
+  static deleteTerrarium(userId, terrariumId, accessToken) {
+    let dataURL = `/fe/v1/users/${userId}/terrariums/${terrariumId}`;
+    return this.axiosInstance.delete(dataURL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  }
+
   //-------------------------------------------------------------------------
   // ----------------- Animal Kind requests ---------------------------------
   //-------------------------------------------------------------------------

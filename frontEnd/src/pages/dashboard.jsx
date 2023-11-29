@@ -18,14 +18,13 @@ function Dashboard() {
     );
   }
   const terrariums = data.data.terrariums;
-  console.log(terrariums);
 
   if (!terrariums || terrariums.length === 0) {
     return (
       <>
         <Alert variant="info">
           You do not have any terrarium yet. Please follow to the section{" "}
-          <Link to={"/createTerrarium"}>"Create terrarium"</Link> .
+          <Link to={"/createTerrarium"}>Create terrarium</Link> .
         </Alert>
       </>
     );
