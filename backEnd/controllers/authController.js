@@ -24,7 +24,7 @@ const authenticateAndRespond = async (req, res, next, includeUserData) => {
     }
 
     const projection = includeUserData
-        ? '-roles -isDeactivated -terrariums -createdAt +password'
+        ? '-isDeactivated -terrariums -createdAt +password'
         : '-firstName -lastName -email -roles -isDeactivated -terrariums -createdAt +password';
 
     const dbDocument = await User.findOne({ email }).select(projection);
@@ -33,7 +33,7 @@ const authenticateAndRespond = async (req, res, next, includeUserData) => {
         return next(new CustomApiError(`Email or password incorrect`, StatusCodes.UNAUTHORIZED));
     }
 
-    const token = includeUserData ? signLoginToken(dbDocument?._id) : signIotIdentificationToken(dbDocument?._id);
+    const token = includeUserData ? signLoginToken(dbDocument?._id, dbDocument?.roles.toString()) : signIotIdentificationToken(dbDocument?._id);
 
     res.status(StatusCodes.CREATED).json({
         status: 'success',
@@ -42,8 +42,8 @@ const authenticateAndRespond = async (req, res, next, includeUserData) => {
     });
 };
 
-const signLoginToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
+const signLoginToken = (id, roles) => {
+    return jwt.sign({ id, roles }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN,
     });
 };
