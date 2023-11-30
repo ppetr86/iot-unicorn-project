@@ -1,13 +1,32 @@
 import { Modal, Button, Form, Alert, Spinner } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+
 import { ApiService } from "../../services/apiService";
 import FormValidation from "../validation/formValidation";
 
 function EditTerrariumModal(props) {
-  const [state, setState] = useState(props.terrarium);
+  const [state, setState] = useState({
+    name: "",
+    animalType: "",
+    description: "",
+    targetLivingConditions: {
+      humidity: {
+        min: 0,
+        max: 0,
+      },
+      temperature: {
+        min: "",
+        max: "",
+      },
+      lightIntensity: {
+        min: 0,
+        max: 0,
+      },
+    },
+    hardwarioCode: "",
+  });
   const [validationErrors, setValidationErrors] = useState({
     animalType: "",
     name: "",
@@ -17,7 +36,7 @@ function EditTerrariumModal(props) {
     hardwarioCode: "",
   });
   const queryClient = useQueryClient();
-  const navigateTo = useNavigate();
+
   const mutation = useMutation({
     mutationFn: () => {
       return ApiService.editTerrarium(
@@ -28,7 +47,6 @@ function EditTerrariumModal(props) {
       );
     },
     onSuccess: () => {
-      navigateTo("/dashboard");
       queryClient.invalidateQueries({ queryKey: ["getAllUserData"] });
     },
   });
@@ -43,6 +61,15 @@ function EditTerrariumModal(props) {
 
     mutation.mutate({ title: "Edit terrarium" });
   };
+
+  useEffect(() => {
+    setState((prev) => ({ ...prev, ...props.terrarium }));
+    if (props.isOpen) {
+      mutation.reset();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.isOpen, props.terrarium]);
+
   const updateInput = (event) => {
     let { value, name } = event.target;
     const field = event.target.dataset.field;
@@ -220,7 +247,7 @@ EditTerrariumModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   closeModal: PropTypes.func.isRequired,
   accessToken: PropTypes.string.isRequired,
-  terrarium: PropTypes.object.isRequired,
+  terrarium: PropTypes.object,
   userData: PropTypes.object.isRequired,
 };
 export default EditTerrariumModal;

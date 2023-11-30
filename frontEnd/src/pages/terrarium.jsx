@@ -2,11 +2,12 @@ import { useParams } from "react-router-dom";
 import GlobalDataFetch from "../services/globalDataFetch";
 import { Alert, Button } from "react-bootstrap";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { LoginContext } from "../context/loginContext";
 import { ApiService } from "../services/apiService";
 import { useNavigate } from "react-router-dom";
 import EditTerrariumModal from "../components/modalWindows/editTerrariumModal";
+import TerrariumObjectTable from "../components/terrariumObjectTable/terrariumObjectTable";
 
 function Terrarium() {
   const navigateTo = useNavigate();
@@ -15,6 +16,7 @@ function Terrarium() {
   const queryClient = useQueryClient();
   let { userData, accessToken } = useContext(LoginContext);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [terrarium, setTerrarium] = useState();
 
   const mutation = useMutation({
     mutationFn: () => {
@@ -33,6 +35,14 @@ function Terrarium() {
     setModalIsOpen(false);
   };
 
+  useEffect(() => {
+    if (data) {
+      setTerrarium(
+        data.data.terrariums.find((terrarium) => terrarium._id === terrariumId)
+      );
+    }
+  }, [data, terrariumId]);
+
   if (isLoading) {
     return (
       <>
@@ -46,10 +56,6 @@ function Terrarium() {
     );
   }
 
-  const terrarium = data.data.terrariums.find(
-    (terrarium) => terrarium._id === terrariumId
-  );
-
   const handleDelete = () => {
     if (
       window.confirm(
@@ -60,16 +66,24 @@ function Terrarium() {
     }
   };
 
+  const resetMutation = () => {
+    mutation.reset();
+  };
+
   return (
     <>
-      <EditTerrariumModal
-        id="dressCreateModal"
-        isOpen={modalIsOpen}
-        closeModal={closeModal}
-        accessToken={accessToken}
-        userData={userData}
-        terrarium={terrarium}
-      />
+      {data && (
+        <EditTerrariumModal
+          id="dressCreateModal"
+          isOpen={modalIsOpen}
+          closeModal={closeModal}
+          accessToken={accessToken}
+          userData={userData}
+          terrarium={terrarium}
+          resetMutation={resetMutation}
+        />
+      )}
+
       {isError && (
         <Alert variant="danger">{`Error fetching data: ${error}`}</Alert>
       )}
@@ -94,8 +108,10 @@ function Terrarium() {
             Edit
           </Button>
         </section>
+        <section>
+          <TerrariumObjectTable obj={terrarium} />
+        </section>
       </div>
-      {JSON.stringify(terrarium)}
     </>
   );
 }
