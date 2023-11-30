@@ -1,12 +1,21 @@
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, Alert, Spinner } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ApiService } from "../../services/apiService";
+import FormValidation from "../validation/formValidation";
 
 function EditTerrariumModal(props) {
   const [state, setState] = useState(props.terrarium);
+  const [validationErrors, setValidationErrors] = useState({
+    animalType: "",
+    name: "",
+    description: "",
+    temperatureMin: "",
+    temperatureMax: "",
+    hardwarioCode: "",
+  });
   const queryClient = useQueryClient();
   const navigateTo = useNavigate();
   const mutation = useMutation({
@@ -25,6 +34,13 @@ function EditTerrariumModal(props) {
   });
 
   const handleSubmit = () => {
+    setValidationErrors({});
+
+    if (FormValidation(state)) {
+      setValidationErrors(FormValidation(state));
+      return;
+    }
+
     mutation.mutate({ title: "Edit terrarium" });
   };
   const updateInput = (event) => {
@@ -51,6 +67,22 @@ function EditTerrariumModal(props) {
     }
   };
 
+  if (mutation.isSuccess) {
+    return (
+      <>
+        <Modal show={props.isOpen} onHide={props.closeModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Edit terrarium</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Alert variant="success">
+              Terrarium has been successfully edited!
+            </Alert>
+          </Modal.Body>
+        </Modal>
+      </>
+    );
+  }
   return (
     <>
       <Modal show={props.isOpen} onHide={props.closeModal}>
@@ -58,8 +90,7 @@ function EditTerrariumModal(props) {
           <Modal.Title>Edit terrarium</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {JSON.stringify(state)}
-          <Form onSubmit={handleSubmit}>
+          <Form>
             <Form.Group controlId="editTerrariumName">
               <Form.Label>Name</Form.Label>
               <Form.Control
@@ -67,7 +98,11 @@ function EditTerrariumModal(props) {
                 name="name"
                 value={state.name}
                 onChange={updateInput}
+                isInvalid={validationErrors.name}
               />
+              <Form.Control.Feedback type="invalid">
+                {validationErrors.name}
+              </Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="editTerrariumAnimalType">
               <Form.Label>Animal Type</Form.Label>
@@ -76,7 +111,11 @@ function EditTerrariumModal(props) {
                 name="animalType"
                 value={state.animalType}
                 onChange={updateInput}
+                isInvalid={validationErrors.animalType}
               />
+              <Form.Control.Feedback type="invalid">
+                {validationErrors.animalType}
+              </Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="editTerrariumDescription">
               <Form.Label>Description</Form.Label>
@@ -85,7 +124,11 @@ function EditTerrariumModal(props) {
                 name="description"
                 value={state.description}
                 onChange={updateInput}
+                isInvalid={validationErrors.description}
               />
+              <Form.Control.Feedback type="invalid">
+                {validationErrors.description}
+              </Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="editTerrariumHardwarioCode">
               <Form.Label>Hardwario Code</Form.Label>
@@ -94,8 +137,13 @@ function EditTerrariumModal(props) {
                 name="hardwarioCode"
                 value={state.hardwarioCode}
                 onChange={updateInput}
+                isInvalid={validationErrors.hardwarioCode}
               />
+              <Form.Control.Feedback type="invalid">
+                {validationErrors.hardwarioCode}
+              </Form.Control.Feedback>
             </Form.Group>
+
             <Form.Group controlId="editTerrariumTemperatureMin">
               <Form.Label>Temperature Min</Form.Label>
               <Form.Control
@@ -105,8 +153,13 @@ function EditTerrariumModal(props) {
                 onChange={updateInput}
                 data-field="targetLivingConditions"
                 data-subfield="temperature"
+                isInvalid={validationErrors.temperatureMin}
               />
+              <Form.Control.Feedback type="invalid">
+                {validationErrors.temperatureMin}
+              </Form.Control.Feedback>
             </Form.Group>
+
             <Form.Group controlId="editTerrariumTemperatureMax">
               <Form.Label>Temperature Max</Form.Label>
               <Form.Control
@@ -116,16 +169,47 @@ function EditTerrariumModal(props) {
                 onChange={updateInput}
                 data-field="targetLivingConditions"
                 data-subfield="temperature"
+                isInvalid={validationErrors.temperatureMax}
               />
+              <Form.Control.Feedback type="invalid">
+                {validationErrors.temperatureMax}
+              </Form.Control.Feedback>
             </Form.Group>
+            {mutation.isPending ? (
+              <Button
+                className="mb-1 mt-2"
+                variant="primary"
+                type="button"
+                disabled
+              >
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />
+                Uploading...
+              </Button>
+            ) : (
+              <>
+                {mutation.isError && (
+                  <Alert variant="danger" className="mb-1 mt-1">
+                    {`An error occurred: ${
+                      mutation.error.message
+                    }: ${JSON.stringify(mutation.error.response.data)}`}
+                  </Alert>
+                )}
 
-            <Button
-              className="mb-1 mt-2"
-              variant="primary"
-              onClick={handleSubmit}
-            >
-              Save Changes
-            </Button>
+                <Button
+                  className="mb-1 mt-1"
+                  variant="primary"
+                  onClick={handleSubmit}
+                >
+                  Save Changes
+                </Button>
+              </>
+            )}
           </Form>
         </Modal.Body>
       </Modal>
@@ -137,5 +221,6 @@ EditTerrariumModal.propTypes = {
   closeModal: PropTypes.func.isRequired,
   accessToken: PropTypes.string.isRequired,
   terrarium: PropTypes.object.isRequired,
+  userData: PropTypes.object.isRequired,
 };
 export default EditTerrariumModal;
