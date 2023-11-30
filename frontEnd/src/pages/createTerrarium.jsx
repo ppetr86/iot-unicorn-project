@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiService } from "../services/apiService";
 import { Button, Alert, Form, Spinner, Col, Row } from "react-bootstrap";
 import { LoginContext } from "../context/loginContext";
+import FormValidation from "../components/validation/formValidation";
 
 function CreateTerrarium() {
   const queryClient = useQueryClient();
@@ -84,77 +85,9 @@ function CreateTerrarium() {
 
   const handleCreateNewTerrarium = () => {
     setValidationErrors({});
-    const { newTerrarium } = state;
 
-    // Validation
-    if (
-      !newTerrarium.name ||
-      !newTerrarium.animalType ||
-      !newTerrarium.description ||
-      isNaN(newTerrarium.targetLivingConditions.temperature.min) ||
-      isNaN(newTerrarium.targetLivingConditions.temperature.max) ||
-      newTerrarium.targetLivingConditions.temperature.min === "" ||
-      newTerrarium.targetLivingConditions.temperature.max === "" ||
-      !newTerrarium.hardwarioCode ||
-      newTerrarium.targetLivingConditions.temperature.min < -100 ||
-      newTerrarium.targetLivingConditions.temperature.min > 100 ||
-      newTerrarium.targetLivingConditions.temperature.max < -100 ||
-      newTerrarium.targetLivingConditions.temperature.max > 100 ||
-      newTerrarium.targetLivingConditions.temperature.max <=
-        newTerrarium.targetLivingConditions.temperature.min
-    ) {
-      setValidationErrors({
-        name: !newTerrarium.name,
-        animalType: !newTerrarium.animalType,
-        description: !newTerrarium.description,
-        hardwarioCode: !newTerrarium.hardwarioCode,
-      });
-      if (
-        newTerrarium.targetLivingConditions.temperature.min === "" ||
-        isNaN(newTerrarium.targetLivingConditions.temperature.min)
-      ) {
-        setValidationErrors((prevState) => ({
-          ...prevState,
-          temperatureMin: true,
-        }));
-      }
-      if (
-        newTerrarium.targetLivingConditions.temperature.max === "" ||
-        isNaN(newTerrarium.targetLivingConditions.temperature.max)
-      ) {
-        setValidationErrors((prevState) => ({
-          ...prevState,
-          temperatureMax: true,
-        }));
-      }
-      if (
-        newTerrarium.targetLivingConditions.temperature.min < -100 ||
-        newTerrarium.targetLivingConditions.temperature.min > 100
-      ) {
-        setValidationErrors((prevState) => ({
-          ...prevState,
-          temperatureMin: "Out of range (+-100°C)",
-        }));
-      }
-      if (
-        newTerrarium.targetLivingConditions.temperature.max < -100 ||
-        newTerrarium.targetLivingConditions.temperature.max > 100
-      ) {
-        setValidationErrors((prevState) => ({
-          ...prevState,
-          temperatureMax: "Out of range (+-100°C)",
-        }));
-      }
-      if (
-        newTerrarium.targetLivingConditions.temperature.max <=
-        newTerrarium.targetLivingConditions.temperature.min
-      ) {
-        setValidationErrors((prevState) => ({
-          ...prevState,
-          temperatureMax: "Max temperature should be higher than the min temp.",
-        }));
-      }
-
+    if (FormValidation(state)) {
+      setValidationErrors(FormValidation(state));
       return;
     }
 
