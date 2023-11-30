@@ -83,12 +83,12 @@ Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 ### get TERRARIUM by id and userId
-GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariumsId/6553ed4aeb48fff32c22ea9a
+GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/656247b08160f2cea0ac13bf
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 ### get DATA of a terrariumId and userId
-GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariumsId/6553ed4aeb48fff32c22ea9a/data
+GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/656247b08160f2cea0ac13bf/data
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 

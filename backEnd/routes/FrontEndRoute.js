@@ -27,6 +27,6 @@ router.route("/:id/terrariumsHc/:hardwarioCode")
     .get(protectWithAuthenticationToken, getTerrariumByHardwarioCode);
 
 
-router.route("/:id/terrariumsId/:terrariumId/data").get(protectWithAuthenticationToken, getTerrariumDataByTerrariumId)
+router.route("/:id/terrariums/:terrariumId/data").get(protectWithAuthenticationToken, getTerrariumDataByTerrariumId)
 
 module.exports = router;
