@@ -106,6 +106,56 @@ const getAllUserTerrariums = asyncWrapper(async (req, res, next) => {
     await getTerrarium(req, res, next, null, {terrariums: 1});
 });
 
+const putUserTerrariumByTerrariumId = asyncWrapper(async (req, res, next) => {
+    const userId = req.params.id;
+    const terrariumId = req.params.terrariumId;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return next(new CustomApiError("Invalid userId", StatusCodes.BAD_REQUEST));
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(terrariumId)) {
+        return next(new CustomApiError("Invalid terrariumId", StatusCodes.BAD_REQUEST));
+    }
+
+    const update = {
+        $set: {
+            "terrariums.$[t].name": req.body.name,
+            "terrariums.$[t].animalType": req.body.animalType,
+            "terrariums.$[t].description": req.body.description,
+            "terrariums.$[t].hardwarioCode": req.body.hardwarioCode,
+            "terrariums.$[t].targetLivingConditions": req.body.targetLivingConditions,
+            "terrariums.$[t].data": req.body.data,
+        },
+    };
+
+    const options = {
+        arrayFilters: [{ "t._id": terrariumId }],
+        new: true,
+    };
+
+    try {
+        const updatedUser = await UserSchema.findOneAndUpdate(
+            { _id: userId, "terrariums._id": terrariumId },
+            update,
+            options
+        );
+
+        if (!updatedUser) {
+            return next(new CustomApiError(`Terrarium with id ${terrariumId} not found for user with id ${userId}`, StatusCodes.NOT_FOUND));
+        }
+
+        res.status(StatusCodes.OK).json({
+            status: "success",
+            message: "Terrarium updated successfully",
+            data: updatedUser.terrariums.find(t => t._id.toString() === terrariumId),
+        });
+    } catch (error) {
+        console.error("Error updating terrarium:", error);
+        return next(new CustomApiError("Internal server error", StatusCodes.INTERNAL_SERVER_ERROR));
+    }
+});
+
 const createUserTerrarium = asyncWrapper(async (req, res, next) => {
     // je potreba zajistit, aby uzivatel vytvarel terrarium pouze pro sebe a ne pro jineho
     const userId = req.params.id;
@@ -121,7 +171,7 @@ const createUserTerrarium = asyncWrapper(async (req, res, next) => {
     await createTerrarium(req, res, next);
 });
 
-const deleteUserTerrarium = asyncWrapper(async (req, res, next) => {
+const deleteUserTerrariumById = asyncWrapper(async (req, res, next) => {
     const userId = req.params.id;
     const terrariumId = req.params.terrariumId;
 
@@ -171,5 +221,6 @@ module.exports = {
     getTerrariumByTerrariumId,
     getTerrariumDataByTerrariumId,
     createUserTerrarium,
-    deleteUserTerrarium
+    deleteUserTerrariumById,
+    putUserTerrariumByTerrariumId
 };

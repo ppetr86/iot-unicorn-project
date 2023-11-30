@@ -123,3 +123,59 @@ Authorization: Bearer: {{jwtAdmin}}
 DELETE localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/656243a88bb6c9d9a6dcb82a
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
+
+### edit terrarium of a user
+PUT localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/656247b08160f2cea0ac13bf
+Content-Type: application/json
+Authorization: Bearer: {{jwtAdmin}}
+
+{
+  "name": "ahoj",
+  "animalType": "asdasd",
+  "description": "asdasd",
+  "targetLivingConditions": {
+    "humidity": {
+      "min": 0,
+      "max": 0
+    },
+    "temperature": {
+      "min": 10,
+      "max": 100
+    },
+    "lightIntensity": {
+      "min": 0,
+      "max": 0
+    }
+  },
+  "hardwarioCode": "555555",
+  "data": null,
+  "_id": "65636d64c86ecee49fe6309a"
+}
+
+### edit terrarium of a user - not existing terrariumId
+PUT localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/656247b08160f2cea0ac13bc
+Content-Type: application/json
+Authorization: Bearer: {{jwtAdmin}}
+
+{
+  "name": "ahoj",
+  "animalType": "asdasd",
+  "description": "asdasd",
+  "targetLivingConditions": {
+    "humidity": {
+      "min": 0,
+      "max": 0
+    },
+    "temperature": {
+      "min": 10,
+      "max": 100
+    },
+    "lightIntensity": {
+      "min": 0,
+      "max": 0
+    }
+  },
+  "hardwarioCode": "555555",
+  "data": null,
+  "_id": "65636d64c86ecee49fe6309a"
+}

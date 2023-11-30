@@ -7,7 +7,8 @@ const {
     getTerrariumByTerrariumId,
     getTerrariumDataByTerrariumId,
     createUserTerrarium,
-    deleteUserTerrarium
+    deleteUserTerrariumById,
+    putUserTerrariumByTerrariumId
 } = require('../controllers/FrontendController');
 
 const {
@@ -20,8 +21,9 @@ router.route("/:id/terrariums")
     .post(protectWithAuthenticationToken, requestingUserIsTheSameAsPathUserOrThrow, createUserTerrarium);
 
 router.route("/:id/terrariums/:terrariumId")
-    .delete(protectWithAuthenticationToken, requestingUserIsTheSameAsPathUserOrThrow, deleteUserTerrarium)
-    .get(protectWithAuthenticationToken, getTerrariumByTerrariumId);
+    .delete(protectWithAuthenticationToken, requestingUserIsTheSameAsPathUserOrThrow, deleteUserTerrariumById)
+    .get(protectWithAuthenticationToken, requestingUserIsTheSameAsPathUserOrThrow, getTerrariumByTerrariumId)
+    .put(protectWithAuthenticationToken, requestingUserIsTheSameAsPathUserOrThrow, putUserTerrariumByTerrariumId);
 
 router.route("/:id/terrariumsHc/:hardwarioCode")
     .get(protectWithAuthenticationToken, getTerrariumByHardwarioCode);
