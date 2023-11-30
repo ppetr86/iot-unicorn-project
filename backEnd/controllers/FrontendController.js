@@ -52,6 +52,15 @@ const createTerrarium = async (req, res, next) => {
             req.body.hardwarioCode,
             null);
 
+        const existingTerrarium = await UserSchema.findOne({
+            _id: userId,
+            "terrariums.name": req.body.name,
+        });
+
+        if (existingTerrarium) {
+            return next(new CustomApiError(`Terrarium with name ${req.body.name} already exists for user with id ${userId}`, StatusCodes.CONFLICT));
+        }
+
         const result = await UserSchema.findOneAndUpdate(
             {_id: userId},
             {$push: {terrariums: terrarium}},
@@ -116,6 +125,16 @@ const putUserTerrariumByTerrariumId = asyncWrapper(async (req, res, next) => {
 
     if (!mongoose.Types.ObjectId.isValid(terrariumId)) {
         return next(new CustomApiError("Invalid terrariumId", StatusCodes.BAD_REQUEST));
+    }
+
+    const existingTerrarium = await UserSchema.findOne({
+        _id: userId,
+        "terrariums.name": req.body.name,
+        "terrariums._id": { $ne: terrariumId }, // Exclude the current terrarium from the check
+    });
+
+    if (existingTerrarium) {
+        return next(new CustomApiError(`Terrarium with name ${req.body.name} already exists for user with id ${userId}`, StatusCodes.CONFLICT));
     }
 
     const update = {
