@@ -2,10 +2,11 @@ import { useParams } from "react-router-dom";
 import GlobalDataFetch from "../services/globalDataFetch";
 import { Alert, Button } from "react-bootstrap";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { LoginContext } from "../context/loginContext";
 import { ApiService } from "../services/apiService";
 import { useNavigate } from "react-router-dom";
+import EditTerrariumModal from "../components/modalWindows/editTerrariumModal";
 
 function Terrarium() {
   const navigateTo = useNavigate();
@@ -13,6 +14,7 @@ function Terrarium() {
   const { data, isLoading, isError, error } = GlobalDataFetch();
   const queryClient = useQueryClient();
   let { userData, accessToken } = useContext(LoginContext);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const mutation = useMutation({
     mutationFn: () => {
@@ -23,6 +25,13 @@ function Terrarium() {
       queryClient.invalidateQueries({ queryKey: ["getAllUserData"] });
     },
   });
+
+  const openModal = () => {
+    setModalIsOpen(true);
+  };
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
 
   if (isLoading) {
     return (
@@ -42,11 +51,25 @@ function Terrarium() {
   );
 
   const handleDelete = () => {
-    mutation.mutate({ title: "Delete terrarium" });
+    if (
+      window.confirm(
+        "Are you sure? By deleting terrarium all its data will be lost."
+      )
+    ) {
+      mutation.mutate({ title: "Delete terrarium" });
+    }
   };
 
   return (
     <>
+      <EditTerrariumModal
+        id="dressCreateModal"
+        isOpen={modalIsOpen}
+        closeModal={closeModal}
+        accessToken={accessToken}
+        userData={userData}
+        terrarium={terrarium}
+      />
       {isError && (
         <Alert variant="danger">{`Error fetching data: ${error}`}</Alert>
       )}
@@ -66,6 +89,9 @@ function Terrarium() {
           )}
           <Button variant="danger" onClick={handleDelete}>
             Delete
+          </Button>{" "}
+          <Button variant="primary" onClick={openModal}>
+            Edit
           </Button>
         </section>
       </div>

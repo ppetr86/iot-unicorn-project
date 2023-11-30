@@ -60,6 +60,15 @@ export class ApiService {
     });
   }
 
+  static editTerrarium(terrariumData, userId, terrariumId, accessToken) {
+    let dataURL = `/fe/v1/users/${userId}/terrariums/${terrariumId}`;
+    return this.axiosInstance.put(dataURL, terrariumData, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  }
+
   //-------------------------------------------------------------------------
   // ----------------- Animal Kind requests ---------------------------------
   //-------------------------------------------------------------------------
