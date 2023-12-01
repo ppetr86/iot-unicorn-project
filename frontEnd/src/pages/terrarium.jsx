@@ -8,6 +8,7 @@ import { ApiService } from "../services/apiService";
 import { useNavigate } from "react-router-dom";
 import EditTerrariumModal from "../components/modalWindows/editTerrariumModal";
 import TerrariumObjectTable from "../components/terrariumObjectTable/terrariumObjectTable";
+import CreateTerrariumToken from "../components/modalWindows/createTerrariumToken";
 
 function Terrarium() {
   const navigateTo = useNavigate();
@@ -16,6 +17,7 @@ function Terrarium() {
   const queryClient = useQueryClient();
   let { userData, accessToken } = useContext(LoginContext);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [jwtTerrariumIsOpen, setJwtTerrariumIsOpen] = useState(false);
   const [terrarium, setTerrarium] = useState();
 
   const mutation = useMutation({
@@ -33,6 +35,12 @@ function Terrarium() {
   };
   const closeModal = () => {
     setModalIsOpen(false);
+  };
+  const openJwtModal = () => {
+    setJwtTerrariumIsOpen(true);
+  };
+  const closeJwtModal = () => {
+    setJwtTerrariumIsOpen(false);
   };
 
   useEffect(() => {
@@ -73,15 +81,26 @@ function Terrarium() {
   return (
     <>
       {data && (
-        <EditTerrariumModal
-          id="dressCreateModal"
-          isOpen={modalIsOpen}
-          closeModal={closeModal}
-          accessToken={accessToken}
-          userData={userData}
-          terrarium={terrarium}
-          resetMutation={resetMutation}
-        />
+        <>
+          <EditTerrariumModal
+            id="editTerrariumModal"
+            isOpen={modalIsOpen}
+            closeModal={closeModal}
+            accessToken={accessToken}
+            userData={userData}
+            terrarium={terrarium}
+            resetMutation={resetMutation}
+          />
+          <CreateTerrariumToken
+            id="createTerrariumToken"
+            isOpen={jwtTerrariumIsOpen}
+            closeModal={closeJwtModal}
+            accessToken={accessToken}
+            userData={userData}
+            terrarium={terrarium}
+            resetMutation={resetMutation}
+          />
+        </>
       )}
 
       {isError && (
@@ -106,6 +125,9 @@ function Terrarium() {
           </Button>{" "}
           <Button variant="primary" onClick={openModal}>
             Edit
+          </Button>{" "}
+          <Button variant="primary" onClick={openJwtModal}>
+            Generate new JWT
           </Button>
         </section>
         <section>
