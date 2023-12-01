@@ -72,7 +72,8 @@ const UserSchema = new Schema({
             {
                 name: {
                     type: String,
-                    index: true
+                    index: true,
+                    unique: true
                 },
                 animalType: String,
                 description: String,
