@@ -45,12 +45,18 @@ const createTerrarium = async (req, res, next) => {
     try {
         const userId = req.params.id;
 
+        //Mongoose does not automatically enforce unique constraints on subdocuments when using $push.
         const terrarium = new Terrarium(req.body.targetLivingConditions,
             req.body.name,
             req.body.animalType,
             req.body.description,
             req.body.hardwarioCode,
-            null);
+            []);
+
+        const {error} = TerrariumDtoIn.validate(terrarium);
+        if (error) {
+            return next(new CustomApiError(`Terrarium validation failed: ${error.message}`, StatusCodes.BAD_REQUEST));
+        }
 
         const existingTerrarium = await UserSchema.findOne({
             _id: userId,
@@ -127,10 +133,24 @@ const putUserTerrariumByTerrariumId = asyncWrapper(async (req, res, next) => {
         return next(new CustomApiError("Invalid terrariumId", StatusCodes.BAD_REQUEST));
     }
 
+    //TODO: tady je otazka jestli chceme dovolit manipulovat i ta data
+    const terrarium = new Terrarium(req.body.targetLivingConditions,
+        req.body.name,
+        req.body.animalType,
+        req.body.description,
+        req.body.hardwarioCode,
+        req.body.data);
+
+    const {error} = TerrariumDtoIn.validate(terrarium);
+
+    if (error) {
+        return next(new CustomApiError(`Terrarium validation failed: ${error.message}`, StatusCodes.BAD_REQUEST));
+    }
+
     const existingTerrarium = await UserSchema.findOne({
         _id: userId,
         "terrariums.name": req.body.name,
-        "terrariums._id": { $ne: terrariumId }, // Exclude the current terrarium from the check
+        "terrariums._id": {$ne: terrariumId}, // Exclude the current terrarium from the check
     });
 
     if (existingTerrarium) {
@@ -149,13 +169,13 @@ const putUserTerrariumByTerrariumId = asyncWrapper(async (req, res, next) => {
     };
 
     const options = {
-        arrayFilters: [{ "t._id": terrariumId }],
+        arrayFilters: [{"t._id": terrariumId}],
         new: true,
     };
 
     try {
         const updatedUser = await UserSchema.findOneAndUpdate(
-            { _id: userId, "terrariums._id": terrariumId },
+            {_id: userId, "terrariums._id": terrariumId},
             update,
             options
         );
@@ -181,7 +201,7 @@ const createUserTerrarium = asyncWrapper(async (req, res, next) => {
 
     const {error} = TerrariumDtoIn.validate(req.body);
     if (error) {
-        return next(new CustomApiError('TerrariumDtoIn is in wrong format.', StatusCodes.BAD_REQUEST));
+        return next(new CustomApiError(`Terrarium validation failed: ${error.message}`, StatusCodes.BAD_REQUEST));
     }
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
