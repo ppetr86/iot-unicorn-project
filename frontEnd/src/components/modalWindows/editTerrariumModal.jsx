@@ -66,6 +66,7 @@ function EditTerrariumModal(props) {
     setState((prev) => ({ ...prev, ...props.terrarium }));
     if (props.isOpen) {
       mutation.reset();
+      setValidationErrors({});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.isOpen, props.terrarium]);

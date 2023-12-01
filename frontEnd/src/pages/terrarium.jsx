@@ -2,13 +2,17 @@ import { useParams } from "react-router-dom";
 import GlobalDataFetch from "../services/globalDataFetch";
 import { Alert, Button } from "react-bootstrap";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { LoginContext } from "../context/loginContext";
 import { ApiService } from "../services/apiService";
 import { useNavigate } from "react-router-dom";
 import EditTerrariumModal from "../components/modalWindows/editTerrariumModal";
 import TerrariumObjectTable from "../components/terrariumObjectTable/terrariumObjectTable";
 import CreateTerrariumToken from "../components/modalWindows/createTerrariumToken";
+import Chart from "chart.js/auto";
+// import { format } from "date-fns";
+// import {de} from 'date-fns/locale';
+import "chartjs-adapter-date-fns";
 
 function Terrarium() {
   const navigateTo = useNavigate();
@@ -50,6 +54,73 @@ function Terrarium() {
       );
     }
   }, [data, terrariumId]);
+
+  function generateFakeData() {
+    const data = [];
+    const currentDate = new Date();
+    const weekAgo = new Date();
+    weekAgo.setDate(currentDate.getDate() - 7);
+
+    while (weekAgo < currentDate) {
+      const timestamp = new Date(weekAgo);
+      const value = Math.floor(Math.random() * (28 - 18 + 1)) + 18;
+      const type = "temperature";
+      data.push({ timestamp, value, type });
+
+      weekAgo.setTime(weekAgo.getTime() + 30 * 60 * 1000);
+    }
+
+    return data;
+  }
+
+  useEffect(() => {
+    // Create a line chart
+
+    const fakeData = generateFakeData();
+    if (terrarium) {
+      const ctx = document.getElementById("myChart").getContext("2d");
+      const myChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          datasets: [
+            {
+              label: "Temperature Data",
+              data: fakeData.map((item) => ({
+                x: item.timestamp,
+                y: item.value,
+              })),
+              borderColor: "rgb(75, 192, 192)",
+              tension: 0.1,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            x: {
+              type: "time",
+              time: {
+                unit: "day",
+              },
+              title: {
+                display: true,
+                text: "Time",
+              },
+            },
+            y: {
+              title: {
+                display: true,
+                text: "Temperature",
+              },
+            },
+          },
+        },
+      });
+
+      return () => {
+        myChart.destroy();
+      };
+    }
+  }, [terrarium]);
 
   if (isLoading) {
     return (
@@ -132,6 +203,10 @@ function Terrarium() {
         </section>
         <section>
           <TerrariumObjectTable obj={terrarium} />
+        </section>
+        <section>
+          {" "}
+          <canvas id="myChart" width="400" height="200"></canvas>
         </section>
       </div>
     </>

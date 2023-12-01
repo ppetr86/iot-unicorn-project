@@ -21,10 +21,10 @@ function CreateTerrariumToken(props) {
     <>
       <Modal show={props.isOpen} onHide={props.closeModal}>
         <Modal.Header closeButton>
-          <Modal.Title>{`Get new JWT token for terrarium: ${props.terrarium.name}`}</Modal.Title>
+          <Modal.Title>Get new JWT token</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Button>Confirmar!</Button>
+          <Button>Confirm!</Button>
         </Modal.Body>
       </Modal>
     </>
