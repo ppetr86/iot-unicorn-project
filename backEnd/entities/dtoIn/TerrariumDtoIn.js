@@ -23,7 +23,7 @@ const TerrariumDtoIn = Joi.object({
         timestamp: Joi.date(),
         value: Joi.number(),
         type: Joi.string().valid('temperature', 'danger', 'feeding', 'drinking'),
-    })),
+    }).default([])),
 });
 
 module.exports = TerrariumDtoIn;
