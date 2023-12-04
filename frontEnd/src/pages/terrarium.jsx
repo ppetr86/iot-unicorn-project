@@ -85,7 +85,6 @@ function Terrarium() {
     const fakeData = generateFakeData();
     if (terrarium) {
       Chart.register(annotationPlugin);
-      console.log(JSON.stringify(terrarium));
       const ctx = document.getElementById("myChart").getContext("2d");
       const myChart = new Chart(ctx, {
         type: "line",
@@ -172,7 +171,7 @@ function Terrarium() {
         myChart.destroy();
       };
     }
-  }, [terrarium]);
+  }, [generateFakeData, terrarium]);
 
   if (isLoading) {
     return (
