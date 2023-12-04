@@ -135,6 +135,21 @@ const updatePassword = asyncWrapper(async (req, res, next) => {
     createSendToken(user, StatusCodes.OK, res);
 })
 
+const getIotIdentificationToken = asyncWrapper(async (req, res, next) => {
+    try {
+        //TODO: consider adding PathVariable which will verify existing using terrarium for
+        const userId = req.user.id;
+        const iotToken = signIotIdentificationToken(userId);
+
+        res.status(200).json({
+            status: 'success',
+            data: iotToken
+        });
+    } catch (err) {
+        return next(new CustomApiError("IoT token generation failed", StatusCodes.UNAUTHORIZED));
+    }
+})
+
 module.exports = {
     loginUser,
     loginUserToIotSensors,
@@ -142,5 +157,6 @@ module.exports = {
     forgotPassword,
     resetPassword,
     updatePassword,
-    signIotIdentificationToken
+    signIotIdentificationToken,
+    getIotIdentificationToken
 }

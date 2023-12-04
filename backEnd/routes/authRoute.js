@@ -6,7 +6,8 @@ const {
     loginUserToIotSensors,
     forgotPassword,
     resetPassword,
-    updatePassword
+    updatePassword,
+    getIotIdentificationToken
 } = require('../controllers/authController');
 
 const {
@@ -22,5 +23,7 @@ router.route('/forgotPassword').post(forgotPassword)
 router.route('/resetPassword/:token').post(resetPassword);
 
 router.route('/updatePassword').patch(protectWithAuthenticationToken, updatePassword);
+
+router.route('/iot-token').get(protectWithAuthenticationToken, getIotIdentificationToken);
 
 module.exports = router;
