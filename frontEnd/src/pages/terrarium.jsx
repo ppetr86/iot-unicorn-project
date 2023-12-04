@@ -10,9 +10,8 @@ import EditTerrariumModal from "../components/modalWindows/editTerrariumModal";
 import TerrariumObjectTable from "../components/terrariumObjectTable/terrariumObjectTable";
 import CreateTerrariumToken from "../components/modalWindows/createTerrariumToken";
 import Chart from "chart.js/auto";
-// import { format } from "date-fns";
-// import {de} from 'date-fns/locale';
 import "chartjs-adapter-date-fns";
+import annotationPlugin from "chartjs-plugin-annotation";
 
 function Terrarium() {
   const navigateTo = useNavigate();
@@ -56,6 +55,7 @@ function Terrarium() {
   }, [data, terrariumId]);
 
   function generateFakeData() {
+    if (!terrarium) return;
     const data = [];
     const currentDate = new Date();
     const weekAgo = new Date();
@@ -63,7 +63,13 @@ function Terrarium() {
 
     while (weekAgo < currentDate) {
       const timestamp = new Date(weekAgo);
-      const value = Math.floor(Math.random() * (28 - 18 + 1)) + 18;
+      const value =
+        Math.floor(
+          Math.random() *
+            (terrarium.targetLivingConditions.temperature.max -
+              terrarium.targetLivingConditions.temperature.min +
+              1)
+        ) + terrarium.targetLivingConditions.temperature.min;
       const type = "temperature";
       data.push({ timestamp, value, type });
 
@@ -78,6 +84,8 @@ function Terrarium() {
 
     const fakeData = generateFakeData();
     if (terrarium) {
+      Chart.register(annotationPlugin);
+      console.log(JSON.stringify(terrarium));
       const ctx = document.getElementById("myChart").getContext("2d");
       const myChart = new Chart(ctx, {
         type: "line",
@@ -95,6 +103,38 @@ function Terrarium() {
           ],
         },
         options: {
+          plugins: {
+            annotation: {
+              annotations: [
+                {
+                  type: "line",
+                  mode: "horizontal",
+                  scaleID: "y",
+                  value: terrarium.targetLivingConditions.temperature.min, // Value where you want to draw the horizontal line
+                  borderColor: "red",
+                  borderWidth: 1,
+                  label: {
+                    content: "Threshold", // Label for the line
+                    enabled: true,
+                    position: "right",
+                  },
+                },
+                {
+                  type: "line",
+                  mode: "horizontal",
+                  scaleID: "y",
+                  value: terrarium.targetLivingConditions.temperature.max,
+                  borderColor: "red",
+                  borderWidth: 1,
+                  label: {
+                    content: "Threshold 2",
+                    enabled: true,
+                    position: "right",
+                  },
+                },
+              ],
+            },
+          },
           scales: {
             x: {
               type: "time",
@@ -111,6 +151,18 @@ function Terrarium() {
                 display: true,
                 text: "Temperature",
               },
+
+              suggestedMin:
+                terrarium.targetLivingConditions.temperature.min -
+                (terrarium.targetLivingConditions.temperature.max -
+                  terrarium.targetLivingConditions.temperature.min) /
+                  10, // Set minimum value for Y-axis
+              suggestedMax:
+                terrarium.targetLivingConditions.temperature.max +
+                (terrarium.targetLivingConditions.temperature.max -
+                  terrarium.targetLivingConditions.temperature.min) /
+                  10, // Set maximum value for Y-axis
+              // You can also set step size, ticks, and other configurations here
             },
           },
         },
