@@ -1,0 +1,16 @@
+{
+  "name": "iot-unicorn-projekt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "install-server": "cd backEnd && npm install",
+    "start-server": "cd backEnd && npm run start",
+    "install-client": "cd frontEnd && npm install",
+    "build-client": "cd frontEnd && npm run build",
+    "start-client": "cd frontEnd && npm run start"
+  },
+  "keywords": [],
+  "author": "Michal Vanek",
+  "license": "ISC"
+}
