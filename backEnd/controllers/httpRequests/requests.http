@@ -8,7 +8,7 @@ Content-Type: application/json
 }
 
 ### login user test0@ to receive iot-sensor token
-POST localhost:3001/api/v1/auth/login-iot
+POST https://jittery-ruby-pigeon.cyclic.app/api/v1/auth/login-iot
 Content-Type: application/json
 
 {
@@ -18,6 +18,11 @@ Content-Type: application/json
 
 ### get SELF user ROLE_ADMIN by id
 GET localhost:3001/api/v1/users/{{idAdmin}}
+Content-Type: application/json
+Authorization: Bearer: {{jwtAdmin}}
+
+### get SELF user ROLE_ADMIN by id
+GET https://jittery-ruby-pigeon.cyclic.app/api/v1/users/{{idAdmin}}
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
@@ -47,7 +52,7 @@ Accept: application/json
 Authorization: Bearer: {{jwtUser1}}
 
 ### get all animal kinds - should 200
-GET localhost:3001/api/v1/animalKinds
+GET{{deploymentUrl}}/api/v1/animalKinds
 Accept: application/json
 Authorization: Bearer: {{jwtUser1}}
 
