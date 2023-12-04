@@ -25,22 +25,10 @@ const oldDataEraser = require("./util/OldDataEraser.js");
 const cron = require('node-cron');
 
 // enable CORS for any resource
-/*app.use(cors({
-    origin: 'http://localhost:3000',
+app.use(cors({
+    origin: appConfig.corsUrl,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
-}));*/
-
-app.use(function(req, res, next) {
-    const allowedOrigins = ['http://localhost:3000', 'https://iot-unicorn-project.onrender.com/'];
-    const origin = req.headers.origin;
-
-    if (allowedOrigins.indexOf(origin) !== -1) {
-        res.header('Access-Control-Allow-Origin', origin);
-        next();
-    } else {
-        res.status(403).send('Go fuck yourself!');
-    }
-});
+}));
 
 //Security http headers
 app.use(helmet());
