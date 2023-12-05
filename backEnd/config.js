@@ -1,7 +1,8 @@
 const getConfiguration = () => ({
     dbConnectionString: String(getDbConnectionStringValue()),
     port: Number(getPortValue()),
-    applicationProfiles: String(applicationProfiles())
+    applicationProfiles: String(applicationProfiles()),
+    corsUrl:String(getCorsAllowedUrlValue())
 });
 
 const getPortValue = () => {
@@ -11,6 +12,9 @@ const getPortValue = () => {
 
 const getDbConnectionStringValue = () => getEnvVarValue("MONGO_URL")
     || throwConfigurationError("dbConnectionString");
+
+const getCorsAllowedUrlValue = () => getEnvVarValue("CORS")
+    || throwConfigurationError("corsUrl");
 
 const getEnvVarValue = (envVarName) => {
     const envVarRawValue = process.env[envVarName];

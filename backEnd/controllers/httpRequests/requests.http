@@ -7,17 +7,18 @@ Content-Type: application/json
   "password": "1234"
 }
 
-### login user test0@ to receive iot-sensor token
-POST localhost:3001/api/v1/auth/login-iot
+### GET IOT TOKEN
+GET localhost:3001/api/v1/auth/iot-token
 Content-Type: application/json
-
-{
-  "email": "test0@test.com",
-  "password": "1234"
-}
+Authorization: Bearer: {{jwtAdmin}}
 
 ### get SELF user ROLE_ADMIN by id
 GET localhost:3001/api/v1/users/{{idAdmin}}
+Content-Type: application/json
+Authorization: Bearer: {{jwtAdmin}}
+
+### get SELF user ROLE_ADMIN by id
+GET https://jittery-ruby-pigeon.cyclic.app/api/v1/users/{{idAdmin}}
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
@@ -47,7 +48,7 @@ Accept: application/json
 Authorization: Bearer: {{jwtUser1}}
 
 ### get all animal kinds - should 200
-GET localhost:3001/api/v1/animalKinds
+GET{{deploymentUrl}}/api/v1/animalKinds
 Accept: application/json
 Authorization: Bearer: {{jwtUser1}}
 
@@ -98,9 +99,9 @@ Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 {
-  "name": "test1",
-  "animalType": "type1",
-  "description": "description",
+  "name": "test11",
+  "animalType": "type11",
+  "description": "description1",
   "targetLivingConditions": {
     "humidity": {
       "min": 1,

@@ -26,7 +26,7 @@ const cron = require('node-cron');
 
 // enable CORS for any resource
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: appConfig.corsUrl,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
 }));
 
