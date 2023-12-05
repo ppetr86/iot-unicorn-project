@@ -6,7 +6,6 @@ const {ResponseObjDto} = require("../entities/ResponseObjDto");
 const UserSchema = require("../entities/db/UserSchema");
 const {Terrarium} = require("../entities/schemaToClass/MongooseSchemaToClass");
 const TerrariumDtoIn = require("../entities/dtoIn/TerrariumDtoIn");
-const {signIotIdentificationToken} = require("../controllers/authController");
 
 class TerrariumService {
     constructor() {
@@ -141,10 +140,8 @@ class TerrariumService {
             );
 
             if (result) {
-                const token = signIotIdentificationToken(userId);
                 res.status(StatusCodes.CREATED).json({
                     status: 'success',
-                    token,
                     data: terrarium,
                 });
             }
