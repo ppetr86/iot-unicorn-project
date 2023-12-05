@@ -65,7 +65,8 @@ function CreateTerrarium() {
         newTerrarium
       );
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log(data);
       queryClient.invalidateQueries({ queryKey: ["getAllUserData"] });
     },
     onError: (error) => {
@@ -308,7 +309,7 @@ function CreateTerrarium() {
               <Form.Group className="col-md-6 mb-1 mt-2">
                 <Form.Label>Hardwario code</Form.Label>
                 <Form.Control
-                  type="number"
+                  type="string"
                   id="hardwarioCode"
                   placeholder="Enter the code of your hardwario device"
                   required
