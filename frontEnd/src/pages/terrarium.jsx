@@ -54,36 +54,36 @@ function Terrarium() {
     }
   }, [data, terrariumId]);
 
-  function generateFakeData() {
-    if (!terrarium) return;
-    const data = [];
-    const currentDate = new Date();
-    const weekAgo = new Date();
-    weekAgo.setDate(currentDate.getDate() - 7);
+  // function generateFakeData() {
+  //   if (!terrarium) return;
+  //   const data = [];
+  //   const currentDate = new Date();
+  //   const weekAgo = new Date();
+  //   weekAgo.setDate(currentDate.getDate() - 7);
 
-    while (weekAgo < currentDate) {
-      const timestamp = new Date(weekAgo);
-      const value =
-        Math.floor(
-          Math.random() *
-            (terrarium.targetLivingConditions.temperature.max -
-              terrarium.targetLivingConditions.temperature.min +
-              1)
-        ) + terrarium.targetLivingConditions.temperature.min;
-      const type = "temperature";
-      data.push({ timestamp, value, type });
+  //   while (weekAgo < currentDate) {
+  //     const timestamp = new Date(weekAgo);
+  //     const value =
+  //       Math.floor(
+  //         Math.random() *
+  //           (terrarium.targetLivingConditions.temperature.max -
+  //             terrarium.targetLivingConditions.temperature.min +
+  //             1)
+  //       ) + terrarium.targetLivingConditions.temperature.min;
+  //     const type = "temperature";
+  //     data.push({ timestamp, value, type });
 
-      weekAgo.setTime(weekAgo.getTime() + 30 * 60 * 1000);
-    }
+  //     weekAgo.setTime(weekAgo.getTime() + 30 * 60 * 1000);
+  //   }
 
-    return data;
-  }
+  //   return data;
+  // }
 
   useEffect(() => {
     // Create a line chart
 
-    const fakeData = generateFakeData();
-    if (terrarium) {
+    if (terrarium && terrarium.data) {
+      console.log(terrarium);
       Chart.register(annotationPlugin);
       const ctx = document.getElementById("myChart").getContext("2d");
       const myChart = new Chart(ctx, {
@@ -92,7 +92,7 @@ function Terrarium() {
           datasets: [
             {
               label: "Temperature Data",
-              data: fakeData.map((item) => ({
+              data: terrarium.data.map((item) => ({
                 x: item.timestamp,
                 y: item.value,
               })),
@@ -171,7 +171,7 @@ function Terrarium() {
         myChart.destroy();
       };
     }
-  }, [generateFakeData, terrarium]);
+  }, [terrarium]);
 
   if (isLoading) {
     return (

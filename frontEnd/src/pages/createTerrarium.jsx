@@ -65,7 +65,8 @@ function CreateTerrarium() {
         newTerrarium
       );
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log(data);
       queryClient.invalidateQueries({ queryKey: ["getAllUserData"] });
     },
     onError: (error) => {
