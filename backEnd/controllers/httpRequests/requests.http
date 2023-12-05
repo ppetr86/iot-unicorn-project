@@ -84,12 +84,12 @@ Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 ### get TERRARIUM by id and userId
-GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/656247b08160f2cea0ac13bf
+GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/6568ea1537606a400c01e659
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 ### get DATA of a terrariumId and userId
-GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/656247b08160f2cea0ac13bf/data
+GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/6568ea1537606a400c01e659/data
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
@@ -99,7 +99,7 @@ Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 {
-  "name": "test11",
+  "name": "terrarium.name0",
   "animalType": "type11",
   "description": "description1",
   "targetLivingConditions": {
@@ -126,35 +126,34 @@ Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 ### edit terrarium of a user
-PUT localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/656247b08160f2cea0ac13bf
+PUT localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/656f91bdc6a5232e7d289d75
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 {
-  "name": "ahoj",
-  "animalType": "asdasd",
-  "description": "asdasd",
   "targetLivingConditions": {
     "humidity": {
-      "min": 0,
-      "max": 0
+      "min": 1,
+      "max": 1
     },
     "temperature": {
-      "min": 10,
-      "max": 100
+      "min": 1,
+      "max": 1
     },
     "lightIntensity": {
-      "min": 0,
-      "max": 0
+      "min": 1,
+      "max": 1
     }
   },
-  "hardwarioCode": "555555",
-  "data": null,
-  "_id": "65636d64c86ecee49fe6309a"
+  "name": "terrarium.name01",
+  "animalType": "type11",
+  "description": "description1",
+  "hardwarioCode": "hardwarioCode1",
+  "data": []
 }
 
 ### edit terrarium of a user - not existing terrariumId
-PUT localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/656247b08160f2cea0ac13bc
+PUT localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/656f91bdc6a5232e7d289d75
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 

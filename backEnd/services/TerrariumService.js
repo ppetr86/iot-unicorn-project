@@ -15,7 +15,7 @@ class TerrariumService {
         const userId = req.params.id;
         const terrariumId = req.params.terrariumId;
 
-        terrariumService.validateUserIdAndTerrariumId(userId, terrariumId, next);
+        this.validateUserIdAndTerrariumId(userId, terrariumId, next);
 
         //TODO: tady je otazka jestli chceme dovolit manipulovat i ta data
         const terrarium = new Terrarium(req.body.targetLivingConditions,
