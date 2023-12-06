@@ -3,7 +3,7 @@ class AnimalKindDtoOut {
         this.id = dbDocument?._id;
         this.animalType = dbDocument?.animalType;
         this.description = dbDocument?.description;
-        this.livingConditions = dbDocument?.livingConditions;
+        this.targetLivingConditions = dbDocument?.targetLivingConditions;
     }
 }
 

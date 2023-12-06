@@ -16,7 +16,7 @@ const AnimalKindSchema = new Schema({
         minLength: 20,
     },
     //optimalni hodnoty kterych chceme dosahovat pri chovu
-    livingConditions: {
+    targetLivingConditions: {
         type: Object,
         required:true,
         humidity: {
@@ -63,7 +63,7 @@ const AnimalKindSchema = new Schema({
     },
 });
 
-AnimalKindSchema.path('livingConditions').validate(validateMinMax, 'Condition max must be greater equal condition min.');
+AnimalKindSchema.path('targetLivingConditions').validate(validateMinMax, 'Condition max must be greater equal condition min.');
 
 function validateMinMax(conditions) {
     return conditions.humidity.min <= conditions.humidity.max &&
