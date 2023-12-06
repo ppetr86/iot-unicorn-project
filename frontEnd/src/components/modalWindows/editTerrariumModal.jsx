@@ -63,11 +63,22 @@ function EditTerrariumModal(props) {
   };
 
   useEffect(() => {
-    setState((prev) => ({ ...prev, ...props.terrarium }));
-    if (props.isOpen) {
-      mutation.reset();
-      setValidationErrors({});
+    if (props.terrarium) {
+      // eslint-disable-next-line no-unused-vars
+      const { data, ...rest } = props.terrarium;
+      setState((prev) => ({ ...prev, ...rest }));
     }
+
+    //when the window is closed, mutuation is reseted, so you can edit again. There is delay because if not, the modal is reseted before it close
+    if (!props.isOpen) {
+      const timeout = setTimeout(() => {
+        mutation.reset();
+        setValidationErrors({});
+      }, 200);
+
+      return () => clearTimeout(timeout);
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.isOpen, props.terrarium]);
 

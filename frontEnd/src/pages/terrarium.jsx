@@ -83,7 +83,6 @@ function Terrarium() {
     // Create a line chart
 
     if (terrarium && terrarium.data) {
-      console.log(terrarium);
       Chart.register(annotationPlugin);
       const ctx = document.getElementById("myChart").getContext("2d");
       const myChart = new Chart(ctx, {
