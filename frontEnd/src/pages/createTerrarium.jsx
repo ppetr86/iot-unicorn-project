@@ -125,7 +125,7 @@ function CreateTerrarium() {
   };
   const handleAnimalTypeSelect = (e) => {
     let result = state.searchResultAnimalTypes.find(
-      (element) => element._id === e.target.value
+      (element) => element.id === e.target.value
     );
     if (result) {
       setState((prevState) => ({
@@ -206,7 +206,6 @@ function CreateTerrarium() {
       {isError && (
         <Alert variant="danger">{`Error fetching data: ${error}`}</Alert>
       )}
-
       <div className="container">
         <section className="searchAnimalType">
           <Row>
@@ -245,7 +244,7 @@ function CreateTerrarium() {
                   {isLoading ? "Loading..." : "Select animal type"}
                 </option>
                 {state.searchResultAnimalTypes.map((animalType) => (
-                  <option key={animalType._id} value={animalType._id}>
+                  <option key={animalType.id} value={animalType.id}>
                     {`${animalType.animalType} - ${animalType.description}`}
                   </option>
                 ))}
