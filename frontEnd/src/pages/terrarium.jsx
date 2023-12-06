@@ -2,13 +2,13 @@ import { useParams } from "react-router-dom";
 import GlobalDataFetch from "../services/globalDataFetch";
 import { Alert, Button } from "react-bootstrap";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useContext, useState, useEffect, useRef } from "react";
+import { useContext, useState, useEffect } from "react";
 import { LoginContext } from "../context/loginContext";
 import { ApiService } from "../services/apiService";
 import { useNavigate } from "react-router-dom";
 import EditTerrariumModal from "../components/modalWindows/editTerrariumModal";
 import TerrariumObjectTable from "../components/terrariumObjectTable/terrariumObjectTable";
-import CreateTerrariumToken from "../components/modalWindows/createTerrariumToken";
+
 import Chart from "chart.js/auto";
 import "chartjs-adapter-date-fns";
 import annotationPlugin from "chartjs-plugin-annotation";
@@ -18,9 +18,9 @@ function Terrarium() {
   const { terrariumId } = useParams();
   const { data, isLoading, isError, error } = GlobalDataFetch();
   const queryClient = useQueryClient();
-  let { userData, accessToken } = useContext(LoginContext);
+  const { userData, accessToken } = useContext(LoginContext);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [jwtTerrariumIsOpen, setJwtTerrariumIsOpen] = useState(false);
+
   const [terrarium, setTerrarium] = useState();
 
   const mutation = useMutation({
@@ -38,12 +38,6 @@ function Terrarium() {
   };
   const closeModal = () => {
     setModalIsOpen(false);
-  };
-  const openJwtModal = () => {
-    setJwtTerrariumIsOpen(true);
-  };
-  const closeJwtModal = () => {
-    setJwtTerrariumIsOpen(false);
   };
 
   useEffect(() => {
@@ -212,15 +206,6 @@ function Terrarium() {
             terrarium={terrarium}
             resetMutation={resetMutation}
           />
-          <CreateTerrariumToken
-            id="createTerrariumToken"
-            isOpen={jwtTerrariumIsOpen}
-            closeModal={closeJwtModal}
-            accessToken={accessToken}
-            userData={userData}
-            terrarium={terrarium}
-            resetMutation={resetMutation}
-          />
         </>
       )}
 
@@ -246,9 +231,6 @@ function Terrarium() {
           </Button>{" "}
           <Button variant="primary" onClick={openModal}>
             Edit
-          </Button>{" "}
-          <Button variant="primary" onClick={openJwtModal}>
-            Generate new JWT
           </Button>
         </section>
         <section>

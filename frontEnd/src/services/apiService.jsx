@@ -69,6 +69,14 @@ export class ApiService {
     });
   }
 
+  static getIotToken(accessToken) {
+    let dataURL = `/api/v1/auth/iot-token`;
+    return this.axiosInstance.get(dataURL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  }
   //-------------------------------------------------------------------------
   // ----------------- Animal Kind requests ---------------------------------
   //-------------------------------------------------------------------------

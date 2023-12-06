@@ -1,30 +1,49 @@
 import { Modal, Button, Form, Alert, Spinner } from "react-bootstrap";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { ApiService } from "../../services/apiService";
+import { useEffect } from "react";
 
 function CreateTerrariumToken(props) {
-  const queryClient = useQueryClient();
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["iotToken"],
+    queryFn: async () => {
+      const response = await ApiService.getIotToken(props.accessToken);
 
-  const mutation = useMutation({
-    mutationFn: () => {
-      return ApiService.editTerrarium(
-        props.userData.id,
-        props.terrarium._id,
-        props.accessToken
-      );
+      return response.data.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["getAllUserData"] });
-    },
+
+    staleTime: Infinity,
+    cacheTime: Infinity,
+    enabled: !!props.isOpen,
   });
+
   return (
     <>
       <Modal show={props.isOpen} onHide={props.closeModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Get new JWT token</Modal.Title>
+          <Modal.Title>Get JWT token</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <Button>Confirm!</Button>
+        <Modal.Body style={{ wordBreak: "break-all" }}>
+          {isLoading && (
+            <>
+              <div className="d-flex align-items-center">
+                <strong role="status">Loading...</strong>
+                <div
+                  className="spinner-border ms-auto"
+                  aria-hidden="true"
+                ></div>
+              </div>
+            </>
+          )}
+          {isError && (
+            <Alert variant="danger">{`Error fetching data: ${error}`}</Alert>
+          )}
+          {data && (
+            <>
+              <h6>JWT token for your gateway is: </h6>
+              <Alert variant="success">{`${data}`}</Alert>
+            </>
+          )}
         </Modal.Body>
       </Modal>
     </>

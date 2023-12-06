@@ -1,7 +1,20 @@
 import GlobalDataFetch from "../services/globalDataFetch";
+import CreateTerrariumToken from "../components/modalWindows/createTerrariumToken";
+import { useState, useContext } from "react";
+import { Button } from "react-bootstrap";
+import { LoginContext } from "../context/loginContext";
 
 function UserPage() {
   const { data, isLoading, isError, error } = GlobalDataFetch();
+  const [jwtTerrariumIsOpen, setJwtTerrariumIsOpen] = useState(false);
+  const { accessToken } = useContext(LoginContext);
+
+  const openJwtModal = () => {
+    setJwtTerrariumIsOpen(true);
+  };
+  const closeJwtModal = () => {
+    setJwtTerrariumIsOpen(false);
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -31,6 +44,18 @@ function UserPage() {
             </tr>
           </tbody>
         </table>
+        <Button variant="primary" onClick={openJwtModal}>
+          Get token for your gateway
+        </Button>
+        {data && (
+          <CreateTerrariumToken
+            id="createTerrariumToken"
+            isOpen={jwtTerrariumIsOpen}
+            closeModal={closeJwtModal}
+            accessToken={accessToken}
+            // resetMutation={resetMutation}
+          />
+        )}
       </div>
     );
   }
