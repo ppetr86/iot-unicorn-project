@@ -3,7 +3,7 @@ const Joi = require('joi');
 const AnimalKindDtoIn = Joi.object({
     animalType: Joi.string().required().min(1).max(255),
     description: Joi.string().trim().min(20).max(255),
-    livingConditions: Joi.array().items(
+    targetLivingConditions: Joi.array().items(
         Joi.object({
             humidity: Joi.object({
                 min: Joi.number().min(0),

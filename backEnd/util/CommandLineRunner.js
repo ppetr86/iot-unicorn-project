@@ -134,7 +134,7 @@ class CommandLineRunner {
         return {
             animalType: "animalType" + faker.number.int({min: 0, max: 10000}),
             description: faker.lorem.sentences().substring(0, 254),
-            livingConditions: new TerrariumTarget(25, 30, 60, 70, 80, 90)
+            targetLivingConditions: new TerrariumTarget(25, 30, 60, 70, 80, 90)
         }
     }
 
