@@ -59,7 +59,7 @@ app.use("/fe/v1/users", frontEndRoute);
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
-cron.schedule('* * * * *', () => {
+cron.schedule('0 * * * *', () => {
     //TODO: cron job runs every minute just for testing purpose...
     oldDataEraser.eraseOldMeasuredDataFromDatabase(7);
 });
