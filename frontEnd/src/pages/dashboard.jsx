@@ -1,5 +1,5 @@
 import GlobalDataFetch from "../services/globalDataFetch";
-import { Alert, Card } from "react-bootstrap";
+import { Alert, Card, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import TemperatureChart from "../components/charts/temperatureChart";
 
@@ -39,14 +39,18 @@ function Dashboard() {
 
       <div className="container">
         <section className="terrariumsCharts">
-          {terrariums.map((terrarium) => (
-            <Card key={terrarium._id}>
-              <Card.Body>
-                <Card.Title>{terrarium.name}</Card.Title>
-                <TemperatureChart terrarium={terrarium} />
-              </Card.Body>
-            </Card>
-          ))}
+          <Row xs={1} md={2} className="g-4">
+            {terrariums.map((terrarium, idx) => (
+              <Col key={idx}>
+                <Card key={terrarium._id}>
+                  <Card.Body>
+                    <Card.Title>{terrarium.name}</Card.Title>
+                    <TemperatureChart terrarium={terrarium} />
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
         </section>
       </div>
     </>

@@ -1,10 +1,10 @@
-import { forwardRef, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 import annotationPlugin from "chartjs-plugin-annotation";
 import "chartjs-adapter-date-fns";
 import "chart.js/auto";
 
-const TemperatureChart = forwardRef(({ terrarium }, ref) => {
+const TemperatureChart = ({ terrarium }) => {
   const chartRef = useRef(null);
   useEffect(() => {
     if (terrarium && terrarium.data) {
@@ -39,7 +39,7 @@ const TemperatureChart = forwardRef(({ terrarium }, ref) => {
                   borderColor: "red",
                   borderWidth: 1,
                   label: {
-                    content: "Threshold", // Label for the line
+                    content: "Threshold",
                     enabled: true,
                     position: "right",
                   },
@@ -109,7 +109,7 @@ const TemperatureChart = forwardRef(({ terrarium }, ref) => {
   return (
     <canvas id={"myChart"} width="400" height="200" ref={chartRef}></canvas>
   );
-});
+};
 TemperatureChart.displayName = "TemperatureChart";
 
 export default TemperatureChart;
