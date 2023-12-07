@@ -60,7 +60,7 @@ app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
 cron.schedule('0 * * * *', () => {
-    //TODO: cron job runs every minute just for testing purpose...
+    //TODO: cron job runs every hour just for testing purpose...
     oldDataEraser.eraseOldMeasuredDataFromDatabase(7);
 });
 const start = async () => {
