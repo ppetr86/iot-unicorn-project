@@ -9,9 +9,7 @@ import { useNavigate } from "react-router-dom";
 import EditTerrariumModal from "../components/modalWindows/editTerrariumModal";
 import TerrariumObjectTable from "../components/terrariumObjectTable/terrariumObjectTable";
 
-import Chart from "chart.js/auto";
-import "chartjs-adapter-date-fns";
-import annotationPlugin from "chartjs-plugin-annotation";
+import TemperatureChart from "../components/charts/temperatureChart";
 
 function Terrarium() {
   const navigateTo = useNavigate();
@@ -47,127 +45,6 @@ function Terrarium() {
       );
     }
   }, [data, terrariumId]);
-
-  // function generateFakeData() {
-  //   if (!terrarium) return;
-  //   const data = [];
-  //   const currentDate = new Date();
-  //   const weekAgo = new Date();
-  //   weekAgo.setDate(currentDate.getDate() - 7);
-
-  //   while (weekAgo < currentDate) {
-  //     const timestamp = new Date(weekAgo);
-  //     const value =
-  //       Math.floor(
-  //         Math.random() *
-  //           (terrarium.targetLivingConditions.temperature.max -
-  //             terrarium.targetLivingConditions.temperature.min +
-  //             1)
-  //       ) + terrarium.targetLivingConditions.temperature.min;
-  //     const type = "temperature";
-  //     data.push({ timestamp, value, type });
-
-  //     weekAgo.setTime(weekAgo.getTime() + 30 * 60 * 1000);
-  //   }
-
-  //   return data;
-  // }
-
-  useEffect(() => {
-    // Create a line chart
-
-    if (terrarium && terrarium.data) {
-      const filteredTemperatureData = terrarium.data.filter(
-        (item) => item.type === "temperature"
-      );
-      Chart.register(annotationPlugin);
-      const ctx = document.getElementById("myChart").getContext("2d");
-      const myChart = new Chart(ctx, {
-        type: "line",
-        data: {
-          datasets: [
-            {
-              label: "Temperature Data",
-              data: filteredTemperatureData.map((item) => ({
-                x: item.timestamp,
-                y: item.value,
-              })),
-              borderColor: "rgb(75, 192, 192)",
-              tension: 0.1,
-            },
-          ],
-        },
-        options: {
-          plugins: {
-            annotation: {
-              annotations: [
-                {
-                  type: "line",
-                  mode: "horizontal",
-                  scaleID: "y",
-                  value: terrarium.targetLivingConditions.temperature.min, // Value where you want to draw the horizontal line
-                  borderColor: "red",
-                  borderWidth: 1,
-                  label: {
-                    content: "Threshold", // Label for the line
-                    enabled: true,
-                    position: "right",
-                  },
-                },
-                {
-                  type: "line",
-                  mode: "horizontal",
-                  scaleID: "y",
-                  value: terrarium.targetLivingConditions.temperature.max,
-                  borderColor: "red",
-                  borderWidth: 1,
-                  label: {
-                    content: "Threshold 2",
-                    enabled: true,
-                    position: "right",
-                  },
-                },
-              ],
-            },
-          },
-          scales: {
-            x: {
-              type: "time",
-              time: {
-                unit: "day",
-              },
-              title: {
-                display: true,
-                text: "Time",
-              },
-            },
-            y: {
-              title: {
-                display: true,
-                text: "Temperature",
-              },
-
-              suggestedMin:
-                terrarium.targetLivingConditions.temperature.min -
-                (terrarium.targetLivingConditions.temperature.max -
-                  terrarium.targetLivingConditions.temperature.min) /
-                  10, // Set minimum value for Y-axis
-              suggestedMax:
-                terrarium.targetLivingConditions.temperature.max +
-                (terrarium.targetLivingConditions.temperature.max -
-                  terrarium.targetLivingConditions.temperature.min) /
-                  10, // Set maximum value for Y-axis
-              // You can also set step size, ticks, and other configurations here
-            },
-          },
-        },
-      });
-
-      return () => {
-        myChart.destroy();
-      };
-    }
-  }, [terrarium]);
 
   if (isLoading) {
     return (
@@ -240,8 +117,7 @@ function Terrarium() {
           <TerrariumObjectTable obj={terrarium} />
         </section>
         <section>
-          {" "}
-          <canvas id="myChart" width="400" height="200"></canvas>
+          <TemperatureChart terrarium={terrarium} />
         </section>
       </div>
     </>

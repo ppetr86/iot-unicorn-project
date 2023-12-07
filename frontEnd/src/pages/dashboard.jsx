@@ -1,9 +1,12 @@
 import GlobalDataFetch from "../services/globalDataFetch";
-import { Alert } from "react-bootstrap";
+import { Alert, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import TemperatureChart from "../components/charts/temperatureChart";
+import { useRef } from "react";
 
 function Dashboard() {
   const { data, isLoading, isError, error } = GlobalDataFetch();
+  const ref = useRef();
 
   if (isLoading) {
     return (
@@ -37,7 +40,18 @@ function Dashboard() {
       )}
       <div className="container">
         <section className="terrariumsCharts">
-          <p>Terrariums: {`${JSON.stringify(data.data.terrariums)}`}</p>
+          {terrariums.map((terrarium) => (
+            <Card key={terrarium.id}>
+              <Card.Body>
+                <Card.Title>{terrarium.name}</Card.Title>
+                <TemperatureChart
+                  id={terrarium.id}
+                  ref={ref}
+                  terrarium={terrarium}
+                />
+              </Card.Body>
+            </Card>
+          ))}
         </section>
       </div>
     </>
