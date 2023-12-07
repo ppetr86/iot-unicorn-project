@@ -77,6 +77,9 @@ function Terrarium() {
     // Create a line chart
 
     if (terrarium && terrarium.data) {
+      const filteredTemperatureData = terrarium.data.filter(
+        (item) => item.type === "temperature"
+      );
       Chart.register(annotationPlugin);
       const ctx = document.getElementById("myChart").getContext("2d");
       const myChart = new Chart(ctx, {
@@ -85,7 +88,7 @@ function Terrarium() {
           datasets: [
             {
               label: "Temperature Data",
-              data: terrarium.data.map((item) => ({
+              data: filteredTemperatureData.map((item) => ({
                 x: item.timestamp,
                 y: item.value,
               })),
