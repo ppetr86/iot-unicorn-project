@@ -1,20 +1,18 @@
-import { useEffect } from "react";
+import { forwardRef, useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 import annotationPlugin from "chartjs-plugin-annotation";
 import "chartjs-adapter-date-fns";
 import "chart.js/auto";
 
-function TemperatureChart({ terrarium }) {
+const TemperatureChart = forwardRef(({ terrarium }, ref) => {
+  const chartRef = useRef(null);
   useEffect(() => {
     if (terrarium && terrarium.data) {
+      let myChart = null;
       const filteredTemperatureData = terrarium.data.filter(
         (item) => item.type === "temperature"
       );
-
-      Chart.register(annotationPlugin);
-      const ctx = document.getElementById("myChart").getContext("2d");
-
-      const myChart = new Chart(ctx, {
+      const chartConfig = {
         type: "line",
         data: {
           datasets: [
@@ -93,22 +91,25 @@ function TemperatureChart({ terrarium }) {
             },
           },
         },
-      });
+      };
+
+      Chart.register(annotationPlugin);
+      const ctx = chartRef.current.getContext("2d");
+
+      myChart = new Chart(ctx, chartConfig);
 
       return () => {
-        myChart.destroy();
+        if (myChart) {
+          myChart.destroy(); // Destroy the previous Chart instance
+        }
       };
     }
   }, [terrarium]);
 
   return (
-    <canvas
-      ref={terrarium.ref}
-      id={"myChart"}
-      width="400"
-      height="200"
-    ></canvas>
+    <canvas id={"myChart"} width="400" height="200" ref={chartRef}></canvas>
   );
-}
+});
+TemperatureChart.displayName = "TemperatureChart";
 
 export default TemperatureChart;

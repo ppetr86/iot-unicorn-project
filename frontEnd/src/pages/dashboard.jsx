@@ -2,11 +2,9 @@ import GlobalDataFetch from "../services/globalDataFetch";
 import { Alert, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import TemperatureChart from "../components/charts/temperatureChart";
-import { useRef } from "react";
 
 function Dashboard() {
   const { data, isLoading, isError, error } = GlobalDataFetch();
-  const ref = useRef();
 
   if (isLoading) {
     return (
@@ -38,17 +36,14 @@ function Dashboard() {
       {isError && (
         <Alert variant="danger">{`Error fetching data: ${error}`}</Alert>
       )}
+
       <div className="container">
         <section className="terrariumsCharts">
           {terrariums.map((terrarium) => (
-            <Card key={terrarium.id}>
+            <Card key={terrarium._id}>
               <Card.Body>
                 <Card.Title>{terrarium.name}</Card.Title>
-                <TemperatureChart
-                  id={terrarium.id}
-                  ref={ref}
-                  terrarium={terrarium}
-                />
+                <TemperatureChart terrarium={terrarium} />
               </Card.Body>
             </Card>
           ))}
