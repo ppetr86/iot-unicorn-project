@@ -2,10 +2,11 @@ const asyncWrapper = require("../middleware/Async");
 const {CustomApiError} = require("../errors/CustomApiError");
 const {StatusCodes} = require("http-status-codes");
 const User = require("../entities/db/UserSchema");
-const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const LoginDtoIn = require("../entities/dtoIn/LoginDtoIn");
 const {UserDtoOut, UserDtoOutWithIdNameEmail} = require("../entities/dtoOut/UserDtoOut");
+const authService = require("../services/AuthService");
+
 
 const loginUser = asyncWrapper(async (req, res, next) => {
     await authenticateAndRespond(req, res, next, true);
@@ -16,9 +17,9 @@ const loginUserToIotSensors = asyncWrapper(async (req, res, next) => {
 });
 
 const authenticateAndRespond = async (req, res, next, includeUserData) => {
-    const { email, password } = req.body;
+    const {email, password} = req.body;
 
-    const { error } = LoginDtoIn.validate(req.body);
+    const {error} = LoginDtoIn.validate(req.body);
     if (error) {
         return next(new CustomApiError('Email or password in wrong format', StatusCodes.BAD_REQUEST));
     }
@@ -27,29 +28,21 @@ const authenticateAndRespond = async (req, res, next, includeUserData) => {
         ? '-isDeactivated -terrariums -createdAt +password'
         : '-firstName -lastName -email -roles -isDeactivated -terrariums -createdAt +password';
 
-    const dbDocument = await User.findOne({ email }).select(projection);
+    const dbDocument = await User.findOne({email}).select(projection);
 
     if (!dbDocument || !(await dbDocument.isProvidedPasswordMatchingPersisted(password, dbDocument.password))) {
         return next(new CustomApiError(`Email or password incorrect`, StatusCodes.UNAUTHORIZED));
     }
 
-    const token = includeUserData ? signLoginToken(dbDocument?._id, dbDocument?.roles.toString()) : signIotIdentificationToken(dbDocument?._id);
+    const token = includeUserData ? //
+        authService.signLoginToken(dbDocument?._id, dbDocument?.roles.toString()) //
+        : authService.signIotIdentificationToken(dbDocument?._id);
 
     res.status(StatusCodes.CREATED).json({
         status: 'success',
         token,
         data: includeUserData ? new UserDtoOutWithIdNameEmail(dbDocument) : undefined,
     });
-};
-
-const signLoginToken = (id, roles) => {
-    return jwt.sign({ id, roles }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRES_IN,
-    });
-};
-
-const signIotIdentificationToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET);
 };
 
 const forgotPassword = asyncWrapper(async (req, res, next) => {
@@ -98,7 +91,7 @@ const resetPassword = asyncWrapper(async (req, res, next) => {
 });
 
 const createSendToken = (user, statusCode, res) => {
-    const token = signLoginToken(user._id);
+    const token = authService.signLoginToken(user._id);
     const cookieOptions = {
         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 100),
         httpOnly: true
@@ -139,7 +132,7 @@ const getIotIdentificationToken = asyncWrapper(async (req, res, next) => {
     try {
         //TODO: consider adding PathVariable which will verify existing using terrarium for
         const userId = req.user.id;
-        const iotToken = signIotIdentificationToken(userId);
+        const iotToken = authService.signIotIdentificationToken(userId);
 
         res.status(200).json({
             status: 'success',
@@ -153,10 +146,8 @@ const getIotIdentificationToken = asyncWrapper(async (req, res, next) => {
 module.exports = {
     loginUser,
     loginUserToIotSensors,
-    signLoginToken,
     forgotPassword,
     resetPassword,
     updatePassword,
-    signIotIdentificationToken,
     getIotIdentificationToken
 }
