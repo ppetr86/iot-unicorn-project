@@ -3,9 +3,10 @@ const asyncWrapper = require("../middleware/Async");
 const {CustomApiError} = require("../errors/CustomApiError");
 const {StatusCodes} = require('http-status-codes');
 const {UserDtoOut} = require("../entities/dtoOut/UserDtoOut");
-const UserPutDtoIn = require("../entities/dtoIn/UserPutDtoIn");
-const UserCreateDtoIn = require("../entities/dtoIn/UserCreateDtoIn");
+const UserPutValidationIn = require("../entities/dtoIn/validation/UserPutValidationIn");
+const UserCreateValidationIn = require("../entities/dtoIn/validation/UserCreateValidationIn");
 const UserDao = require("../dao/UserDao");
+const {UserPutDtoIn, UserCreateDtoIn} = require("../entities/dtoIn/ClassDtosIn");
 
 const getAllUsers = asyncWrapper(async (req, res, next) => {
 
@@ -42,11 +43,12 @@ const deleteUser = asyncWrapper(async (req, res, next) => {
 
 const putUser = asyncWrapper(async (req, res, next) => {
 
-    const {error} = UserPutDtoIn.validate(req.body);
+    const {error} = UserPutValidationIn.validate(req.body);
     if (error)
         return next(new CustomApiError(error), StatusCodes.BAD_REQUEST);
 
-    const dbDocument = await User.findOneAndUpdate({_id: req.params.id}, req.body, {
+    const putUserIn = new UserPutDtoIn(req.body);
+    const dbDocument = await User.findOneAndUpdate({_id: req.params.id}, putUserIn, {
         new: true,
         runValidators: true,
     });
@@ -76,14 +78,16 @@ const getUser = asyncWrapper(async (req, res, next) => {
 const createUser = asyncWrapper(async (req, res, next) => {
     delete req.body["repeatPassword"]
 
-    const {error} = UserCreateDtoIn.validate(req.body);
+    const {error} = UserCreateValidationIn.validate(req.body);
+
     if (error)
         return next(new CustomApiError(error), StatusCodes.BAD_REQUEST);
 
-    if (await User.isExistingByEmail(req.body.email))
-        return next(new CustomApiError(`User with email ${req.body.email} already exists.`, StatusCodes.BAD_REQUEST));
+    const userCreateIn = new UserCreateDtoIn(req.body);
+    if (await User.isExistingByEmail(userCreateIn.email))
+        return next(new CustomApiError(`User with email ${userCreateIn.email} already exists.`, StatusCodes.BAD_REQUEST));
 
-    let activatedNotAdminUser = {...req.body, isDeactivated: false};
+    let activatedNotAdminUser = {...userCreateIn, isDeactivated: false};
 
     const user = new User(activatedNotAdminUser);
     let validationErrors = user.collectValidationErrors();

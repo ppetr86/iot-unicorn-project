@@ -1,9 +1,4 @@
 const asyncWrapper = require("../middleware/Async");
-const {StatusCodes} = require("http-status-codes");
-const UserSchema = require("../entities/db/UserSchema");
-const {CustomApiError} = require("../errors/CustomApiError");
-const {Terrarium} = require("../entities/schemaToClass/MongooseSchemaToClass");
-const TerrariumDtoIn = require("../entities/dtoIn/TerrariumDtoIn");
 const terrariumService = require("../services/TerrariumService");
 
 const getAllUserTerrariums = asyncWrapper(async (req, res, next) => {

@@ -72,6 +72,12 @@ const requestingUserIsTheSameAsPathUserOrThrow = asyncWrapper(async (req, res, n
     next();
 });
 
+const onlyUserRoleCanBeCreated = asyncWrapper(async (req, res, next) => {
+    if (req.body.roles.length !== 1 || req.body.roles[0].toUpperCase() !== 'ROLE_USER')
+        return next(new CustomApiError('Only user with a `ROLE_USER` can be created.', StatusCodes.UNAUTHORIZED));
+    next();
+});
+
 module.exports = {
     protectWithAuthenticationToken,
     authorize,
@@ -79,4 +85,5 @@ module.exports = {
     adminAccessOrThrow,
     adminifyThrow,
     requestingUserIsTheSameAsPathUserOrThrow,
+    onlyUserRoleCanBeCreated,
 }

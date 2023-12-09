@@ -7,6 +7,15 @@ Content-Type: application/json
   "password": "1234"
 }
 
+### login user test0@ for ROLE_ADMIN, test1 to n@ for ROLE_USER
+POST localhost:3001/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "test0@test.com  ",
+  "password": "1234"
+}
+
 ### GET IOT TOKEN
 GET localhost:3001/api/v1/auth/iot-token
 Content-Type: application/json
@@ -21,6 +30,20 @@ Authorization: Bearer: {{jwtAdmin}}
 GET https://jittery-ruby-pigeon.cyclic.app/api/v1/users/{{idAdmin}}
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
+
+### POST USER
+POST localhost:3001/api/v1/users
+Content-Type: application/json
+
+{
+  "firstName": "Petr",
+  "lastName": "Novotny",
+  "email": "petr@test.com",
+  "roles": [
+    "ROLE_USER"
+  ],
+  "password": "1234"
+}
 
 ### get OTHER user ROLE_ADMIN by id - should 200
 GET localhost:3001/api/v1/users/{{idUser1}}
@@ -99,7 +122,7 @@ Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 {
-  "name": "terrarium.name0",
+  "name": "Mexican hostages4",
   "animalType": "type11",
   "description": "description1",
   "targetLivingConditions": {

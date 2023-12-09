@@ -5,7 +5,7 @@ const UserSchema = require("../entities/db/UserSchema");
 
 const createTerrariumData = asyncWrapper(async (req, res, next) => {
 
-    const hardwarioCode = req.body.sensorId;
+    const hardwarioCode = req.body.sensorId.trim();
     const userId = req.user.id;
     const type = req.body.topic.toLowerCase().trim();
     if (('temperature' === type || 'danger' === type || 'drinking' === type || 'feeding' === type) && !isNaN(req.body.value)) {

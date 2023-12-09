@@ -3,10 +3,10 @@ const {CustomApiError} = require("../errors/CustomApiError");
 const {StatusCodes} = require("http-status-codes");
 const User = require("../entities/db/UserSchema");
 const crypto = require("crypto");
-const LoginDtoIn = require("../entities/dtoIn/LoginDtoIn");
 const {UserDtoOut, UserDtoOutWithIdNameEmail} = require("../entities/dtoOut/UserDtoOut");
 const authService = require("../services/AuthService");
-
+const LoginValidationIn = require("../entities/dtoIn/validation/LoginValidationIn");
+const {LoginDtoIn} = require("../entities/dtoIn/ClassDtosIn");
 
 const loginUser = asyncWrapper(async (req, res, next) => {
     await authenticateAndRespond(req, res, next, true);
@@ -17,9 +17,7 @@ const loginUserToIotSensors = asyncWrapper(async (req, res, next) => {
 });
 
 const authenticateAndRespond = async (req, res, next, includeUserData) => {
-    const {email, password} = req.body;
-
-    const {error} = LoginDtoIn.validate(req.body);
+    const {error} = LoginValidationIn.validate(req.body);
     if (error) {
         return next(new CustomApiError('Email or password in wrong format', StatusCodes.BAD_REQUEST));
     }
@@ -28,9 +26,10 @@ const authenticateAndRespond = async (req, res, next, includeUserData) => {
         ? '-isDeactivated -terrariums -createdAt +password'
         : '-firstName -lastName -email -roles -isDeactivated -terrariums -createdAt +password';
 
-    const dbDocument = await User.findOne({email}).select(projection);
+    const loginDtoIn = new LoginDtoIn(req.body);
+    const dbDocument = await User.findOne({email: loginDtoIn.email}).select(projection);
 
-    if (!dbDocument || !(await dbDocument.isProvidedPasswordMatchingPersisted(password, dbDocument.password))) {
+    if (!dbDocument || !(await dbDocument.isProvidedPasswordMatchingPersisted(loginDtoIn.password, dbDocument.password))) {
         return next(new CustomApiError(`Email or password incorrect`, StatusCodes.UNAUTHORIZED));
     }
 
@@ -47,7 +46,7 @@ const authenticateAndRespond = async (req, res, next, includeUserData) => {
 
 const forgotPassword = asyncWrapper(async (req, res, next) => {
     // 1) dbDocument
-    const user = await User.findOne({email: req.body.email});
+    const user = await User.findOne({email: req.body.email.trim()});
     if (!user) {
         return next(new CustomApiError('There is no user with email address.', StatusCodes.NOT_FOUND));
     }
@@ -80,7 +79,7 @@ const resetPassword = asyncWrapper(async (req, res, next) => {
     if (!user) {
         return next(new CustomApiError('Token is invalid or has expired', StatusCodes.BAD_REQUEST));
     }
-    user.password = req.body.password;
+    user.password = req.body.password.trim();
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save();
@@ -116,10 +115,10 @@ const updatePassword = asyncWrapper(async (req, res, next) => {
 
     const user = await User.findById(req.user.id).select('+password');
 
-    if (!(await user.isProvidedPasswordMatchingPersisted(req.body.passwordCurrent, user.password)))
+    if (!(await user.isProvidedPasswordMatchingPersisted(req.body.passwordCurrent.trim(), user.password)))
         return next(new CustomApiError('Your current password is wrong.', StatusCodes.UNAUTHORIZED));
 
-    user.password = req.body.password;
+    user.password = req.body.password.trim();
     await user.save();
     // User.findByIdAndUpdate will NOT work as intended!
     // don't use update on anything password related

@@ -1,9 +1,9 @@
 const Joi = require('joi');
 
-const TerrariumDtoIn = Joi.object({
-    name: Joi.string().required(),
-    animalType: Joi.string(),
-    description: Joi.string(),
+const TerrariumValidationIn = Joi.object({
+    name: Joi.string().required().trim(),
+    animalType: Joi.string().trim(),
+    description: Joi.string().trim(),
     targetLivingConditions: Joi.object({
         humidity: Joi.object({
             min: Joi.number().min(0).max(100),
@@ -18,12 +18,12 @@ const TerrariumDtoIn = Joi.object({
             max: Joi.number().min(0).max(100),
         }).required(),
     }).required(),
-    hardwarioCode: Joi.string().min(1).max(36).required(),
+    hardwarioCode: Joi.string().min(1).max(36).required().trim(),
     data: Joi.array().items(Joi.object({
         timestamp: Joi.date(),
         value: Joi.number(),
-        type: Joi.string().valid('temperature', 'danger', 'feeding', 'drinking'),
+        type: Joi.string().trim().valid('temperature', 'danger', 'feeding', 'drinking'),
     }).default([])),
 });
 
-module.exports = TerrariumDtoIn;
+module.exports = TerrariumValidationIn;

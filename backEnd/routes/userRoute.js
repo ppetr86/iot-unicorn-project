@@ -15,7 +15,8 @@ const {
     authorize,
     adminOrOwnerAccessOrThrow,
     adminAccessOrThrow,
-    adminifyThrow
+    adminifyThrow,
+    onlyUserRoleCanBeCreated
 } = require('../middleware/AuthenticationMiddleware');
 
 /*get by id, delete by id, put by id*/
@@ -27,6 +28,6 @@ router.route("/:id")
 /*get all, create one*/
 router.route('/')
     .get(protectWithAuthenticationToken, adminAccessOrThrow, getAllUsers)
-    .post(createUser)
+    .post(onlyUserRoleCanBeCreated, createUser)
 
 module.exports = router;

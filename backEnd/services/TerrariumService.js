@@ -5,7 +5,8 @@ const {StatusCodes} = require("http-status-codes");
 const {ResponseObjDto} = require("../entities/ResponseObjDto");
 const UserSchema = require("../entities/db/UserSchema");
 const {Terrarium} = require("../entities/schemaToClass/MongooseSchemaToClass");
-const TerrariumDtoIn = require("../entities/dtoIn/TerrariumDtoIn");
+const TerrariumValidationIn = require("../entities/dtoIn/validation/TerrariumValidationIn");
+const {TerrariumDtoIn} = require("../entities/dtoIn/ClassDtosIn");
 
 class TerrariumService {
     constructor() {
@@ -18,14 +19,9 @@ class TerrariumService {
         this.validateUserIdAndTerrariumId(userId, terrariumId, next);
 
         //TODO: tady je otazka jestli chceme dovolit manipulovat i ta data
-        const terrarium = new Terrarium(req.body.targetLivingConditions,
-            req.body.name,
-            req.body.animalType,
-            req.body.description,
-            req.body.hardwarioCode,
-            req.body.data);
+        const terrariumIn = new TerrariumDtoIn(req.body);
 
-        const {error} = TerrariumDtoIn.validate(terrarium);
+        const {error} = TerrariumValidationIn.validate(terrariumIn);
 
         if (error) {
             return next(new CustomApiError(`Terrarium validation failed: ${error.message}`, StatusCodes.BAD_REQUEST));
@@ -33,22 +29,23 @@ class TerrariumService {
 
         const existingTerrarium = await UserSchema.findOne({
             _id: userId,
-            "terrariums.name": req.body.name,
+            "terrariums.name": terrariumIn.name,
             "terrariums._id": {$ne: terrariumId}, // Exclude the current terrarium from the check
         });
 
         if (existingTerrarium) {
-            return next(new CustomApiError(`Terrarium with name ${req.body.name} already exists for user with id ${userId}`, StatusCodes.CONFLICT));
+            return next(new CustomApiError(`Terrarium with name ${req.body.name} already ` +
+                `exists for user with id ${userId}`, StatusCodes.CONFLICT));
         }
 
         const update = {
             $set: {
-                "terrariums.$[t].name": req.body.name,
-                "terrariums.$[t].animalType": req.body.animalType,
-                "terrariums.$[t].description": req.body.description,
-                "terrariums.$[t].hardwarioCode": req.body.hardwarioCode,
-                "terrariums.$[t].targetLivingConditions": req.body.targetLivingConditions,
-                "terrariums.$[t].data": req.body.data,
+                "terrariums.$[t].name": terrariumIn.name,
+                "terrariums.$[t].animalType": terrariumIn.animalType,
+                "terrariums.$[t].description": terrariumIn.description,
+                "terrariums.$[t].hardwarioCode": terrariumIn.hardwarioCode,
+                "terrariums.$[t].targetLivingConditions": terrariumIn.targetLivingConditions,
+                "terrariums.$[t].data": terrariumIn.data,
             },
         };
 
@@ -65,7 +62,8 @@ class TerrariumService {
             );
 
             if (!updatedUser) {
-                return next(new CustomApiError(`Terrarium with id ${terrariumId} not found for user with id ${userId}`, StatusCodes.NOT_FOUND));
+                return next(new CustomApiError(`Terrarium with id ${terrariumId} not found for user with id ${userId}`,
+                    StatusCodes.NOT_FOUND));
             }
 
             res.status(StatusCodes.OK).json({
@@ -130,7 +128,17 @@ class TerrariumService {
             });
 
             if (existingTerrarium) {
-                return next(new CustomApiError(`Terrarium with name ${req.body.name} already exists for user with id ${userId}`, StatusCodes.CONFLICT));
+                return next(new CustomApiError(`Terrarium with name ${req.body.name} already exists for user with id ${userId}`,
+                    StatusCodes.CONFLICT));
+            }
+
+            const hardWarioCodeInUse = await UserSchema.findOne({
+                _id: userId,
+                "terrariums.hardwarioCode": req.body.hardwarioCode,
+            });
+
+            if (hardWarioCodeInUse) {
+                return next(new CustomApiError(`HardwarioCode ${req.body.hardwarioCode} already in use.`, StatusCodes.CONFLICT));
             }
 
             const result = await UserSchema.findOneAndUpdate(
