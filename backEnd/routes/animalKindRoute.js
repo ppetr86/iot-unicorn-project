@@ -13,10 +13,7 @@ const {
 const {
     protectWithAuthenticationToken,
     authorize,
-    adminOrOwnerAccessOrThrow,
-    adminAccessOrThrow,
-    adminifyThrow
-} = require('../middleware/AuthenticationMiddleware');
+} = require('../middleware/AuthMiddleware');
 
 /*get by id, delete by id, put by id*/
 router.route("/:id")

@@ -4,6 +4,8 @@ const {CustomApiError} = require("../errors/CustomApiError");
 const {StatusCodes} = require("http-status-codes");
 const {promisify} = require("util");
 const User = require("../entities/db/UserSchema");
+const UserSchema = require("../entities/db/UserSchema");
+const mongoose = require("mongoose");
 
 const protectWithAuthenticationToken = asyncWrapper(async (req, res, next) => {
     // 1) Getting token and check if it's there
@@ -78,6 +80,37 @@ const onlyUserRoleCanBeCreated = asyncWrapper(async (req, res, next) => {
     next();
 });
 
+const requestingUserHasAccessToTerrarium = asyncWrapper(async (req, res, next) => {
+    const userId = req.params.id;
+    const terrariumId = req.params.terrariumId;
+
+    // Check if the terrariumId exists within the terrariums array
+    const count = await UserSchema.countDocuments({
+        _id: userId,
+        terrariums: terrariumId
+    });
+
+    if (count === 0)
+        return next(new CustomApiError(`User does not have access to this resource`, StatusCodes.BAD_REQUEST));
+    next();
+});
+
+const isUserIdValid = asyncWrapper(async (req, res, next) => {
+    const userId = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return next(new CustomApiError("Invalid userId", StatusCodes.BAD_REQUEST));
+    }
+    next();
+});
+
+const isTerrariumIdValid = asyncWrapper(async (req, res, next) => {
+    const terrariumId = req.params.terrariumId;
+    if (!mongoose.Types.ObjectId.isValid(terrariumId)) {
+        return next(new CustomApiError("Invalid terrariumId", StatusCodes.BAD_REQUEST));
+    }
+    next();
+});
+
 module.exports = {
     protectWithAuthenticationToken,
     authorize,
@@ -86,4 +119,7 @@ module.exports = {
     adminifyThrow,
     requestingUserIsTheSameAsPathUserOrThrow,
     onlyUserRoleCanBeCreated,
+    requestingUserHasAccessToTerrarium,
+    isTerrariumIdValid,
+    isUserIdValid
 }

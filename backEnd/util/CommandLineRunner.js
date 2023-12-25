@@ -2,9 +2,15 @@
 const {faker} = require('@faker-js/faker');
 const animalKindDao = require("../dao/AnimalKindDao");
 const userDao = require("../dao/UserDao");
-const {TerrariumData, TerrariumTarget, Sensor, Terrarium} = require('../entities/schemaToClass/MongooseSchemaToClass.js');
+const {
+    TerrariumData,
+    TerrariumTarget,
+    Sensor,
+    Terrarium
+} = require('../entities/schemaToClass/MongooseSchemaToClass.js');
 const {v4: uuidV4} = require('uuid');
 const {UUID} = require("mongodb");
+const TerrariumSchema = require("../entities/db/TerrariumSchema")
 
 class CommandLineRunner {
     constructor() {
@@ -40,41 +46,49 @@ class CommandLineRunner {
 
         }
 
-        //create user
-        if (appConfig.applicationProfiles.indexOf("createUsers") !== -1) {
-            for (let i = 0; i < 3; i++) {
-                let email = "test" + i + "@test.com";
-                if (!(await this.isDataExisting(userDao, {"email": email}))) {
-                    //ROLE_ADMIN one time, rest ROLE_USER
-                    const user = this.createFakeUser(i === 0 ? "ROLE_ADMIN" : "ROLE_USER", email);
-                    try {
-                        this.writeData(userDao, user);
-                        console.log("Writing user with email: " + email);
-                    } catch (e) {
-                        console.error("Failed writing user from commandLineRunner")
+        //create terrariums
+        const isCreateUsersConfigured = appConfig.applicationProfiles.indexOf("createUsers") !== -1;
+        const isCreateUsersRoleUserConfigured = appConfig.applicationProfiles.indexOf("createUsersRoleUser");
+
+        if (isCreateUsersConfigured || isCreateUsersRoleUserConfigured !== -1) {
+            const terrariums = await this.createFakeTerrariums();
+            const terrariumIds = terrariums.map(each => each._id);
+
+            //create user
+            if (isCreateUsersConfigured) {
+                for (let i = 0; i < 3; i++) {
+                    let email = "test" + i + "@test.com";
+                    if (!(await this.isDataExisting(userDao, {"email": email}))) {
+                        //ROLE_ADMIN one time, rest ROLE_USER
+                        const user = this.createFakeUser(i === 0 ? "ROLE_ADMIN" : "ROLE_USER", email, terrariumIds);
+                        try {
+                            this.writeData(userDao, user);
+                            console.log("Writing user with email: " + email);
+                        } catch (e) {
+                            console.error("Failed writing user from commandLineRunner")
+                        }
                     }
                 }
+                console.log("createUsers done");
             }
-            console.log("createUsers done");
-        }
 
-        if (appConfig.applicationProfiles.indexOf("createUsersRoleUser") !== -1) {
-            for (let i = 0; i < 3; i++) {
-                let email = "test" + i + "@test.com";
-                if (!(await this.isDataExisting(userDao, {"email": email}))) {
-                    //ROLE_ADMIN one time, rest ROLE_USER
-                    const user = this.createFakeUser("ROLE_USER", email);
-                    try {
-                        this.writeData(userDao, user);
-                        console.log("Writing user with email: " + email);
-                    } catch (e) {
-                        console.error("Failed writing user from commandLineRunner")
+            if (isCreateUsersRoleUserConfigured !== -1) {
+                for (let i = 0; i < 3; i++) {
+                    let email = "test" + i + "@test.com";
+                    if (!(await this.isDataExisting(userDao, {"email": email}))) {
+                        //ROLE_ADMIN one time, rest ROLE_USER
+                        const user = this.createFakeUser("ROLE_USER", email, terrariumIds);
+                        try {
+                            this.writeData(userDao, user);
+                            console.log("Writing user with email: " + email);
+                        } catch (e) {
+                            console.error("Failed writing user from commandLineRunner")
+                        }
                     }
                 }
+                console.log("createUsers done");
             }
-            console.log("createUsers done");
         }
-
     }
 
     async isDataExisting(dao, queryObject) {
@@ -100,18 +114,18 @@ class CommandLineRunner {
         }
     }
 
-    createFakeUser(role, email) {
+    createFakeUser(role, email, terarriumids) {
         const user = {};
         user.firstName = faker.person.firstName()
         user.lastName = faker.person.lastName();
         user.email = email;
         user.roles = [role];
         user.password = 1234;
-        user.terrariums = this.createFakeTerrariums();
+        user.terrariums = terarriumids;
         return user;
     }
 
-    createFakeTerrariums() {
+    async createFakeTerrariums() {
         const terrariumsArray = [];
         for (let i = 0; i < 1; i++) {
 
@@ -127,7 +141,7 @@ class CommandLineRunner {
                 "12aef2bd83b3" + UUID.generate(),
                 data));
         }
-        return terrariumsArray;
+        const data = await TerrariumSchema.bulkSave(terrariumsArray);
     }
 
     createFakeAnimalKind() {

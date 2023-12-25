@@ -8,7 +8,6 @@ class UserDtoOut {
         this.isDeactivated = dbDocument?.isDeactivated;
         this.createdAt = dbDocument?.createdAt;
         this.terrariums = dbDocument?.terrariums;
-        //TODO: Define what and how to return about terrariums, sensors, data
     }
 }
 

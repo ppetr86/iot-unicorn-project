@@ -12,7 +12,7 @@ const {
 
 const {
     protectWithAuthenticationToken,
-} = require('../middleware/AuthenticationMiddleware');
+} = require('../middleware/AuthMiddleware');
 
 router.route('/login').post(loginUser)
 

@@ -26,7 +26,7 @@ const UserSchema = new Schema({
             trim: true,
             lowercase: true,
             unique: true,
-            required:true,
+            required: true,
             validate: [validateEmail, 'Please fill a valid email address'],
             index: true
         },
@@ -65,96 +65,15 @@ const UserSchema = new Schema({
             type: Date,
             default: Date.now,
         },
-        //user related info end
 
-        //embedded objects in mongoose are assigned _id by default
-        terrariums: [
-            {
-                name: {
-                    type: String,
-                    index: true,
-                    unique: true
-                },
-                animalType: String,
-                description: String,
-                //optimalni hodnoty kterych chceme dosahovat pri chovu
-                targetLivingConditions: {
-                    type: Object,
-                    required: true,
-                    humidity: {
-                        min: {
-                            type: Number,
-                            min: 0,
-                            max: 100
-                        },
-                        max: {
-                            type: Number,
-                            min: 0,
-                            max: 100
-                        }
-                    },
-                    temperature: {
-                        min: {
-                            type: Number,
-                            min: -100,
-                            max: 100
-                        },
-                        max: {
-                            type: Number,
-                            min: -100,
-                            max: 100
-                        }
-                    },
-                    lightIntensity: {
-                        min: {
-                            type: Number,
-                            min: 0,
-                            max: 100
-                        },
-                        max: {
-                            type: Number,
-                            min: 0,
-                            max: 100
-                        }
-                    }
-                },
-                hardwarioCode: {
-                    type: String,
-                    maxlength: 36,
-                    minLength: 1,
-                    sparse: true,
-                    unique: true,
-                    index: true
-                },
-                data: [
-                    {
-                        timestamp: Date,
-                        value: Number,
-                        type: {
-                            type: String,
-                            enum: ['temperature', 'danger', 'feeding', 'drinking']
-                        },
-                    },
-                ],
-            },
-        ],
-    })
-;
-
-UserSchema.path('terrariums.targetLivingConditions').validate(validateMinMax, 'Target max must be greater or equal to Target min.');
-
-function validateMinMax(targetLivingConditions) {
-    return targetLivingConditions.humidity.min <= targetLivingConditions.humidity.max &&
-        targetLivingConditions.temperature.min <= targetLivingConditions.temperature.max &&
-        targetLivingConditions.lightIntensity.min <= targetLivingConditions.lightIntensity.max;
-
-}
+        // @ManyToMany
+        terrariums: [{type: Schema.Types.ObjectId, ref: 'TerrariumSchema'}],
+    });
 
 UserSchema.pre('save', async function (next) {
     if (!this.isModified('password'))
         return next();
     this.password = await bcrypt.hash(this.password, 10);
-
     next();
 });
 

@@ -1,9 +1,9 @@
 "use strict";
-const mongoose = require('mongoose');
 const {CustomApiError} = require("../errors/CustomApiError");
 const {StatusCodes} = require("http-status-codes");
 const {ResponseObjDto} = require("../entities/ResponseObjDto");
 const UserSchema = require("../entities/db/UserSchema");
+const TerrariumSchema = require("../entities/db/TerrariumSchema");
 const {Terrarium} = require("../entities/schemaToClass/MongooseSchemaToClass");
 const TerrariumValidationIn = require("../entities/dtoIn/validation/TerrariumValidationIn");
 const {TerrariumDtoIn} = require("../entities/dtoIn/ClassDtosIn");
@@ -27,49 +27,20 @@ class TerrariumService {
             return next(new CustomApiError(`Terrarium validation failed: ${error.message}`, StatusCodes.BAD_REQUEST));
         }
 
-        const existingTerrarium = await UserSchema.findOne({
-            _id: userId,
-            "terrariums.name": terrariumIn.name,
-            "terrariums._id": {$ne: terrariumId}, // Exclude the current terrarium from the check
-        });
-
-        if (existingTerrarium) {
-            return next(new CustomApiError(`Terrarium with name ${req.body.name} already ` +
-                `exists for user with id ${userId}`, StatusCodes.CONFLICT));
-        }
-
-        const update = {
-            $set: {
-                "terrariums.$[t].name": terrariumIn.name,
-                "terrariums.$[t].animalType": terrariumIn.animalType,
-                "terrariums.$[t].description": terrariumIn.description,
-                "terrariums.$[t].hardwarioCode": terrariumIn.hardwarioCode,
-                "terrariums.$[t].targetLivingConditions": terrariumIn.targetLivingConditions,
-                "terrariums.$[t].data": terrariumIn.data,
-            },
-        };
-
-        const options = {
-            arrayFilters: [{"t._id": terrariumId}],
-            new: true,
-        };
-
         try {
-            const updatedUser = await UserSchema.findOneAndUpdate(
-                {_id: userId, "terrariums._id": terrariumId},
-                update,
-                options
+            const updatedTerrarium = await TerrariumSchema.findOneAndUpdate(
+                {_id: terrariumId},
+                terrariumIn
             );
 
-            if (!updatedUser) {
-                return next(new CustomApiError(`Terrarium with id ${terrariumId} not found for user with id ${userId}`,
-                    StatusCodes.NOT_FOUND));
+            if (!updatedTerrarium) {
+                return next(new CustomApiError(`Terrarium with id ${terrariumId} not found`, StatusCodes.NOT_FOUND));
             }
 
             res.status(StatusCodes.OK).json({
                 status: "success",
                 message: "Terrarium updated successfully",
-                data: updatedUser.terrariums.find(t => t._id.toString() === terrariumId),
+                data: updatedTerrarium,
             });
         } catch (error) {
             console.error("Error updating terrarium:", error);
@@ -81,13 +52,13 @@ class TerrariumService {
     async getTerrariums(req, res, next) {
         const userId = req.params.id;
         try {
-
-            this.validateUserId(userId, next);
-
-            const userTerrariums = await UserSchema.findOne({_id: userId}).select('terrariums');
+            const userTerrariums = await UserSchema
+                .findById(userId)
+                .select('terrariums')
+                .populate("terrariums");
 
             if (!userTerrariums) {
-                const message = `UserId: ${userId} not found or the has no terrariums.`;
+                const message = `UserId: ${userId} not found or has no terrariums.`;
                 console.error(message);
                 return res.status(StatusCodes.NOT_FOUND).json(new ResponseObjDto(message, 'fail'));
             }
@@ -106,10 +77,6 @@ class TerrariumService {
 
     async createTerrarium(req, res, next) {
         try {
-            const userId = req.params.id;
-            this.validateUserId(userId, next);
-
-            //Mongoose does not automatically enforce unique constraints on subdocuments when using $push.
             const terrarium = new Terrarium(req.body.targetLivingConditions,
                 req.body.name,
                 req.body.animalType,
@@ -117,35 +84,20 @@ class TerrariumService {
                 req.body.hardwarioCode,
                 []);
 
-            const {error} = TerrariumDtoIn.validate(terrarium);
+            const {error} = TerrariumValidationIn.validate(terrarium);
             if (error) {
                 return next(new CustomApiError(`Terrarium validation failed: ${error.message}`, StatusCodes.BAD_REQUEST));
             }
 
-            const existingTerrarium = await UserSchema.findOne({
-                _id: userId,
-                "terrariums.name": req.body.name,
+            const isHardwarioCodeUsed = await TerrariumSchema.findOne({
+                "hardwarioCode": req.body.hardwarioCode,
             });
 
-            if (existingTerrarium) {
-                return next(new CustomApiError(`Terrarium with name ${req.body.name} already exists for user with id ${userId}`,
-                    StatusCodes.CONFLICT));
+            if (isHardwarioCodeUsed) {
+                return next(new CustomApiError(`HardwarioCode ${req.body.hardwarioCode} in use.`, StatusCodes.CONFLICT));
             }
 
-            const hardWarioCodeInUse = await UserSchema.findOne({
-                _id: userId,
-                "terrariums.hardwarioCode": req.body.hardwarioCode,
-            });
-
-            if (hardWarioCodeInUse) {
-                return next(new CustomApiError(`HardwarioCode ${req.body.hardwarioCode} already in use.`, StatusCodes.CONFLICT));
-            }
-
-            const result = await UserSchema.findOneAndUpdate(
-                {_id: userId},
-                {$push: {terrariums: terrarium}},
-                {new: true}
-            );
+            const result = await new TerrariumSchema(terrarium).save();
 
             if (result) {
                 res.status(StatusCodes.CREATED).json({
@@ -161,19 +113,12 @@ class TerrariumService {
     };
 
     async deleteTerrarium(req, res, next) {
+        const terrariumId = req.params.terrariumId;
         try {
+            const deletedTerrarium = await TerrariumSchema.findByIdAndDelete(terrariumId);
 
-            const userId = req.params.id;
-            const terrariumId = req.params.terrariumId;
-            this.validateUserIdAndTerrariumId(userId, terrariumId, next);
-            const result = await UserSchema.findOneAndUpdate(
-                {_id: userId},
-                {$pull: {terrariums: {_id: terrariumId}}},
-                {new: true}
-            );
-
-            if (!result) {
-                console.log('User not found');
+            if (!deletedTerrarium) {
+                console.log('Terrarium not found');
                 // Handle the case where the user is not found (optional)
                 return;
             }
@@ -188,9 +133,7 @@ class TerrariumService {
 
     async getTerrariumData(req, res, next, filter, projection) {
         try {
-
             await this.getTerrarium(req, res, next, filter, projection);
-
             const data = res.locals.response.data.map((terrarium) => terrarium.data);
 
             res.status(StatusCodes.OK).json(new ResponseObjDto(data, "success"));
@@ -200,28 +143,9 @@ class TerrariumService {
     };
 
     async getTerrarium(req, res, next, filter, projection) {
+        const terrariumId = req.params.terrariumId;
         try {
-            const userId = req.params.id;
-            const terrariumId = req.params.terrariumId;
-            this.validateUserIdAndTerrariumId(userId, terrariumId, next);
-
-            const user = await UserSchema.findOne(
-                {
-                    _id: userId,
-                    ...filter,
-                },
-                projection
-            );
-
-            if (!user || !user.terrariums || user.terrariums.length === 0) {
-                const message = `NOT FOUND: Terrarium id: ${terrariumId} of a userId: ${userId}`;
-                console.error(message);
-                return res.status(StatusCodes.NOT_FOUND).json(new ResponseObjDto(message, 'fail'));
-            }
-
-            const data = user.terrariums.map((t) =>
-                new Terrarium(t.targetLivingConditions, t.name, t.animalType, t.description, t.hardwarioCode, t.data)
-            );
+            const data = await TerrariumSchema.findById(terrariumId);
 
             res.status(StatusCodes.OK).json(new ResponseObjDto(data, 'success'));
         } catch (error) {
@@ -229,23 +153,6 @@ class TerrariumService {
             console.error(message);
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(new ResponseObjDto(message, 'fail'));
         }
-    }
-
-    validateUserId(userId, next) {
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            return next(new CustomApiError("Invalid userId", StatusCodes.BAD_REQUEST));
-        }
-    }
-
-    validateTerrariumId(terrariumId, next) {
-        if (!mongoose.Types.ObjectId.isValid(terrariumId)) {
-            return next(new CustomApiError("Invalid terrariumId", StatusCodes.BAD_REQUEST));
-        }
-    }
-
-    validateUserIdAndTerrariumId(userId, terrariumId, next) {
-        this.validateUserId(userId, next);
-        this.validateTerrariumId(terrariumId, next);
     }
 }
 

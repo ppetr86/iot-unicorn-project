@@ -13,22 +13,26 @@ const {
 
 const {
     protectWithAuthenticationToken,
-    requestingUserIsTheSameAsPathUserOrThrow
-} = require('../middleware/AuthenticationMiddleware');
+    requestingUserIsTheSameAsPathUserOrThrow,
+    requestingUserHasAccessToTerrarium,
+    isTerrariumIdValid,
+    isUserIdValid,
+} = require('../middleware/AuthMiddleware');
 
 router.route("/:id/terrariums")
-    .get(protectWithAuthenticationToken, getAllUserTerrariums)
-    .post(protectWithAuthenticationToken, requestingUserIsTheSameAsPathUserOrThrow, createUserTerrarium);
+    .get(protectWithAuthenticationToken, isUserIdValid, getAllUserTerrariums)
+    .post(protectWithAuthenticationToken, isUserIdValid, requestingUserIsTheSameAsPathUserOrThrow, createUserTerrarium);
 
 router.route("/:id/terrariums/:terrariumId")
-    .delete(protectWithAuthenticationToken, requestingUserIsTheSameAsPathUserOrThrow, deleteUserTerrariumById)
-    .get(protectWithAuthenticationToken, requestingUserIsTheSameAsPathUserOrThrow, getTerrariumByTerrariumId)
-    .put(protectWithAuthenticationToken, requestingUserIsTheSameAsPathUserOrThrow, putUserTerrariumByTerrariumId);
+    .delete(protectWithAuthenticationToken, isUserIdValid, isTerrariumIdValid, requestingUserIsTheSameAsPathUserOrThrow, requestingUserHasAccessToTerrarium, deleteUserTerrariumById)
+    .get(protectWithAuthenticationToken, isUserIdValid, isTerrariumIdValid, requestingUserIsTheSameAsPathUserOrThrow, requestingUserHasAccessToTerrarium, getTerrariumByTerrariumId)
+    .put(protectWithAuthenticationToken, isUserIdValid, isTerrariumIdValid, requestingUserIsTheSameAsPathUserOrThrow, requestingUserHasAccessToTerrarium, putUserTerrariumByTerrariumId);
 
 router.route("/:id/terrariumsHc/:hardwarioCode")
-    .get(protectWithAuthenticationToken, getTerrariumByHardwarioCode);
+    .get(protectWithAuthenticationToken, isUserIdValid, getTerrariumByHardwarioCode);
 
 
-router.route("/:id/terrariums/:terrariumId/data").get(protectWithAuthenticationToken, getTerrariumDataByTerrariumId)
+router.route("/:id/terrariums/:terrariumId/data")
+    .get(protectWithAuthenticationToken, isUserIdValid, isTerrariumIdValid, requestingUserHasAccessToTerrarium, getTerrariumDataByTerrariumId)
 
 module.exports = router;
