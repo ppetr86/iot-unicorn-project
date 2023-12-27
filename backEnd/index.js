@@ -60,8 +60,8 @@ app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
 cron.schedule('0 * * * *', () => {
-    //TODO: cron job runs every hour just for testing purpose...
-    oldDataEraser.eraseOldMeasuredDataFromDatabase(7);
+    const value = appConfig.dataEraser;
+    oldDataEraser.eraseOldMeasuredDataFromDatabase(!isNaN(value) ? 7 : value);
 });
 const start = async () => {
     try {

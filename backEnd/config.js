@@ -2,6 +2,7 @@ const getConfiguration = () => ({
     dbConnectionString: String(getDbConnectionStringValue()),
     port: Number(getPortValue()),
     applicationProfiles: String(applicationProfiles()),
+    dataEraser: Number(dataEraser()),
     corsUrl:String(getCorsAllowedUrlValue())
 });
 
@@ -28,6 +29,22 @@ const getEnvVarValue = (envVarName) => {
     return (targetEnvVarName === envVarName) ? envVarRawValue : getEnvVarValue(targetEnvVarName);
 }
 
+const getEnvVarValueAsNumber = (envVarName) => {
+    const envVarRawValue = process.env[envVarName];
+
+    if (!envVarRawValue || !(typeof envVarRawValue === 'number')) {
+        return envVarRawValue;
+    }
+
+    if (envVarRawValue.startsWith('{') && envVarRawValue.endsWith('}')) {
+        const targetEnvVarName = envVarRawValue.substring(1, envVarRawValue.length - 1);
+        return getEnvVarValueAsNumber(targetEnvVarName);
+    }
+
+    return parseFloat(envVarRawValue);
+};
+
+
 const throwConfigurationError = (configKey) => {
     throw `${configKey} must be configured to make the app work, please see config.js and set it up`;
 }
@@ -37,5 +54,6 @@ const throwConfigurationError = (configKey) => {
  * - database writes
  * */
 const applicationProfiles = () => getEnvVarValue("ACTIVE_PROFILES") || "";
+const dataEraser = () => getEnvVarValueAsNumber("DATA_ERASER") || 7;
 
 module.exports = getConfiguration

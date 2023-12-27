@@ -6,7 +6,7 @@ class TerrariumData {
     }
 }
 
-class TerrariumTarget {
+class TargetLivingConditions {
     constructor(temperatureMin,temperatureMax , humidityMin, humidityMax, lightIntensityMin, lightIntensityMax) {
 
         this.temperature = {};
@@ -34,4 +34,4 @@ class Terrarium {
     }
 }
 
-module.exports = {TerrariumData, TerrariumTarget, Terrarium};
+module.exports = {TerrariumData, TargetLivingConditions, Terrarium};

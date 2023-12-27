@@ -4,7 +4,7 @@ const animalKindDao = require("../dao/AnimalKindDao");
 const userDao = require("../dao/UserDao");
 const {
     TerrariumData,
-    TerrariumTarget,
+    TargetLivingConditions,
     Sensor,
     Terrarium
 } = require('../entities/schemaToClass/MongooseSchemaToClass.js');
@@ -52,7 +52,7 @@ class CommandLineRunner {
 
         if (isCreateUsersConfigured || isCreateUsersRoleUserConfigured !== -1) {
             const terrariums = await this.createFakeTerrariums();
-            const terrariumIds = terrariums.map(each => each._id);
+            const terrariumIds = terrariums.map(each => each._id.toString());
 
             //create user
             if (isCreateUsersConfigured) {
@@ -134,21 +134,21 @@ class CommandLineRunner {
                 data.push(new TerrariumData(25.5, "temperature"));
             }
             terrariumsArray.push(new Terrarium(
-                new TerrariumTarget(25, 30, 60, 70, 80, 90),
+                new TargetLivingConditions(25, 30, 60, 70, 80, 90),
                 "terrarium.name" + i,
                 "animalType" + i,
                 "description" + i,
                 "12aef2bd83b3" + UUID.generate(),
                 data));
         }
-        const data = await TerrariumSchema.bulkSave(terrariumsArray);
+        return await TerrariumSchema.insertMany(terrariumsArray);
     }
 
     createFakeAnimalKind() {
         return {
             animalType: "animalType" + faker.number.int({min: 0, max: 10000}),
             description: faker.lorem.sentences().substring(0, 254),
-            targetLivingConditions: new TerrariumTarget(25, 30, 60, 70, 80, 90)
+            targetLivingConditions: new TargetLivingConditions(25, 30, 60, 70, 80, 90)
         }
     }
 
