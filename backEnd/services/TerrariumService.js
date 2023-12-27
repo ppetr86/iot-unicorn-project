@@ -131,29 +131,14 @@ class TerrariumService {
         }
     };
 
-    async getTerrariumData(req, res, next, filter, projection) {
-        try {
-            await this.getTerrarium(req, res, next, filter, projection);
-            const data = res.locals.response.data.map((terrarium) => terrarium.data);
-
-            res.status(StatusCodes.OK).json(new ResponseObjDto(data, "success"));
-        } catch (error) {
-            // already handled by the getTerrarium method
-        }
+    async findByHardwarioCode(hardwarioCode){
+        return TerrariumSchema.findOne({hardwarioCode});
     };
 
-    async getTerrarium(req, res, next, filter, projection) {
-        const terrariumId = req.params.terrariumId;
-        try {
-            const data = await TerrariumSchema.findById(terrariumId);
-
-            res.status(StatusCodes.OK).json(new ResponseObjDto(data, 'success'));
-        } catch (error) {
-            const message = `Error retrieving terrarium data: ${error.message}`;
-            console.error(message);
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(new ResponseObjDto(message, 'fail'));
-        }
+    async findById(id){
+        return TerrariumSchema.findById(id);
     }
+
 }
 
 module.exports = new TerrariumService();

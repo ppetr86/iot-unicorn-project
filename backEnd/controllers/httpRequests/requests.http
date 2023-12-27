@@ -107,12 +107,12 @@ Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 ### get TERRARIUM by id and userId
-GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/6568ea1537606a400c01e659
+GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/658cae487a69cb10f56e04a7
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 ### get DATA of a terrariumId and userId
-GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/6568ea1537606a400c01e659/data
+GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/658cae487a69cb10f56e04a7/data
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 

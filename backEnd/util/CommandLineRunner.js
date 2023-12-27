@@ -127,7 +127,7 @@ class CommandLineRunner {
 
     async createFakeTerrariums() {
         const terrariumsArray = [];
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < 3; i++) {
 
             const data = [];
             for (let k = 0; k < 2; k++) {
