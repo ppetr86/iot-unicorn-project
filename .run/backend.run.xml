@@ -7,12 +7,17 @@
     </scripts>
     <node-interpreter value="project" />
     <envs>
-      <env name="ACTIVE_PROFILES" value="create-Users-RoleUser-purge-All,load-AnimalKinds,create-Users" />
       <env name="CORS" value="localhost:3000" />
+      <env name="CREATE_USERS" value="1" />
+      <env name="CREATE_USERS_ROLE_USER" value="0" />
       <env name="DATA_ERASER" value="7" />
-      <env name="MONGO_URL" value="mongodb+srv://petrmongo:Uilp9CVG6HLP@atlascluster.afark3p.mongodb.net/iot-unicorn-project" />
-      <env name="MAILTRAP_USER" value="b29349674b9fbf" />
+      <env name="LOAD_ANIMAL_KINDS" value="0" />
       <env name="MAILTRAP_PASSWORD" value="434ce6b797a370" />
+      <env name="MAILTRAP_USER" value="b29349674b9fbf" />
+      <env name="MONGO_URL" value="mongodb+srv://petrmongo:Uilp9CVG6HLP@atlascluster.afark3p.mongodb.net/iot-unicorn-project" />
+      <env name="PURGE_ALL" value="0" />
+      <env name="PURGE_ANIMAL_KINDS" value="0" />
+      <env name="PURGE_USERS" value="0" />
     </envs>
     <method v="2" />
   </configuration>

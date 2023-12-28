@@ -19,21 +19,21 @@ class CommandLineRunner {
     async runOnStartUp(appConfig) {
 
         //purge all data
-        if (appConfig.applicationProfiles.indexOf("purgeAll") !== -1) {
+        if (appConfig.applicationProfiles.purgeAll === "1") {
             await this.deleteAll(animalKindDao);
             await this.deleteAll(userDao);
         }
 
-        if (appConfig.applicationProfiles.indexOf("purgeAnimalKinds") !== -1) {
+        if (appConfig.applicationProfiles.purgeAnimalKinds === "1") {
             await this.deleteAll(animalKindDao);
         }
 
-        if (appConfig.applicationProfiles.indexOf("purgeUsers") !== -1) {
+        if (appConfig.applicationProfiles.purgeUsers === "1") {
             await this.deleteAll(userDao);
         }
 
         //createAnimals
-        if (appConfig.applicationProfiles.indexOf("loadAnimalKinds") !== -1) {
+        if (appConfig.applicationProfiles.loadAnimalKinds === "1") {
             for (let i = 0; i < 3; i++) {
                 try {
                     this.writeData(animalKindDao, this.createFakeAnimalKind());
@@ -47,10 +47,10 @@ class CommandLineRunner {
         }
 
         //create terrariums
-        const isCreateUsersConfigured = appConfig.applicationProfiles.indexOf("createUsers") !== -1;
-        const isCreateUsersRoleUserConfigured = appConfig.applicationProfiles.indexOf("createUsersRoleUser");
+        const isCreateUsersConfigured = appConfig.applicationProfiles.createUsers === "1";
+        const isCreateUsersRoleUserConfigured = appConfig.applicationProfiles.createUsersRoleUser === "1";
 
-        if (isCreateUsersConfigured || isCreateUsersRoleUserConfigured !== -1) {
+        if (isCreateUsersConfigured || isCreateUsersRoleUserConfigured) {
             const terrariums = await this.createFakeTerrariums();
             const terrariumIds = terrariums.map(each => each._id.toString());
 
@@ -72,7 +72,7 @@ class CommandLineRunner {
                 console.log("createUsers done");
             }
 
-            if (isCreateUsersRoleUserConfigured !== -1) {
+            if (isCreateUsersRoleUserConfigured) {
                 for (let i = 0; i < 3; i++) {
                     let email = "test" + i + "@test.com";
                     if (!(await this.isDataExisting(userDao, {"email": email}))) {

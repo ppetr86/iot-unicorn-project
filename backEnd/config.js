@@ -1,11 +1,11 @@
 const getConfiguration = () => ({
     dbConnectionString: String(getDbConnectionStringValue()),
     port: Number(getPortValue()),
-    applicationProfiles: String(applicationProfiles()),
+    applicationProfiles: applicationProfiles(),
     dataEraser: Number(dataEraser()),
-    corsUrl:String(getCorsAllowedUrlValue()),
-    mailTrapUser:String(getMailTrapUser()),
-    mailTrapPassword:String(getMailTrapPassword()),
+    corsUrl: String(getCorsAllowedUrlValue()),
+    mailTrapUser: String(getMailTrapUser()),
+    mailTrapPassword: String(getMailTrapPassword()),
 });
 
 const getPortValue = () => {
@@ -61,7 +61,16 @@ const throwConfigurationError = (configKey) => {
  * - database purge
  * - database writes
  * */
-const applicationProfiles = () => getEnvVarValue("ACTIVE_PROFILES") || "";
+const applicationProfiles = () => {
+    const result = {};
+    result.createUsers = getEnvVarValue("CREATE_USERS") || "0";
+    result.createUsersRoleUser = getEnvVarValue("CREATE_USERS_ROLE_USER") || "0";
+    result.loadAnimalKinds = getEnvVarValue("LOAD_ANIMAL_KINDS") || "0";
+    result.purgeAll = getEnvVarValue("PURGE_ALL") || "0";
+    result.purgeAnimalKinds = getEnvVarValue("PURGE_ANIMAL_KINDS") || "0";
+    result.purgeUsers = getEnvVarValue("PURGE_USERS") || "0";
+    return result;
+}
 const dataEraser = () => getEnvVarValueAsNumber("DATA_ERASER") || 7;
 
 module.exports = getConfiguration
