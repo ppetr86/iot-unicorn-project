@@ -3,13 +3,21 @@ const getConfiguration = () => ({
     port: Number(getPortValue()),
     applicationProfiles: String(applicationProfiles()),
     dataEraser: Number(dataEraser()),
-    corsUrl:String(getCorsAllowedUrlValue())
+    corsUrl:String(getCorsAllowedUrlValue()),
+    mailTrapUser:String(getMailTrapUser()),
+    mailTrapPassword:String(getMailTrapPassword()),
 });
 
 const getPortValue = () => {
     let portValue = getEnvVarValue("PORT");
     return portValue || 3001;
 }
+
+const getMailTrapUser = () => getEnvVarValue("MAILTRAP_USER")
+    || throwConfigurationError("MAILTRAP_USER");
+
+const getMailTrapPassword = () => getEnvVarValue("MAILTRAP_PASSWORD")
+    || throwConfigurationError("MAILTRAP_PASSWORD");
 
 const getDbConnectionStringValue = () => getEnvVarValue("MONGO_URL")
     || throwConfigurationError("dbConnectionString");

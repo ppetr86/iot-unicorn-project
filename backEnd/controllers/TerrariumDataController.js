@@ -1,6 +1,7 @@
 const asyncWrapper = require("../middleware/Async");
 const {StatusCodes} = require("http-status-codes");
 const UserSchema = require("../entities/db/UserSchema");
+const terrariumService = require("../services/TerrariumService");
 
 
 const createTerrariumData = asyncWrapper(async (req, res, next) => {
@@ -8,32 +9,8 @@ const createTerrariumData = asyncWrapper(async (req, res, next) => {
     const hardwarioCode = req.body.sensorId.trim();
     const userId = req.user.id;
     const type = req.body.topic.toLowerCase().trim();
-    if (('temperature' === type || 'danger' === type || 'drinking' === type || 'feeding' === type) && !isNaN(req.body.value)) {
-        const receivedData = {
-            timestamp: new Date(),
-            value: req.body.value,
-            type: type
-        };
-
-        UserSchema.findOneAndUpdate(
-            {
-                _id: userId,
-                'terrariums.hardwarioCode': hardwarioCode,
-            },
-            {
-                $push: {
-                    'terrariums.$.data': receivedData,
-                },
-            },
-            {new: true}
-        )
-            .then(() => {
-                console.log('Data pushed successfully');
-            })
-            .catch((error) => {
-                console.error('Failed to push data', error);
-            });
-
+    const measuredData = req.body.value;
+    if (await terrariumService.createTerrariumData(hardwarioCode, userId, type, measuredData)) {
         res.status(StatusCodes.ACCEPTED);
     } else {
         console.error("Invalid data type received from hardwarioCode: " + hardwarioCode)

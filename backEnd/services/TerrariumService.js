@@ -7,9 +7,13 @@ const TerrariumSchema = require("../entities/db/TerrariumSchema");
 const {Terrarium} = require("../entities/schemaToClass/MongooseSchemaToClass");
 const TerrariumValidationIn = require("../entities/dtoIn/validation/TerrariumValidationIn");
 const {TerrariumDtoIn} = require("../entities/dtoIn/ClassDtosIn");
+const emailService = require("../services/EmailService");
+
 
 class TerrariumService {
     constructor() {
+        //key = hardwarioCode, value = objekt s terarium id a targetLivingConditions
+        this.cacheByHardwarioCode = new Map();
     }
 
     async editTerrariumByIdAndUserId(req, res, next) {
@@ -119,7 +123,6 @@ class TerrariumService {
 
             if (!deletedTerrarium) {
                 console.log('Terrarium not found');
-                // Handle the case where the user is not found (optional)
                 return;
             }
 
@@ -131,13 +134,74 @@ class TerrariumService {
         }
     };
 
-    async findByHardwarioCode(hardwarioCode){
+    async findByHardwarioCode(hardwarioCode) {
         return TerrariumSchema.findOne({hardwarioCode});
     };
 
-    async findById(id){
+    async findById(id) {
         return TerrariumSchema.findById(id);
     }
+
+    async createTerrariumData(hardwarioCode, userId, type, measuredData) {
+
+        //TODO: dalo by se to udelat lepe, exportovat stejnou instanci a v index.js to po nastartovani inicializovat
+        await this.loadCache();
+
+        if (('temperature' === type || 'humidity' === type || 'lightIntensity' === type //
+            || 'danger' === type || 'drinking' === type || 'feeding' === type) && !isNaN(measuredData)) {
+
+            const receivedData = {
+                timestamp: new Date(),
+                value: measuredData,
+                type: type
+            };
+
+            if (('temperature' === type || 'humidity' === type || 'lightIntensity' === type)
+                && !this.isDataInMinMax(hardwarioCode, measuredData, type)) {
+                emailService.sendEmail(hardwarioCode, measuredData, this.cacheByHardwarioCode.get(hardwarioCode), type);
+            }
+
+            TerrariumSchema.findOneAndUpdate(
+                {
+                    'hardwarioCode': hardwarioCode,
+                },
+                {
+                    $push: {
+                        'data': receivedData,
+                    },
+                },
+                {new: true}
+            )
+                .then(() => {
+                    console.log('Data pushed successfully');
+                })
+                .catch((error) => {
+                    console.error('Failed to push data', error);
+                });
+            return true;
+        }
+        return false;
+    }
+
+    isDataInMinMax(hardwarioCode, measuredData, type) {
+        const value = this.cacheByHardwarioCode.get(hardwarioCode).targetLivingConditions;
+        return measuredData > value[type].min && measuredData < value[type].max;
+    }
+
+    async loadCache() {
+        if (this.cacheByHardwarioCode.size === 0) {
+            const terrariums = await TerrariumSchema
+                .find()
+                .select({targetLivingConditions: 1, hardwarioCode: 1, _id: 1});
+
+            terrariums.map(each => {
+                const targetLivingConditions = each.targetLivingConditions;
+                const id = each._id;
+                const value = {_id: id, targetLivingConditions: targetLivingConditions}
+                this.cacheByHardwarioCode.set(each.hardwarioCode, value);
+            });
+        }
+    };
 
 }
 
