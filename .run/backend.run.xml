@@ -1,0 +1,19 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="backend" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/backEnd/package.json" />
+    <command value="run" />
+    <scripts>
+      <script value="start" />
+    </scripts>
+    <node-interpreter value="project" />
+    <envs>
+      <env name="ACTIVE_PROFILES" value="create-Users-RoleUser-purge-All,load-AnimalKinds,create-Users" />
+      <env name="CORS" value="localhost:3000" />
+      <env name="DATA_ERASER" value="7" />
+      <env name="MONGO_URL" value="mongodb+srv://petrmongo:Uilp9CVG6HLP@atlascluster.afark3p.mongodb.net/iot-unicorn-project" />
+      <env name="MAILTRAP_USER" value="b29349674b9fbf" />
+      <env name="MAILTRAP_PASSWORD" value="434ce6b797a370" />
+    </envs>
+    <method v="2" />
+  </configuration>
+</component>
