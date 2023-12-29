@@ -2,15 +2,15 @@
 const {faker} = require('@faker-js/faker');
 const animalKindDao = require("../dao/AnimalKindDao");
 const userDao = require("../dao/UserDao");
+const terrariumDao = require("../dao/TerrariumDao");
+const {UUID} = require("mongodb");
+const TerrariumSchema = require("../entities/db/TerrariumSchema")
+
 const {
     TerrariumData,
     TargetLivingConditions,
-    Sensor,
     Terrarium
 } = require('../entities/schemaToClass/MongooseSchemaToClass.js');
-const {v4: uuidV4} = require('uuid');
-const {UUID} = require("mongodb");
-const TerrariumSchema = require("../entities/db/TerrariumSchema")
 
 class CommandLineRunner {
     constructor() {
@@ -22,6 +22,7 @@ class CommandLineRunner {
         if (appConfig.applicationProfiles.purgeAll === "1") {
             await this.deleteAll(animalKindDao);
             await this.deleteAll(userDao);
+            await this.deleteAll(terrariumDao);
         }
 
         if (appConfig.applicationProfiles.purgeAnimalKinds === "1") {

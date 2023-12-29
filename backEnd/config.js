@@ -57,10 +57,7 @@ const throwConfigurationError = (configKey) => {
     throw `${configKey} must be configured to make the app work, please see config.js and set it up`;
 }
 
-/**Application profiles to do some basic stuff on startup like
- * - database purge
- * - database writes
- * */
+/**Bulk of application related configurations*/
 const applicationProfiles = () => {
     const result = {};
     result.createUsers = getEnvVarValue("CREATE_USERS") || "0";

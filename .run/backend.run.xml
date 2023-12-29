@@ -8,7 +8,7 @@
     <node-interpreter value="project" />
     <envs>
       <env name="CORS" value="localhost:3000" />
-      <env name="CREATE_USERS" value="1" />
+      <env name="CREATE_USERS" value="0" />
       <env name="CREATE_USERS_ROLE_USER" value="0" />
       <env name="DATA_ERASER" value="7" />
       <env name="LOAD_ANIMAL_KINDS" value="0" />
