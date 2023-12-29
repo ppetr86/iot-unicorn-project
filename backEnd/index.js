@@ -61,7 +61,8 @@ app.use(errorHandlerMiddleware);
 
 cron.schedule('0 * * * *', () => {
     const value = appConfig.dataEraser;
-    oldDataEraser.eraseOldMeasuredDataFromDatabase(!isNaN(value) ? 7 : value);
+    oldDataEraser.eraseOldMeasuredDataFromDatabaseBasedOnTime(!isNaN(value) ? 7 : value);
+    oldDataEraser.eraseOldMeasuredDataFromDatabaseBasedOnDataArraySize();
 });
 const start = async () => {
     try {
