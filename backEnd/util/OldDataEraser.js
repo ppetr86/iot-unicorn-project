@@ -1,4 +1,4 @@
-const User = require('../entities/db/UserSchema');
+const Terrarium = require('../entities/db/TerrariumSchema');
 
 class OldDataEraser {
     constructor() {
@@ -9,9 +9,9 @@ class OldDataEraser {
         const olderThanDate = new Date(currentDate.setDate(currentDate.getDate() - numberOfDays));
         console.info("OldDataEraser.eraseOldMeasuredDataFromDatabase: started")
 
-        User.updateMany(
-            {'terrariums.data.timestamp': {$lt: olderThanDate}},
-            {$pull: {'terrariums.$.data': {timestamp: {$lt: olderThanDate}}}}
+        Terrarium.updateMany(
+            {'data.timestamp': {$lt: olderThanDate}},
+            {$pull: {'$.data': {timestamp: {$lt: olderThanDate}}}}
         ).then(() => {
             console.log("OldDataEraser.eraseOldMeasuredDataFromDatabase: success");
         }).catch((error) => {
