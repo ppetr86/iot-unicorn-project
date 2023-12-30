@@ -1,0 +1,12 @@
+version: '3.1'
+name: iot-gateway-db
+
+services:
+  mongo:
+    image: mongo:6.0.12
+    restart: unless-stopped
+    ports:
+      - ${IOT_GATEWAY_DB_PORT}:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${IOT_GATEWAY_DB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${IOT_GATEWAY_DB_ROOT_PASSWORD}

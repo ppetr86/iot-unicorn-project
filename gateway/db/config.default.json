@@ -1,0 +1,7 @@
+{
+    "port": 27017,
+    "root": {
+        "username": "root",
+        "password": "pass"
+    }
+}
