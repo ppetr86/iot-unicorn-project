@@ -83,7 +83,7 @@ Authorization: Bearer: {{iotSensorJwtAdmin}}
 {
   "value": 29.5,
   "sensorId": "12aef2bd83b3",
-  "topic": "temperature"
+  "topic": "xys/syx/temperature"
 }
 
 ### get ALL USERS by user ROLE_ADMIN
