@@ -36,9 +36,9 @@ POST localhost:3001/api/v1/users
 Content-Type: application/json
 
 {
-  "firstName": "Petr",
-  "lastName": "Novotny",
-  "email": "petr@test.com",
+  "firstName": "Petra",
+  "lastName": "Novotna",
+  "email": "petra@test.com",
   "roles": [
     "ROLE_USER"
   ],

@@ -50,8 +50,8 @@ class TerrariumDtoIn {
 class UserPutDtoIn {
     constructor(value) {
         this.firstName = value.firstName.trim();
-        this.lastName = value.lastName().trim();
-        this.email = value.email().trim();
+        this.lastName = value.lastName.trim();
+        this.email = value.email.trim();
         this.roles = value.roles.map(each => each.trim());
     }
 }
@@ -59,8 +59,8 @@ class UserPutDtoIn {
 class UserCreateDtoIn {
     constructor(value) {
         this.firstName = value.firstName.trim();
-        this.lastName = value.lastName().trim();
-        this.email = value.email().trim();
+        this.lastName = value.lastName.trim();
+        this.email = value.email.trim();
         this.roles = value.roles.map(each => each.trim());
         this.password = value.password;
     }
