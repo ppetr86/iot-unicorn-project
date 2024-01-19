@@ -9,7 +9,8 @@ const createTerrariumData = asyncWrapper(async (req, res, next) => {
     const userId = req.user.id;
     const type = req.body.topic.toLowerCase().trim();
     const measuredData = req.body.value;
-    if (await terrariumService.createTerrariumData(hardwarioCode, userId, type, measuredData)) {
+    const measuredAt = req.body.measuredAt;
+    if (await terrariumService.createTerrariumData(hardwarioCode, userId, type, measuredData, measuredAt)) {
         res.status(StatusCodes.ACCEPTED).json(new ResponseObjDto("terrarium data push succeeded", "success"));
     } else {
         console.error("Invalid data type received from hardwarioCode: " + hardwarioCode)

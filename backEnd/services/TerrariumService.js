@@ -142,7 +142,7 @@ class TerrariumService {
         return TerrariumSchema.findById(id);
     }
 
-    async createTerrariumData(hardwarioCode, userId, type, measuredData) {
+    async createTerrariumData(hardwarioCode, userId, type, measuredData, measuredAt) {
 
         //TODO: dalo by se to udelat lepe, exportovat stejnou instanci a v index.js to po nastartovani inicializovat
         await this.loadCache();
@@ -151,7 +151,7 @@ class TerrariumService {
             || 'danger' === type || 'drinking' === type || 'feeding' === type) && !isNaN(measuredData)) {
 
             const receivedData = {
-                timestamp: new Date(),
+                timestamp: new Date(measuredAt),
                 value: measuredData,
                 type: type
             };
