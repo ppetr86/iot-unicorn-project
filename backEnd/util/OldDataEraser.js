@@ -45,10 +45,6 @@ class OldDataEraser {
                         });
                     }
                 }
-
-                if (terrariums.length === 0) {
-                    break; // No more documents to process
-                }
             });
         }
 
