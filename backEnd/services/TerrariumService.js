@@ -146,7 +146,7 @@ class TerrariumService {
 
         //TODO: dalo by se to udelat lepe, exportovat stejnou instanci a v index.js to po nastartovani inicializovat
         await this.loadCache();
-
+        type = type.split("/")[2];
         if (('temperature' === type || 'humidity' === type || 'lightIntensity' === type //
             || 'danger' === type || 'drinking' === type || 'feeding' === type) && !isNaN(measuredData)) {
 

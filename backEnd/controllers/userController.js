@@ -90,6 +90,7 @@ const createUser = asyncWrapper(async (req, res, next) => {
     let activatedNotAdminUser = {...userCreateIn, isDeactivated: false};
 
     const user = new User(activatedNotAdminUser);
+    // webstorm sice picuje, ze tu metodu nevidi, ale pri debugu to do ni normalne vleze...
     let validationErrors = user.collectValidationErrors();
     if (validationErrors) {
         return next(new CustomApiError(`Validation errors: ${validationErrors}`, StatusCodes.BAD_REQUEST));

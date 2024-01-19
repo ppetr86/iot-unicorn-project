@@ -11,7 +11,5 @@ try {
     & docker compose up --detach
 }
 finally {
-    $env:IOT_GATEWAY_DB_PORT = $null
-    $env:IOT_GATEWAY_DB_ROOT_USERNAME = $null
-    $env:IOT_GATEWAY_DB_ROOT_PASSWORD = $null
+
 }

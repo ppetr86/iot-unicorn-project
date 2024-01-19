@@ -1,6 +1,5 @@
 const asyncWrapper = require("../middleware/Async");
 const {StatusCodes} = require("http-status-codes");
-const UserSchema = require("../entities/db/UserSchema");
 const terrariumService = require("../services/TerrariumService");
 
 
