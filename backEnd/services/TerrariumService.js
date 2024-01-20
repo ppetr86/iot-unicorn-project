@@ -104,6 +104,23 @@ class TerrariumService {
             const result = await new TerrariumSchema(terrarium).save();
 
             if (result) {
+                //
+                UserSchema.findOneAndUpdate(
+                    { _id: req.params.id },
+                    { $push: { terrariums: result._id } },
+                    { new: true }
+                )
+                    .then(user => {
+                        if (user) {
+                            console.log('Terrarium added successfully:', user);
+                        } else {
+                            console.log('User not found');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error adding terrarium:', error);
+                    });
+
                 res.status(StatusCodes.CREATED).json({
                     status: 'success',
                     data: terrarium,

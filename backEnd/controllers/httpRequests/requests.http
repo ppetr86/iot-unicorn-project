@@ -122,24 +122,24 @@ Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 {
-  "name": "Mexican hostages4",
-  "animalType": "type11",
-  "description": "description1",
+  "name": "Pavouk Anezka",
+  "animalType": "Tarantule",
+  "description": "Anezka je mily a nenarocny pavouk. Krmime drobnym hmyzem jednou za 14 dni.",
   "targetLivingConditions": {
     "humidity": {
-      "min": 1,
-      "max": 1
+      "min": 50,
+      "max": 90
     },
     "temperature": {
-      "min": 1,
-      "max": 1
+      "min": 30,
+      "max": 35
     },
     "lightIntensity": {
-      "min": 1,
-      "max": 1
+      "min": 0,
+      "max": 100
     }
   },
-  "hardwarioCode": "hardwarioCode1",
+  "hardwarioCode": "mock-code",
   "data": []
 }
 
