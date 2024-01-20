@@ -1,7 +1,14 @@
-import { Table, Accordion, Card, Button } from "react-bootstrap";
+import { Table, Accordion } from "react-bootstrap";
 import React from "react";
 
-const excludeKeys = ["humidity", "lightIntensity", "data", "_id"];
+const excludeKeys = ["humidity", "lightIntensity", "data", "_id", "__v"];
+
+const keyMappings = {
+  name: "Name",
+  animalType: "Animal Type",
+  description: "Description",
+  hardwarioCode: "Hardwario Code",
+};
 
 const TerrariumObjectTable = ({ obj }) => {
   if (!obj || typeof obj !== "object") {
@@ -18,14 +25,9 @@ const TerrariumObjectTable = ({ obj }) => {
           <Accordion.Header>Detail of: {obj.name} </Accordion.Header>
           <Accordion.Body>
             <Table striped bordered hover>
-              {/* <thead>
-                <tr>
-                  <th>Key</th>
-                  <th>Value</th>
-                </tr>
-              </thead> */}
               <tbody>
                 {filteredKeys.map((key) => {
+                  const displayKey = keyMappings[key] || key;
                   if (key === "targetLivingConditions") {
                     return (
                       <React.Fragment key={`${key}_fragment`}>
@@ -48,7 +50,7 @@ const TerrariumObjectTable = ({ obj }) => {
                   } else {
                     return (
                       <tr key={key}>
-                        <td>{key}</td>
+                        <td>{displayKey}</td>
                         <td>{JSON.stringify(obj[key])}</td>
                       </tr>
                     );
