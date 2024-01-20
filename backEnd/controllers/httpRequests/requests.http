@@ -107,7 +107,7 @@ Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 ### get TERRARIUM by id and userId
-GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/658cae487a69cb10f56e04a7
+GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/658ee1984417a895b83d2fee
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
@@ -122,7 +122,7 @@ Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 {
-  "name": "Pavouk Anezka",
+  "name": "Pavouk Anezka4",
   "animalType": "Tarantule",
   "description": "Anezka je mily a nenarocny pavouk. Krmime drobnym hmyzem jednou za 14 dni.",
   "targetLivingConditions": {
@@ -139,7 +139,7 @@ Authorization: Bearer: {{jwtAdmin}}
       "max": 100
     }
   },
-  "hardwarioCode": "mock-code",
+  "hardwarioCode": "mock-code4",
   "data": []
 }
 

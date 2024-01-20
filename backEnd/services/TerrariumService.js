@@ -123,7 +123,7 @@ class TerrariumService {
 
                 res.status(StatusCodes.CREATED).json({
                     status: 'success',
-                    data: terrarium,
+                    data: result,
                 });
             }
         } catch (error) {
