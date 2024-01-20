@@ -106,3 +106,4 @@ dist
 .tern-port
 /api.iml
 frontEnd/src/pages/createTerrarium.jsx
+backEnd/.env

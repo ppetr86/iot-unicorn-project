@@ -22,7 +22,7 @@ export class ApiService {
   }
 
   static getSelfUser(userId, accessToken) {
-    let dataURL = `/api/v1/users/${userId}`;
+    let dataURL = `/fe/v1/users/${userId}/populated`;
     return this.axiosInstance.get(dataURL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
