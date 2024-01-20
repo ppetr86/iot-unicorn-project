@@ -18,6 +18,7 @@ export class ApiService {
       password,
       firstName,
       lastName,
+      roles: ["ROLE_USER"],
     });
   }
 
