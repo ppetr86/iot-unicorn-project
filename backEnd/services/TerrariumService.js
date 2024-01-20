@@ -150,8 +150,9 @@ class TerrariumService {
         if (('temperature' === type || 'humidity' === type || 'lightIntensity' === type //
             || 'danger' === type || 'drinking' === type || 'feeding' === type) && !isNaN(measuredData)) {
 
+            const dateMeasuredAt = new Date(measuredAt);
             const receivedData = {
-                timestamp: new Date(measuredAt),
+                timestamp: dateMeasuredAt,
                 value: measuredData,
                 type: type
             };
@@ -173,7 +174,7 @@ class TerrariumService {
                 {new: true}
             )
                 .then(() => {
-                    console.log('Data pushed successfully');
+                    console.log(`Data of ${type} pushed successfully @ ` + new Date());
                 })
                 .catch((error) => {
                     console.error('Failed to push data', error);

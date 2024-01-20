@@ -59,11 +59,14 @@ app.use("/fe/v1/users", frontEndRoute);
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
+// cron expression s nulou na zacatku vypne tuhle funkcionalitu
+// nastavime li vsude *, bezi to kazdou minutu
 cron.schedule('0 * * * *', () => {
     const value = appConfig.dataEraser;
     oldDataEraser.eraseOldMeasuredDataFromDatabaseBasedOnTime(!isNaN(value) ? 7 : value);
     oldDataEraser.eraseOldMeasuredDataFromDatabaseBasedOnDataArraySize();
 });
+
 const start = async () => {
     try {
         await connectDB(appConfig.dbConnectionString);

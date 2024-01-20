@@ -91,13 +91,13 @@ GET localhost:3001/api/v1/users/
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
-### get ALL USERS by user ROLE_ADMIN
-GET localhost:3001/fe/v1/users?fields=terrariums
+### get ALL TERRARIUMS of a userId
+GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
-### get ALL TERRARIUMS of a userId
-GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums
+### get USER ID populated with all terrariums
+GET localhost:3001/fe/v1/users/{{idAdmin}}/populated
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
@@ -112,7 +112,7 @@ Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 ### get DATA of a terrariumId and userId
-GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/658cae487a69cb10f56e04a7/data
+GET localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/658ee1984417a895b83d2fee/data
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 

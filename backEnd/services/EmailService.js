@@ -15,38 +15,58 @@ class EmailService {
                 pass: appConfig.mailTrapPassword,
             },
         });
+        this.sentDateByHwCode = new Map();
     }
 
     async sendEmail(hardwarioCode, measuredData, cacheValue, type) {
-        const terrariumId = cacheValue._id.toString();
-        const targetLivingConditions = cacheValue.targetLivingConditions;
-        const recipientEmailAddresses = await UserSchema
-            .find({terrariums: terrariumId})
-            .select({email: 1})
+        const todayPlus1Day = new Date();
+        todayPlus1Day.setDate(todayPlus1Day.getDate() + 1);
 
-        const subject = 'Terrarium Alert';
-        let text = "This is an email from IoT TerrariumServiceApp\n\n";
-        text += `Your terrarium associated with hardwarioCode: ${hardwarioCode} reported values not within given limits.\n`;
-        text += `${type} limit min is: ${targetLivingConditions[type].min} \n`;
-        text += `${type} limit max is: ${targetLivingConditions[type].max} \n`;
-        text += `measured value: ${measuredData}`;
-        const message = {
-            from: '"IoT TerrariumServiceApp" <iotterrariumserviceapp@example.com>',
-            to: "",
-            subject: subject,
-            text: text,
-        };
+        //poslal jsem vubec nekdy email
+        const isHasBeenEmailSent = this.sentDateByHwCode.has(hardwarioCode);
+        // nastavim datum nyni pokud jsem email nikdy neposlal
+        let relevantDateForEmail = new Date();
+        //pokud jsem mail poslal, prenastavim datum
+        if (isHasBeenEmailSent)
+            relevantDateForEmail = this.sentDateByHwCode.get(hardwarioCode);
 
-        recipientEmailAddresses.forEach(document => {
-            message.to = document.email;
-            this.transporter.sendMail(message, (error, info) => {
-                if (error) {
-                    console.error('Error sending email:', error);
-                    return;
-                }
-                console.log('Email sent successfully:', info.messageId);
+        const isShouldSendEmailAgain = relevantDateForEmail.setDate(relevantDateForEmail.getDate() + 1) <= new Date();
+
+        if (!isHasBeenEmailSent || (isHasBeenEmailSent && isShouldSendEmailAgain)) {
+            // set the hardwario code and date of email sending to the cache
+            this.sentDateByHwCode.set(hardwarioCode, new Date());
+
+            const terrariumId = cacheValue._id.toString();
+            const targetLivingConditions = cacheValue.targetLivingConditions;
+            const recipientEmailAddresses = await UserSchema
+                .find({terrariums: terrariumId})
+                .select({email: 1})
+
+            const subject = 'Terrarium Alert';
+            let text = "This is an email from IoT TerrariumServiceApp\n\n";
+            text += `Your terrarium associated with hardwarioCode: ${hardwarioCode} reported values not within given limits.\n`;
+            text += `${type} limit min is: ${targetLivingConditions[type].min} \n`;
+            text += `${type} limit max is: ${targetLivingConditions[type].max} \n`;
+            text += `measured value: ${measuredData}`;
+            const message = {
+                from: '"IoT TerrariumServiceApp" <iotterrariumserviceapp@example.com>',
+                to: "",
+                subject: subject,
+                text: text,
+            };
+
+            recipientEmailAddresses.forEach(document => {
+                message.to = document.email;
+                this.transporter.sendMail(message, (error, info) => {
+                    if (error) {
+                        console.error('Error sending email:', error);
+                        return;
+                    }
+                    console.log('Email sent successfully:', info.messageId);
+                });
             });
-        })
+        }
+
 
     }
 }
