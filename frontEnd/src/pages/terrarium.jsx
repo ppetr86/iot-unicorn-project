@@ -99,13 +99,6 @@ function Terrarium() {
               {`An error occurred: ${mutation.error.message}`}
             </Alert>
           )}
-          {mutation.isSuccess && (
-            <>
-              <Alert variant="success">
-                Terrarium has been successfully added!
-              </Alert>
-            </>
-          )}
           <Button variant="danger" onClick={handleDelete}>
             Delete
           </Button>{" "}
