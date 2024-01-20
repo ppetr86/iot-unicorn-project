@@ -43,7 +43,8 @@ class TerrariumDtoIn {
         this.description = value.description.trim();
         this.targetLivingConditions = new TargetLivingConditions(value.targetLivingConditions);
         this.hardwarioCode = value.hardwarioCode;
-        this.data = new TerrariumData(value.data);
+        if (value.data && Array.isArray(value.data) && value.data.length > 0)
+            this.data = new TerrariumData(value.data);
     }
 }
 

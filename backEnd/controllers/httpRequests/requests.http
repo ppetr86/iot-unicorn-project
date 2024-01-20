@@ -144,17 +144,17 @@ Authorization: Bearer: {{jwtAdmin}}
 }
 
 ### delete terrarium of a user - deletes the terrarium from all users
-DELETE localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/65abbecafad5cd98ee497962
+DELETE localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/65abca1191800f208c12ce6c
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 ### addTerrariumIdToAnotherUserId - ads existing terrarium to selected user
-PATCH localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/65abbfa3b1b808a5044005b4
+PATCH localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/65abb7eab1b808a504400584
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
 ### edit terrarium of a user
-PUT localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/656f91bdc6a5232e7d289d75
+PUT localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/65abc9dd2047b0a58aa04892
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
@@ -173,10 +173,10 @@ Authorization: Bearer: {{jwtAdmin}}
       "max": 1
     }
   },
-  "name": "terrarium.name01",
+  "name": "BLEBLEBLEBLEBLEBLE",
   "animalType": "type11",
   "description": "description1",
-  "hardwarioCode": "hardwarioCode1",
+  "hardwarioCode": "mock-code2",
   "data": []
 }
 

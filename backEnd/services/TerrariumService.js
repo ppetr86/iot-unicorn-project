@@ -20,8 +20,6 @@ class TerrariumService {
         const userId = req.params.id;
         const terrariumId = req.params.terrariumId;
 
-        this.validateUserIdAndTerrariumId(userId, terrariumId, next);
-
         //TODO: tady je otazka jestli chceme dovolit manipulovat i ta data
         const terrariumIn = new TerrariumDtoIn(req.body);
 
@@ -106,9 +104,9 @@ class TerrariumService {
             if (result) {
                 //
                 UserSchema.findOneAndUpdate(
-                    { _id: req.params.id },
-                    { $push: { terrariums: result._id } },
-                    { new: true }
+                    {_id: req.params.id},
+                    {$push: {terrariums: result._id}},
+                    {new: true}
                 )
                     .then(user => {
                         if (user) {
@@ -144,8 +142,8 @@ class TerrariumService {
             }
 
             UserSchema.updateMany(
-                { 'terrariums': terrariumId },
-                { $pull: { terrariums: terrariumId } }
+                {'terrariums': terrariumId},
+                {$pull: {terrariums: terrariumId}}
             )
                 .then(result => {
                     const numModified = result.nModified;
@@ -155,7 +153,7 @@ class TerrariumService {
                     console.error('Error removing terrarium from users:', error);
                 });
 
-            res.status(StatusCodes.OK).json(new ResponseObjDto(null, "success, terrarium deleted"));
+            res.status(StatusCodes.OK).json(new ResponseObjDto({"terrariumId": terrariumId}, "success, terrarium deleted"));
         } catch (error) {
             const message = `Error deleting terrarium id: ${terrariumId}. Message: ${error.message}`;
             console.error(message);
