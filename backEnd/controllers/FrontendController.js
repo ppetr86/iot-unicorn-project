@@ -1,5 +1,6 @@
 const asyncWrapper = require("../middleware/Async");
 const terrariumService = require("../services/TerrariumService");
+const userService = require("../services/UserService");
 const {StatusCodes} = require("http-status-codes");
 const {ResponseObjDto} = require("../entities/ResponseObjDto");
 const userDao = require("../dao/UserDao");
@@ -24,6 +25,10 @@ const getUserWithAllUserTerrariums = asyncWrapper(async (req, res, next) => {
 const putUserTerrariumByTerrariumId = asyncWrapper(async (req, res, next) => {
     await terrariumService.editTerrariumByIdAndUserId(req, res, next);
 });
+
+const addTerrariumIdToAnotherUserId = asyncWrapper(async (req, res, next)=>{
+    await userService.addTerrariumToAnotherUserId(req, res, next) ;
+})
 
 const createUserTerrarium = asyncWrapper(async (req, res, next) => {
     await terrariumService.createTerrarium(req, res, next);
@@ -77,5 +82,6 @@ module.exports = {
     createUserTerrarium,
     deleteUserTerrariumById,
     putUserTerrariumByTerrariumId,
-    getUserWithAllUserTerrariums
+    getUserWithAllUserTerrariums,
+    addTerrariumIdToAnotherUserId
 };

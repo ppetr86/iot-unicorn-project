@@ -9,7 +9,8 @@ const {
     createUserTerrarium,
     deleteUserTerrariumById,
     putUserTerrariumByTerrariumId,
-    getUserWithAllUserTerrariums
+    getUserWithAllUserTerrariums,
+    addTerrariumIdToAnotherUserId
 } = require('../controllers/FrontendController');
 
 const {
@@ -30,7 +31,8 @@ router.route("/:id/populated")
 router.route("/:id/terrariums/:terrariumId")
     .delete(protectWithAuthenticationToken, isUserIdValid, isTerrariumIdValid, requestingUserIsTheSameAsPathUserOrThrow, requestingUserHasAccessToTerrarium, deleteUserTerrariumById)
     .get(protectWithAuthenticationToken, isUserIdValid, isTerrariumIdValid, requestingUserIsTheSameAsPathUserOrThrow, requestingUserHasAccessToTerrarium, getTerrariumByTerrariumId)
-    .put(protectWithAuthenticationToken, isUserIdValid, isTerrariumIdValid, requestingUserIsTheSameAsPathUserOrThrow, requestingUserHasAccessToTerrarium, putUserTerrariumByTerrariumId);
+    .put(protectWithAuthenticationToken, isUserIdValid, isTerrariumIdValid, requestingUserIsTheSameAsPathUserOrThrow, requestingUserHasAccessToTerrarium, putUserTerrariumByTerrariumId)
+    .patch(protectWithAuthenticationToken, isUserIdValid, isTerrariumIdValid, requestingUserIsTheSameAsPathUserOrThrow, addTerrariumIdToAnotherUserId);
 
 router.route("/:id/terrariumsHc/:hardwarioCode")
     .get(protectWithAuthenticationToken, isUserIdValid, getTerrariumByHardwarioCode);

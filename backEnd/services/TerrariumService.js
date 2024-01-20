@@ -143,6 +143,18 @@ class TerrariumService {
                 return;
             }
 
+            UserSchema.updateMany(
+                { 'terrariums': terrariumId },
+                { $pull: { terrariums: terrariumId } }
+            )
+                .then(result => {
+                    const numModified = result.nModified;
+                    console.log(`${numModified} users updated successfully.`);
+                })
+                .catch(error => {
+                    console.error('Error removing terrarium from users:', error);
+                });
+
             res.status(StatusCodes.OK).json(new ResponseObjDto(null, "success, terrarium deleted"));
         } catch (error) {
             const message = `Error deleting terrarium id: ${terrariumId}. Message: ${error.message}`;

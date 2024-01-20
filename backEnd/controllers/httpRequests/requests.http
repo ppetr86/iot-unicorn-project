@@ -143,8 +143,13 @@ Authorization: Bearer: {{jwtAdmin}}
   "data": []
 }
 
-### delete terrarium of a user
-DELETE localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/656243a88bb6c9d9a6dcb82a
+### delete terrarium of a user - deletes the terrarium from all users
+DELETE localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/65abbecafad5cd98ee497962
+Content-Type: application/json
+Authorization: Bearer: {{jwtAdmin}}
+
+### addTerrariumIdToAnotherUserId - ads existing terrarium to selected user
+PATCH localhost:3001/fe/v1/users/{{idAdmin}}/terrariums/65abbfa3b1b808a5044005b4
 Content-Type: application/json
 Authorization: Bearer: {{jwtAdmin}}
 
