@@ -19,8 +19,6 @@ class EmailService {
     }
 
     async sendEmail(hardwarioCode, measuredData, cacheValue, type) {
-        const todayPlus1Day = new Date();
-        todayPlus1Day.setDate(todayPlus1Day.getDate() + 1);
 
         //poslal jsem vubec nekdy email
         const isHasBeenEmailSent = this.sentDateByHwCode.has(hardwarioCode);
