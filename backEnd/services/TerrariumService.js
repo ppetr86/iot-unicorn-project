@@ -9,7 +9,6 @@ const TerrariumValidationIn = require("../entities/dtoIn/validation/TerrariumVal
 const {TerrariumDtoIn} = require("../entities/dtoIn/ClassDtosIn");
 const emailService = require("../services/EmailService");
 
-
 class TerrariumService {
     constructor() {
         //key = hardwarioCode, value = objekt s terarium id a targetLivingConditions

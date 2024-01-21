@@ -30,7 +30,8 @@ class EmailService {
         if (isHasBeenEmailSent)
             relevantDateForEmail = this.sentDateByHwCode.get(hardwarioCode);
 
-        const isShouldSendEmailAgain = relevantDateForEmail.setDate(relevantDateForEmail.getDate() + 1) <= new Date();
+        const dateD = new Date(relevantDateForEmail.getTime());
+        const isShouldSendEmailAgain = dateD.setDate(relevantDateForEmail.getDate() + 1) <= new Date();
 
         if (!isHasBeenEmailSent || (isHasBeenEmailSent && isShouldSendEmailAgain)) {
             // set the hardwario code and date of email sending to the cache
@@ -66,8 +67,6 @@ class EmailService {
                 });
             });
         }
-
-
     }
 }
 
